@@ -33,9 +33,10 @@ class Main:
         # Case if user selects Option #2
         # Get info for a single package at a particular time -> O(n)
         elif user_input == '2':
-            count = input('Enter a valid package ID: ')
+            package_id = input('Enter a valid package ID: ')
             display_time = input('Enter a time (HH:MM:SS): ')
-            print(f'User entered package ID {count} at {display_time}')
+            print(f'User entered package ID {package_id} at {display_time}')
+            print(get_hash().lookup_item(package_id))
             cont_or_quit = input('Press any key then enter to continue or type "quit" to quit')
             if cont_or_quit != 'quit':
                 continue

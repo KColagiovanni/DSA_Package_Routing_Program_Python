@@ -20,7 +20,9 @@ class HashTable:
         self.hash_table[hash_key] = list([entry])
         print(f'hash_table: {self.hash_table}')
 
-
     def lookup_item(self, key):
         print(f'lookup item key: {key}')
-
+        hash_key = self.create_key(key)
+        for entry in self.hash_table[hash_key]:
+            if entry[0] == key:
+                return entry[1]
