@@ -17,7 +17,7 @@ class HashTable:
     def add_package(self, key, value):
         hash_key = self.create_key(key)
         entry = [key, value]
-        self.hash_table[hash_key] = list([entry])
+        self.hash_table[hash_key] = entry
         print(f'hash_table: {self.hash_table}')
 
     def lookup_item(self, key):

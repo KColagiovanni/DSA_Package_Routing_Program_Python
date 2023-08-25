@@ -13,12 +13,14 @@ with open('./data/input_data.csv', newline='') as delivery_data:
     first_truck = []
     second_truck = []
     third_truck = []
+    delivery_status = None
 
     packages_to_be_delivered_together = set(())
 
     # Define dictionaries
     deliver = {}
     note = {}
+    addresses = {}
 
     for package_details in list(csv_data):
 
@@ -30,6 +32,8 @@ with open('./data/input_data.csv', newline='') as delivery_data:
         deliver_by = package_details[5]
         package_weight = package_details[6]
         special_note = package_details[7]
+
+        desired_data = [package_id, address, deliver_by, city, zipcode, package_weight, delivery_status]
 
         if 'Must be delivered with' in package_details[7]:
             package1 = int(package_details[7][-7:-5])
@@ -51,11 +55,18 @@ with open('./data/input_data.csv', newline='') as delivery_data:
         else:
             note[special_note] += 1
 
-        ht.add_package(package_id, package_details)
+        if address not in addresses:
+            addresses[address] = 1
+        else:
+            addresses[address] += 1
+
+        ht.add_package(package_id, desired_data)
 
     print(f'\nDeliver Time: {deliver.items()}')
     print(f'Special note: {note.items()}')
     print(f'Packages that need to be delivered together: {packages_to_be_delivered_together}')
+    print(f'Addresses: {addresses}')
+    print(f'Number of different addresses: {len(addresses)}')
 
     def get_hash():
         print('Hi from get_hash()')
