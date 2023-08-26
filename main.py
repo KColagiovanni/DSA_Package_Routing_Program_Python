@@ -2,14 +2,24 @@
 # Student ID: 011039990
 
 # from packages import total_distance
-from csv_parser import get_hash
+from parse_package_data import get_hash
+import calulate_distance
 import datetime
 
 class Main:
     # This is the display message that is shown when the user runs the program. The interface is accessible from here
-    print('<*>~<*>~<*>~<*>~<*>~<*>~<*>~<*>~<*>~<*>')
-    print(' WGUPS Routing Program (C950 ~ DSA2) ')
-    print('<*>~<*>~<*>~<*>~<*>~<*>~<*>~<*>~<*>~<*>\n')
+    # print('<*>~<*>~<*>~<*>~<*>~<*>~<*>~<*>~<*>~<*>')
+    # print(' WGUPS Routing Program (C950 ~ DSA2) ')
+    # print('<*>~<*>~<*>~<*>~<*>~<*>~<*>~<*>~<*>~<*>\n')
+
+    print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  ')
+    print('+                        ____            ___     ___          +  ')
+    print('+       |            |  /    \  |     | |   \   /   \         +  ')
+    print('+        \\    /\    /  |   ___  |     | | o  |  \___          + ')
+    print('+         \\  /  \  /   |     |  |     | |___/       \         + ')
+    print('+          \\/    \/     \____/   \___/  |       \___/         + ')
+    print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')
+
 
     while True:
 
