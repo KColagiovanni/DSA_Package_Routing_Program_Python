@@ -24,6 +24,8 @@ class HashTable:
         print(f'lookup item key: {key}')
         hash_key = self.create_key(key)
         for entry in self.hash_table[hash_key]:
+            print(f'entry[0] is {entry[0]}')
+            print(f'entry[1] is {entry[1]}')
             if entry[0] == key:
                 print(f'entry[1] is {entry[1]}')
                 return entry[1]

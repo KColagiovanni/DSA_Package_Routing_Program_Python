@@ -15,7 +15,7 @@ class Main:
     print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  ')
     print('+       _           _    ____   _     _  ___     ___          +  ')
     print('+       |            |  /    \  |     | |   \   /   \         +  ')
-    print('+        \\    /\    /  |   ___  |     | | D  |  \___          + ')
+    print('+        \\    /\    /  |   ___  |     | | D3  |  \___          + ')
     print('+         \\  /  \  /   |     |  |     | |___/       \         + ')
     print('+          \\/    \/     \____/   \___/  |       \___/         + ')
     print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')
@@ -55,7 +55,8 @@ class Main:
 
         #~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
         elif user_input == '3':
-            print(get_distance_data()[int(get_input_data()[1])])
+            print(get_distance_data()[int(get_input_data()[1]) - 1])
+            get_hash().lookup_item(int(get_input_data()[1]))
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
         # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
