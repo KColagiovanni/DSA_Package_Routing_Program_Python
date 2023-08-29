@@ -3,13 +3,13 @@ print('Hi from csv_parser.py')
 import csv
 from hash_table import HashTable
 
+ht = HashTable()
 
 def get_input_data():
     with open('./data/input_data.csv', newline='') as delivery_data:
 
         package_data = csv.reader(delivery_data, delimiter=',')
 
-        ht = HashTable()
         first_truck = []
         second_truck = []
         third_truck = []
@@ -55,18 +55,18 @@ def get_input_data():
                     third_truck.append(int(package_id))
 
             if deliver_by != 'EOD' and special_note == "None":
-                print(f'deliver_by: {deliver_by}')
+                # print(f'deliver_by: {deliver_by}')
                 hour = int(deliver_by[0:deliver_by.find(':')])
-                print(f'hr: {hour}')
+                # print(f'hr: {hour}')
                 minute = int(deliver_by[-5:-3])
-                print(f'min: {minute}')
+                # print(f'min: {minute}')
                 second = int(deliver_by[-2:])
-                print(f'sec: {second}')
+                # print(f'sec: {second}')
 
                 if hour < min_hour and minute < min_minute:
                     min_hour = hour
                     min_minute = minute
-                    first_delivery = deliver_by
+                    first_delivery = [deliver_by, package_id]
                     # first_truck.append(int(package_id))
 
             if 'Delayed on flight' in special_note:
@@ -83,8 +83,6 @@ def get_input_data():
             #         first_truck.extend(set(packages_to_be_delivered_together).difference(set(first_truck)))
 
             ht.add_package(package_id, desired_data)
-
-            print(f'distance data: {get_distance_data()}')
 
             #~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
             # Dictionaries to count the occurrences of each thing
@@ -110,16 +108,20 @@ def get_input_data():
         print(f'Packages on third truck: {len(third_truck)}')
         print(f'Third truck: {third_truck}')
 
+        print(f'distance data: {get_distance_data()}')
+
         print(f'\nDeliver Time: {deliver.items()}')
         print(f'Special note: {note.items()}')
-        print(f'First delivery: {first_delivery}')
+        print(f'First delivery: {first_delivery[0]} (Package ID: {first_delivery[1]})')
         # print(f'Addresses: {addresses}')
         # print(f'Number of different addresses: {len(addresses)}')
         print(f'Packages that need to be delivered together: {packages_to_be_delivered_together}\n')
 
-    def get_hash():
-        print('Hi from get_hash()')
-        return ht
+        return first_delivery
+
+def get_hash():
+    print('Hi from get_hash()')
+    return ht
 
 
 def get_distance_data():

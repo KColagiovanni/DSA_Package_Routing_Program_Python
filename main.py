@@ -2,7 +2,7 @@
 # Student ID: 011039990
 
 # from packages import total_distance
-from parse_package_data import get_hash
+from parse_package_data import get_hash, get_input_data, get_distance_data
 import calulate_distance
 import datetime
 
@@ -54,8 +54,8 @@ class Main:
                 break
 
         #~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
-        # elif user_input == '3':
-        #     print_package_info()
+        elif user_input == '3':
+            print(get_distance_data()[int(get_input_data()[1])])
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
         # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#

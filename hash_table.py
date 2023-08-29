@@ -25,4 +25,5 @@ class HashTable:
         hash_key = self.create_key(key)
         for entry in self.hash_table[hash_key]:
             if entry[0] == key:
+                print(f'entry[1] is {entry[1]}')
                 return entry[1]
