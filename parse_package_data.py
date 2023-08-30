@@ -131,7 +131,7 @@ def get_hash():
 def find_shortest_distance(distances):
     min_dist = distances[0]
     for distance in distances:
-        if distance is not None and distance is not '' and float(distance) > 0:
+        if distance is not None and distance != '' and float(distance) > 0:
             if distance < min_dist:
                 min_dist = distance
             print(f'Distance list: {distance} miles')
@@ -187,11 +187,23 @@ def match_distance_files_to_package_id():
     print(f'\nname_data({len(name_data)} records): {name_data}')
     
     for index in name_data:
+        package_id_list = []
         # print(index[2])
-        if package_data[1] in index[0]:
-            print(f'package_data[1] matches index[2] ({package_data[1]})')
-        record.update({index[2] : [index[0]]})
-    
+        # if package_data[1] in index[0]:
+        #     print(f'package_data[1] matches index[2] ({package_data[1]})')
+        record.update({index[2]: {'Index': int(index[0]), 'Package ID': package_id_list}})
+
+        for package_details in package_data:
+            print(f'package data: {package_details[0]}')
+            if package_details[1] in record.keys():
+                print(f'package_details[1]({package_details[1]}) is in record')
+                if len(package_id_list) == 0:
+                    package_id_list.clear()
+                    package_id_list.append(int(package_details[0]))
+                else:
+                    package_id_list.append(package_details[0])
+
     print(f'\ndict: {record}')
+
 
 get_input_data()
