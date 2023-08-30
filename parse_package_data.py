@@ -1,5 +1,3 @@
-print('Hi from csv_parser.py')
-
 import csv
 from hash_table import HashTable
 
@@ -11,6 +9,22 @@ def get_input_data():
         package_data = csv.reader(delivery_data, delimiter=',')
 
         return list(package_data)
+
+
+def get_distance_data():
+    with open('./data/distance_data.csv', newline='') as distance_data:
+
+        distance_data = csv.reader(distance_data, delimiter=',')
+
+        return list(distance_data)
+
+
+def get_distance_name_data():
+    with open('./data/distance_name_data.csv', newline='') as distance_name_data:
+
+        distance_name_data = csv.reader(distance_name_data, delimiter=',')
+
+        return list(distance_name_data)
 
 
 def get_package_data(package_list):
@@ -60,13 +74,9 @@ def get_package_data(package_list):
                     third_truck.append(int(package_id))
 
             if deliver_by != 'EOD' and special_note == "None":
-                # print(f'deliver_by: {deliver_by}')
                 hour = int(deliver_by[0:deliver_by.find(':')])
-                # print(f'hr: {hour}')
                 minute = int(deliver_by[-5:-3])
-                # print(f'min: {minute}')
                 second = int(deliver_by[-2:])
-                # print(f'sec: {second}')
 
                 if hour < min_hour and minute < min_minute:
                     min_hour = hour
@@ -106,21 +116,21 @@ def get_package_data(package_list):
             else:
                 addresses[address] += 1
 
-        print(f'\nPackages on first truck: {len(first_truck)}')
-        print(f'First truck(Leaving @ 8:00AM): {first_truck}')
-        print(f'Packages on second truck: {len(second_truck)}')
-        print(f'Second truck(Leaving @ 9:05): {second_truck}')
-        print(f'Packages on third truck: {len(third_truck)}')
-        print(f'Third truck: {third_truck}')
+        # print(f'\nPackages on first truck: {len(first_truck)}')
+        # print(f'First truck(Leaving @ 8:00AM): {first_truck}')
+        # print(f'Packages on second truck: {len(second_truck)}')
+        # print(f'Second truck(Leaving @ 9:05): {second_truck}')
+        # print(f'Packages on third truck: {len(third_truck)}')
+        # print(f'Third truck: {third_truck}')
 
         print(f'distance data: {get_distance_data()}')
 
-        print(f'\nDeliver Time: {deliver.items()}')
-        print(f'Special note: {note.items()}')
-        print(f'First delivery: {first_delivery[0]} (Package ID: {first_delivery[1]})')
+        # print(f'\nDeliver Time: {deliver.items()}')
+        # print(f'Special note: {note.items()}')
+        # print(f'First delivery: {first_delivery[0]} (Package ID: {first_delivery[1]})')
         # print(f'Addresses: {addresses}')
         # print(f'Number of different addresses: {len(addresses)}')
-        print(f'Packages that need to be delivered together: {packages_to_be_delivered_together}\n')
+        # print(f'Packages that need to be delivered together: {packages_to_be_delivered_together}\n')
 
         return first_delivery
 
@@ -139,42 +149,6 @@ def find_shortest_distance(distances):
     print(f'Shortest distance index: {distances.index(str(min_dist))}')
     return distances.index(str(min_dist))
 
-def get_distance_data():
-    with open('./data/distance_data.csv', newline='') as distance_data:
-
-        distance_data = csv.reader(distance_data, delimiter=',')
-
-        # def convert_to_float(num):
-        #     if num != '':
-        #         return float(num)
-        #
-        # def sum_list(list_input):
-        #     sum = 0
-        #     for value in list_input:
-        #         if value is not None:
-        #             sum += value
-        #     return round(sum, 2)
-        #
-        # for distance in list(distance_data):
-        #     # print(f'# of items: {len(distance)}')
-        #     converted = map(convert_to_float, distance)
-        #     summed = sum_list(list(converted))
-        #     # print(f'min distance: {min(list(distance))}')
-        #     # print(f'sum: {summed}\n')
-
-        return list(distance_data)
-
-
-def get_distance_name_data():
-    with open('./data/distance_name_data.csv', newline='') as distance_name_data:
-
-        distance_name_data = csv.reader(distance_name_data, delimiter=',')
-
-    # for name in list(distance_name_data):
-    #     print(name)
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-        return list(distance_name_data)
-
 def match_distance_files_to_package_id():
 
     record = {}
@@ -182,28 +156,25 @@ def match_distance_files_to_package_id():
     package_data = get_input_data()
     data = get_distance_data()
     name_data = get_distance_name_data()
-    print(f'\npackage_data({len(package_data)} records): {package_data}')
-    print(f'\ndata({len(data)} records): {data}')
-    print(f'\nname_data({len(name_data)} records): {name_data}')
+    # print(f'\npackage_data({len(package_data)} records): {package_data}')
+    # print(f'\ndata({len(data)} records): {data}')
+    # print(f'\nname_data({len(name_data)} records): {name_data}')
     
     for index in name_data:
-        package_id_list = []
-        # print(index[2])
-        # if package_data[1] in index[0]:
-        #     print(f'package_data[1] matches index[2] ({package_data[1]})')
-        record.update({index[2]: {'Index': int(index[0]), 'Package ID': package_id_list}})
+        package_count = 1
+        record.update({index[2]: {'Index': int(index[0]), 'Package ID': {}}})
 
         for package_details in package_data:
-            print(f'package data: {package_details[0]}')
-            if package_details[1] in record.keys():
-                print(f'package_details[1]({package_details[1]}) is in record')
-                if len(package_id_list) == 0:
-                    package_id_list.clear()
-                    package_id_list.append(int(package_details[0]))
+            if package_details[1] == index[2]:
+                if package_count == 1:
+                    record[index[2]]['Package ID'][package_count] = (int(package_details[0]))
+                    package_count += 1
                 else:
-                    package_id_list.append(package_details[0])
+                    record[index[2]]['Package ID'][package_count] = (int(package_details[0]))
+                    package_count += 1
 
     print(f'\ndict: {record}')
+    return record
 
 
 get_input_data()

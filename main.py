@@ -16,23 +16,24 @@ class Main:
     # print('+          \\/    \/     \____/   \___/  |       \___/         + ')
     # print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')
     #
-    print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-          '')
+    print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+    print('+                                                                 +')
     print('+   ++           ++    ++++++    ++      ++  ++++++     +++++     +')
     print('+   ++           ++   ++    ++   ++      ++  ++   ++  ++     ++   +')
     print('+   ++     +     ++  ++          ++      ++  ++   ++   +++        +')
     print('+    ++   +++   ++   ++    ++++  ++      ++  ++++++        +++    +')
     print('+     ++ ++ ++ ++     ++    ++    ++    ++   ++       ++     ++   +')
     print('+      +++   +++        ++++        ++++     ++         +++++     +')
+    print('+                                                                 +')
     print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')
 
     while True:
 
-        user_input = input("""
-    Select one of the below options or type 'quit' to quit the program:
-        Press 1 to enter a time to display info for all packages
-        Press 2 to enter a package id and time to display info for a specific package
-    """)
+        user_input = input("""\nSelect one of the below options or type 'quit' to quit the program:
+    Press 1 to enter a time to display info for all packages
+    Press 2 to enter a package id and time to display info for a specific package
+
+Selection: """)
 
         if user_input == '1':
             display_time = input('Enter a time (HH:MM:SS): ')
