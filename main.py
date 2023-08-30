@@ -2,7 +2,7 @@
 # Student ID: 011039990
 
 # from packages import total_distance
-from parse_package_data import get_hash, get_input_data, get_distance_data
+import parse_package_data as ppd
 import calulate_distance
 import datetime
 
@@ -24,7 +24,7 @@ class Main:
     while True:
 
         user_input = input("""
-    Select one of the below options or type 'quit' to quit:
+    Select one of the below options or type 'quit' to quit the program:
         Press 1 to enter a time to display info for all packages
         Press 2 to enter a package id and time to display info for a specific package
     """)
@@ -46,7 +46,7 @@ class Main:
             package_id = input('Enter a valid package ID: ')
             display_time = input('Enter a time (HH:MM:SS): ')
             print(f'User entered package ID {package_id} at {display_time}')
-            print(get_hash().lookup_item(package_id))
+            print(ppd.get_hash().lookup_item(package_id))
             cont_or_quit = input('Press any key then enter to continue or type "quit" to quit')
             if cont_or_quit != 'quit':
                 continue
@@ -55,13 +55,22 @@ class Main:
 
         #~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
         elif user_input == '3':
-            print(get_distance_data()[int(get_input_data()[1]) - 1])
-            get_hash().lookup_item(int(get_input_data()[1]))
+            print(ppd.get_hash().lookup_item(int(ppd.get_package_data(ppd.get_input_data()[1][1]))))
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
         # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
         elif user_input == '4':
-            get_hash().create_key(40)
+            print(f'return from create_key() is: {ppd.get_hash().create_key(40)}')
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+        # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
+        elif user_input == '5':
+            index = int(input('Enter a package ID: '))
+            distance_list = ppd.get_distance_data()[index - 1]
+            print(distance_list)
+            ppd.match_distance_files_to_package_id()
+            # print(f'Shortest distance is: {ppd.find_shortest_distance(distance_list)}')
+
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
         # Case 'exit'

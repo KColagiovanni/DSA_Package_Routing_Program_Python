@@ -10,6 +10,11 @@ def get_input_data():
 
         package_data = csv.reader(delivery_data, delimiter=',')
 
+        return list(package_data)
+
+
+def get_package_data(package_list):
+        
         first_truck = []
         second_truck = []
         third_truck = []
@@ -25,7 +30,7 @@ def get_input_data():
         addresses = {}
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-        for package_details in list(package_data):
+        for package_details in list(package_list):
 
             package_id = package_details[0]
             address = package_details[1]
@@ -123,6 +128,16 @@ def get_hash():
     print('Hi from get_hash()')
     return ht
 
+def find_shortest_distance(distances):
+    min_dist = distances[0]
+    for distance in distances:
+        if distance is not None and distance is not '' and float(distance) > 0:
+            if distance < min_dist:
+                min_dist = distance
+            print(f'Distance list: {distance} miles')
+    print(f'Shortest distance is: {min_dist}')
+    print(f'Shortest distance index: {distances.index(str(min_dist))}')
+    return distances.index(str(min_dist))
 
 def get_distance_data():
     with open('./data/distance_data.csv', newline='') as distance_data:
@@ -158,5 +173,25 @@ def get_distance_name_data():
     # for name in list(distance_name_data):
     #     print(name)
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+        return list(distance_name_data)
+
+def match_distance_files_to_package_id():
+
+    record = {}
+
+    package_data = get_input_data()
+    data = get_distance_data()
+    name_data = get_distance_name_data()
+    print(f'\npackage_data({len(package_data)} records): {package_data}')
+    print(f'\ndata({len(data)} records): {data}')
+    print(f'\nname_data({len(name_data)} records): {name_data}')
+    
+    for index in name_data:
+        # print(index[2])
+        if package_data[1] in index[0]:
+            print(f'package_data[1] matches index[2] ({package_data[1]})')
+        record.update({index[2] : [index[0]]})
+    
+    print(f'\ndict: {record}')
 
 get_input_data()
