@@ -51,7 +51,9 @@ Selection: """)
         elif user_input == '2':
             package_id = input('Enter a valid package ID: ')
             display_time = input('Enter a time (HH:MM:SS): ')
-            print(f'User entered package ID {package_id} at {display_time}')
+            (hours, minutes, seconds) = display_time.split(':')
+            convert_time = datetime.timedelta(hours=int(hours), minutes=int(minutes), seconds=int(seconds))
+            print(f'User entered package ID {package_id} at {convert_time}')
             print(ppd.get_hash().lookup_item(package_id))
             cont_or_quit = input('Press any key then enter to continue or type "quit" to quit')
             if cont_or_quit != 'quit':
@@ -61,12 +63,12 @@ Selection: """)
 
         #~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
         elif user_input == '3':
-            print(ppd.get_hash().lookup_item(int(ppd.get_package_data(ppd.get_input_data()[1][1]))))
+            print(ppd.get_hash().lookup_item(int(ppd.get_package_data(ppd.get_input_data())[1])))
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
         # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
         elif user_input == '4':
-            print(f'return from create_key() is: {ppd.get_hash().create_key(40)}')
+            print(f'return from create_key() is: {ppd.get_hash().create_key(int(ppd.get_package_data(ppd.get_input_data())[1]))}')
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
         # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#

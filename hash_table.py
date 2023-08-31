@@ -16,4 +16,4 @@ class HashTable:
         self.hash_table[self.create_key(key)] = entry
 
     def lookup_item(self, key):
-        return self.hash_table[self.create_key(key)][1]
+        return self.hash_table[self.create_key(key)]
