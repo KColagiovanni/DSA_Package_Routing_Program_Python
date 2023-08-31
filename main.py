@@ -63,7 +63,7 @@ Selection: """)
 
         #~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
         elif user_input == '3':
-            print(ppd.get_hash().lookup_item(int(ppd.get_package_data(ppd.get_input_data())[1])))
+            print(f'First Delivery: {ppd.get_hash().lookup_item(int(ppd.get_package_data(ppd.get_input_data())[1][1]))}')
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
         # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
@@ -75,8 +75,10 @@ Selection: """)
         elif user_input == '5':
             index = int(input('Enter a package ID: '))
             distance_list = ppd.get_distance_data()[index - 1]
-            print(distance_list)
+            print(f'Distance List from package ID {index}: {distance_list}')
+            # ppd.find_shortest_distance(distance_list)
             ppd.match_distance_files_to_package_id()
+            # ppd.load_trucks(ppd.match_distance_files_to_package_id[], distance_list)
             # print(f'Shortest distance is: {ppd.find_shortest_distance(distance_list)}')
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#

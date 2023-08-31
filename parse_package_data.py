@@ -89,10 +89,10 @@ def get_package_data(package_list):
         if 'Delayed on flight' in special_note:
             package_eta = special_note[-7:]
             if deliver_by != 'EOD':
-                print(f'HIGH PRIORITY: {package_id} - ETA: {package_eta} (Deliver by: {deliver_by})')
+                print(f'DELAYED | HIGH PRIORITY: {package_id} - ETA: {package_eta} (Deliver by: {deliver_by})')
                 # second_truck.append(int(package_id))
             else:
-                print(f'{package_id} - ETA: {package_eta} (Deliver by: {deliver_by})')
+                print(f'DELAYED | {package_id} - ETA: {package_eta} (Deliver by: {deliver_by})')
                 # third_truck.append(int(package_id))
 
         # if len(packages_to_be_delivered_together) > 0:
@@ -101,44 +101,10 @@ def get_package_data(package_list):
 
         ht.add_package(package_id, desired_data)
 
-        #~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
-        # Dictionaries to count the occurrences of each thing
-        if deliver_by not in deliver:
-            deliver[deliver_by] = 1
-        else:
-            deliver[deliver_by] += 1
-
-        if special_note not in note:
-            note[special_note] = 1
-        else:
-            note[special_note] += 1
-
-        if address not in addresses:
-            addresses[address] = 1
-        else:
-            addresses[address] += 1
-
-    # print(f'\nPackages on first truck: {len(first_truck)}')
-    # print(f'First truck(Leaving @ 8:00AM): {first_truck}')
-    # print(f'Packages on second truck: {len(second_truck)}')
-    # print(f'Second truck(Leaving @ 9:05): {second_truck}')
-    # print(f'Packages on third truck: {len(third_truck)}')
-    # print(f'Third truck: {third_truck}')
-
-    # print(f'distance data: {get_distance_data()}')
-
-    # print(f'\nDeliver Time: {deliver.items()}')
-    # print(f'Special note: {note.items()}')
-    # print(f'First delivery: {first_delivery[0]} (Package ID: {first_delivery[1]})')
-    # print(f'Addresses: {addresses}')
-    # print(f'Number of different addresses: {len(addresses)}')
-    # print(f'Packages that need to be delivered together: {packages_to_be_delivered_together}\n')
-
-    return first_delivery
+    return desired_data, first_delivery
 
 
 def get_hash():
-    print('Hi from get_hash()')
     return ht
 
 
@@ -148,8 +114,8 @@ def find_shortest_distance(distances):
         if distance is not None and distance != '' and float(distance) > 0:
             if distance < min_dist:
                 min_dist = distance
-            print(f'Distance list: {distance} miles')
-    print(f'Shortest distance is: {min_dist}')
+            # print(f'Distance list: {distance} miles')
+    print(f'Shortest distance is: {min_dist} miles')
     print(f'Shortest distance index: {distances.index(str(min_dist))}')
     return distances.index(str(min_dist))
 
@@ -182,5 +148,30 @@ def match_distance_files_to_package_id():
     return record
 
 
-def load_trucks():
+def calc_delivery_time(truck_list):
+    # Trucks move at 18MPH    
+    # for delivery in truck_list:
     pass
+
+
+# Need to know total distance
+# need to know where each package is at any given time
+
+def load_trucks(package_id_data, distance_list):
+    
+    # First truck is loaded and leaves the hub at 8:00AM
+    first_truck, second_truck, third_truck = [], [], []
+
+    distance_data_index = find_shortest_distance(distance_list)
+    print(f'Distance data index is: {distance_data_index}')
+    print(f'distance_list is: {distance_list}')
+
+    if len(first_truck) < 17:
+        first_truck.append(distance_list)
+    elif len(second_truck) < 17:
+        second_truck.append(distance_list)
+    elif len(third_truck) < 17:
+        third_truck.append(distance_list)
+    else:
+        print('There was an error')
+    # load_trucks(match_distance_files_to_package_id()[get_distance_name_data()])
