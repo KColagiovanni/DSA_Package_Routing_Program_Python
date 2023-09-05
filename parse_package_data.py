@@ -3,6 +3,7 @@ from hash_table import HashTable
 
 ht = HashTable()
 
+first_truck, second_truck, third_truck = [], [], []
 
 def get_input_data():
     with open('./data/input_data.csv', newline='') as delivery_data:
@@ -38,6 +39,7 @@ def get_package_data(package_list):
     min_minute = 60
     packages_to_be_delivered_together = set(())
     first_delivery = []
+    desired_data =[]
 
     #~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
     # Define dictionaries
@@ -108,29 +110,36 @@ def get_hash():
     return ht
 
 
-def find_shortest_distance(distances):
-    min_dist = distances[0]
-    for distance in distances:
-        if distance is not None and distance != '' and float(distance) > 0:
-            if distance < min_dist:
-                min_dist = distance
+def find_shortest_distance(distances, start_row=2):
+    print(f'distances: {distances}')
+    print(f'start row: {start_row}')
+    print(f'len(distances[start_row]) is: {len(distances[start_row])}')
+    min_dist = float(distances[start_row][1])
+    for col_index in range(1, len(distances[start_row])):
+        print(f'min_dist: {min_dist}')
+        print(f'distances[{start_row}][{col_index}] is: {distances[start_row][col_index]}')
+        if distances[start_row][col_index] != '' and distances[start_row][col_index] is not None and float(distances[start_row][col_index]) > 0:
+            # if float(distances[col_index] == 0):
+                # for row_index in range(col_index)
+            if float(distances[start_row][col_index]) < float(min_dist):
+                min_dist = distances[start_row][col_index]
+        else:
+            print('Nan')
+            continue
             # print(f'Distance list: {distance} miles')
-    print(f'Shortest distance is: {min_dist} miles')
-    print(f'Shortest distance index: {distances.index(str(min_dist))}')
-    return distances.index(str(min_dist))
+    # print(f'Shortest distance is: {min_dist} miles')
+    # print(f'Shortest distance index: {distances.index(str(min_dist))}')
+    return distances[start_row].index(min_dist)
 
 
-def match_distance_files_to_package_id():
+def sync_csv_data():
 
     record = {}
 
     package_data = get_input_data()
     data = get_distance_data()
     name_data = get_distance_name_data()
-    # print(f'\npackage_data({len(package_data)} records): {package_data}')
-    # print(f'\ndata({len(data)} records): {data}')
-    # print(f'\nname_data({len(name_data)} records): {name_data}')
-    
+
     for index in name_data:
         package_count = 1
         record.update({index[2]: {'Index': int(index[0]), 'Package ID': {}}})
@@ -153,25 +162,58 @@ def calc_delivery_time(truck_list):
     # for delivery in truck_list:
     pass
 
-
+# Need to calc min time in each delivery
 # Need to know total distance
 # need to know where each package is at any given time
 
-def load_trucks(package_id_data, distance_list):
+def load_trucks(package_id):
     
-    # First truck is loaded and leaves the hub at 8:00AM
-    first_truck, second_truck, third_truck = [], [], []
+    index = get_input_data()[package_id - 1]
+    # print(f'index is: {index}')
+    # print(f'index[1] is: {index[1]}, index[0] is {index[0]}')
 
-    distance_data_index = find_shortest_distance(distance_list)
-    print(f'Distance data index is: {distance_data_index}')
-    print(f'distance_list is: {distance_list}')
+    distance_list = sync_csv_data()[index[1]]
+    # print(f'index is: {index}')
+    print(f'distance_list[Index]: {distance_list["Index"]}')
+    # print(f'Distance List:Package ID(#{index[0]}) is: {distance_list.get("Package ID")}')
+    # print(f'Distance List:Index(#{index[0]}) is: {distance_list.get("Index")}')
+    # print(f'Shortest distance index: [{index[0]}][{find_shortest_distance(distance_list.get("Index"))}]')
+
+    # print(f'distance_data(index {distance_list.get("Index")}) is: {get_distance_data()[distance_list.get("Index")]}')
+    # print(f'Shortest distance[{distance_list.get("Index")}][{find_shortest_distance(get_distance_data()[distance_list.get("Index")])}]')
+    # print(f'From {get_distance_name_data()[distance_list.get("Index")][2]} to {get_distance_name_data()[find_shortest_distance(get_distance_data()[distance_list.get("Index")])][2]}')
+    # sync_csv_data()
+    # print(f'Index {ppd.find_shortest_distance(distance_list)} is {ppd.get_input_data()[ppd.find_shortest_distance(distance_list)][1]}')
+    # ppd.load_trucks(ppd.match_distance_files_to_package_id[], distance_list)
+    # print(f'Shortest distance is: {ppd.find_shortest_distance(distance_list)}')
 
     if len(first_truck) < 17:
-        first_truck.append(distance_list)
+        for package_num in range(1, len(distance_list.get('Package ID')) + 1):
+            if distance_list.get('Package ID').get(package_num) not in first_truck:
+                first_truck.append(distance_list.get('Package ID').get(package_num))
+        print(f'Truck 1 Packages: {first_truck}')
+
     elif len(second_truck) < 17:
-        second_truck.append(distance_list)
+        for package_num in range(1, len(distance_list.get('Package ID')) + 1):
+            if distance_list.get('Package ID').get(package_num) not in second_truck:
+                second_truck.append(distance_list.get('Package ID').get(package_num))
+        print(f'Truck 2 Packages: {second_truck}')
+
     elif len(third_truck) < 17:
-        third_truck.append(distance_list)
+        for package_num in range(1, len(distance_list.get('Package ID')) + 1):
+            if distance_list.get('Package ID').get(package_num) not in third_truck:
+                third_truck.append(distance_list.get('Package ID').get(package_num))
+        print(f'Truck 3 Packages: {third_truck}')
+
     else:
-        print('There was an error')
-    # load_trucks(match_distance_files_to_package_id()[get_distance_name_data()])
+        return
+
+    # print(f'package ID: {sync_csv_data()[get_distance_name_data()[find_shortest_distance(get_distance_data()[distance_list.get("Index")])][2]].get("Package ID")[1]}')
+    # load_trucks(sync_csv_data()[get_distance_name_data()[find_shortest_distance(get_distance_data()[distance_list.get("Index")])][2]].get("Package ID")[1])
+
+    print(f'type(distance_list) is: {type(distance_list)}')
+    # print(f'Distance Data: {get_distance_data()}')
+    print(f'find_shortest_distance(get_distance_data(), distance_list.get("Index") is: {find_shortest_distance(get_distance_data(), distance_list.get("Index"))}')
+    print(f'get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))] is: {get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))]}')
+    print(f'sync_csv_data()[get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))]] is: {sync_csv_data()[get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))]]}')
+    load_trucks(sync_csv_data()[get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))]])

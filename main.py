@@ -8,24 +8,16 @@ import datetime
 
 class Main:
     # This is the display message that is shown when the user runs the program. The interface is accessible from here
-    # print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  ')
-    # print('+       _           _    ____   _     _  ___     ___          +  ')
-    # print('+       |            |  /    \  |     | |   \   /   \         +  ')
-    # print('+        \\    /\    /  |   ___  |     | | D  |  \___          + ')
-    # print('+         \\  /  \  /   |     |  |     | |___/       \         + ')
-    # print('+          \\/    \/     \____/   \___/  |       \___/         + ')
-    # print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')
-    #
-    print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-    print('+                                                                 +')
-    print('+   ++           ++    ++++++    ++      ++  ++++++     +++++     +')
-    print('+   ++           ++   ++    ++   ++      ++  ++   ++  ++     ++   +')
-    print('+   ++     +     ++  ++          ++      ++  ++   ++   +++        +')
-    print('+    ++   +++   ++   ++    ++++  ++      ++  ++++++        +++    +')
-    print('+     ++ ++ ++ ++     ++    ++    ++    ++   ++       ++     ++   +')
-    print('+      +++   +++        ++++        ++++     ++         +++++     +')
-    print('+                                                                 +')
-    print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')
+    print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+    print('+                                                                     +')
+    print('+   ++           ++     ++++++     ++      ++  +++++++      +++++     +')
+    print('+   ++           ++   ++      ++   ++      ++  ++     ++  ++     ++   +')
+    print('+   ++     +     ++  ++            ++      ++  ++     ++   +++        +')
+    print('+    ++   +++   ++   ++     +++++  ++      ++  +++++++         +++    +')
+    print('+     ++ ++ ++ ++     ++      ++    ++    ++   ++         ++     ++   +')
+    print('+      +++   +++        ++++++        ++++     ++           +++++     +')
+    print('+                                                                     +')
+    print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')
 
     while True:
 
@@ -68,18 +60,13 @@ Selection: """)
 
         # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
         elif user_input == '4':
-            print(f'return from create_key() is: {ppd.get_hash().create_key(int(ppd.get_package_data(ppd.get_input_data())[1]))}')
+            print(f'return from create_key() is: {ppd.get_hash().create_key(int(ppd.get_package_data(ppd.get_input_data())[1][1]))}')
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
         # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
         elif user_input == '5':
-            index = int(input('Enter a package ID: '))
-            distance_list = ppd.get_distance_data()[index - 1]
-            print(f'Distance List from package ID {index}: {distance_list}')
-            # ppd.find_shortest_distance(distance_list)
-            ppd.match_distance_files_to_package_id()
-            # ppd.load_trucks(ppd.match_distance_files_to_package_id[], distance_list)
-            # print(f'Shortest distance is: {ppd.find_shortest_distance(distance_list)}')
+            input_package_id = int(input('Enter a package ID: '))
+            ppd.load_trucks(input_package_id)
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 

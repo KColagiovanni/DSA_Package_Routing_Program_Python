@@ -12,8 +12,7 @@ class HashTable:
         return int(key) % self.table_size
 
     def add_package(self, key, value):
-        entry = [key, value]
-        self.hash_table[self.create_key(key)] = entry
+        self.hash_table[self.create_key(key)] = [key, value]
 
     def lookup_item(self, key):
         return self.hash_table[self.create_key(key)]
