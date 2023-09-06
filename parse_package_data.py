@@ -111,23 +111,26 @@ def get_hash():
 
 
 def find_shortest_distance(distances, start_row=2):
+    min_distance_index = []
     # print(f'distances: {distances}')
     print(f'start row: {start_row}')
     # print(f'len(distances[start_row]) is: {len(distances[start_row])}')
     min_dist = float(distances[start_row][1])
     for col_index in range(1, len(distances[start_row]) - 1):
-        print(f'min_dist: {min_dist}')
+        print(f'min_dist: {min_dist}(index: [{start_row}][{col_index - 1}])')
         # print(f'distances[{start_row}][{col_index}] is: {distances[start_row][col_index]}')
         if distances[start_row][col_index] != '' and distances[start_row][col_index] is not None and float(distances[start_row][col_index]) > 0:
             # if float(distances[col_index] == 0):
                 # for row_index in range(col_index)
             if float(distances[start_row][col_index]) < float(min_dist):
                 min_dist = distances[start_row][col_index]
+                # min_distance_index.append([start_row][col_index]) # Pop then append value so it only ever contains one value
         elif float(distances[start_row][col_index]) == 0:
             for row in range(start_row, len(distances) - 1):
                 print(f'row is: {row}')
                 print(f'col_index - 1 is: {col_index - 1}')
-                print(f'distances[row][col_index] is: {distances[row][col_index - 1]}')
+                print(f'distances[{row}][{col_index}] is: {distances[row][col_index - 1]}')
+                min_dist = distances[start_row][col_index]
             break
         else:
             # print('Nan')
