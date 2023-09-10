@@ -66,13 +66,33 @@ Selection: """)
         # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
         elif user_input == '5':
             input_package_id = int(input('Enter a package ID: '))
-            ppd.load_trucks(input_package_id)
+            ppd.load_trucks(input_package_id, num_of_packages)
+
+            # index = ppd.get_input_data()[input_package_id - 1]
+            # # print(f'index[1] is: {index[1]}, index[0] is {index[0]}')
+            #
+            # distance_list = ppd.sync_csv_data()[index[1]]
+            # # print(f'distance_list: {distance_list}')
+            # # print(f'Distance List:Package ID(#{index[0]}) is: {distance_list.get("Package ID")}')
+            # # print(f'Distance List:Index(#{index[0]}) is: {distance_list.get("Index")}')
+            #
+            # for package_num in range(1, len(distance_list.get('Package ID')) + 1):
+            #     test_truck_1.append(distance_list.get('Package ID').get(package_num))
+            # print(f'Truck 1 Packages: {test_truck_1}')
+            # # print(f'Shortest distance index: [{index[0]}][{ppd.find_shortest_distance(distance_list.get("Index"))}]')
+            #
+            # # print(f'distance_data(index {distance_list.get("Index")}) is: {ppd.get_distance_data()[distance_list.get("Index")]}')
+            # # print(f'Shortest distance[{distance_list.get("Index")}][{ppd.find_shortest_distance(ppd.get_distance_data()[distance_list.get("Index")])}]')
+            # ppd.sync_csv_data()
+            # # print(f'Index {ppd.find_shortest_distance(distance_list)} is {ppd.get_input_data()[ppd.find_shortest_distance(distance_list)][1]}')
+            # # ppd.load_trucks(ppd.match_distance_files_to_package_id[], distance_list)
+            # # print(f'Shortest distance is: {ppd.find_shortest_distance(distance_list)}')
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
         # Case 'exit'
         # This exits the program
-        elif user_input == 'quit':
+        elif user_input.lower() == 'quit':
             exit()
 
         # Case Error

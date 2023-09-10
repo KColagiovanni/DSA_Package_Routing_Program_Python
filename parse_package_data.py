@@ -2,32 +2,38 @@ import csv
 from hash_table import HashTable
 
 ht = HashTable()
+addresses = []
 
 first_truck, second_truck, third_truck = [], [], []
 
-def get_input_data():
-    with open('./data/input_data.csv', newline='') as delivery_data:
 
-        package_data = csv.reader(delivery_data, delimiter=',')
+class ParseCsvData():
 
-        return list(package_data)
+    @staticmethod
+    def get_input_data():
+        with open('./data/input_data.csv', newline='') as delivery_data:
 
+            package_data = csv.reader(delivery_data, delimiter=',')
 
-def get_distance_data():
-    with open('./data/distance_data.csv', newline='') as distance_data:
+            return list(package_data)
 
-        distance_data = csv.reader(distance_data, delimiter=',')
+    @staticmethod
+    def get_distance_data():
+        with open('./data/distance_data.csv', newline='') as distance_data:
 
-        return list(distance_data)
+            distance_data = csv.reader(distance_data, delimiter=',')
 
+            return list(distance_data)
 
-def get_distance_name_data():
-    with open('./data/distance_name_data.csv', newline='') as distance_name_data:
+    @staticmethod
+    def get_distance_name_data():
+        with open('./data/distance_name_data.csv', newline='') as distance_name_data:
 
-        distance_name_data = csv.reader(distance_name_data, delimiter=',')
+            distance_name_data = csv.reader(distance_name_data, delimiter=',')
 
-        return list(distance_name_data)
+            return list(distance_name_data)
 
+pcd = ParseCsvData()
 
 def get_package_data(package_list):
         
@@ -111,51 +117,84 @@ def get_hash():
 
 
 # Returns the index of the shortest distance
-def find_shortest_distance(distances, start_row=2):
-    min_dist = distances[start_row][1]
-    for col_index in range(1, len(distances[start_row])):
-        print(f'min_dist: {min_dist}')
-        print(f'distances[{start_row}][{col_index}] is: {distances[start_row][col_index]}')
-        if distances[start_row][col_index] != '' and distances[start_row][col_index] is not None and float(distances[start_row][col_index]) > 0:
-            # if float(distances[col_index] == 0):
-                # for row_index in range(col_index)
-            if float(distances[start_row][col_index]) < float(min_dist):
-                min_dist = distances[start_row][col_index]
-        else:
-            print('Nan')
-            continue
-            # print(f'Distance list: {distance} miles')
-    # print(f'Shortest distance is: {min_dist} miles')
-    # print(f'Shortest distance index: {distances.index(str(min_dist))}')
-    min_index = distances[start_row].index(min_dist)
-    return min_index
+def find_shortest_distance(distances, start_row=1):
+    ####################################### Original Version #######################################
+    # min_dist = distances[start_row][1]
+    # min_dist_index = 0
+    # for col_index in range(1, len(distances[start_row])):
+    #     # print(f'distances[{start_row}][{col_index}] is: {distances[start_row][col_index]}')
+    #     if float(distances[start_row][col_index]) != 0:
+    #         if float(distances[start_row][col_index]) < float(min_dist):
+    #             min_dist = distances[start_row][col_index]
+    #     else:
+    #         break
+    # # print(f'Distance list: {distance} miles')
+    # # print(f'Shortest distance is: {min_dist} miles')
+    # # print(f'Shortest distance index: {distances.index(str(min_dist))}')
+    # print(f'min_dist: {min_dist} miles')
+    # print(f'min_dist_index is: {min_dist_index}')
+    # min_index = distances[start_row].index(min_dist)
+    # return min_index
 
-    # traversal_direction = 'horizontal'
+    ####################################### New Version #############################################
+    # horizontal_index = 0
+    # vertical_index = 0
+
     # if float(distances[start_row][0]) != 0:
     #     min_dist = float(distances[start_row][0])
     # else:
     #     min_dist = float(distances[start_row + 1][0])
 
-    # for search_index in range(0, len(distances[start_row]) - 1):
-    #     print(f'search_index is: {search_index}')
-    #     print(f'min_dist is: {min_dist}')
-    #     if distances[start_row][search_index] == '0.0':
-    #         traversal_direction = 'vertical'
-    #     if traversal_direction == 'horizontal' and float(distances[start_row][search_index]) < min_dist and float(distances[start_row][search_index]) != 0:
-    #         min_dist = float(distances[start_row][search_index])
-    #         print(f'distances[{start_row}][{search_index}] is: {distances[start_row][search_index]}')
-    #     if traversal_direction == 'vertical' and float(distances[search_index][start_row]) < min_dist and float(distances[search_index][start_row]) != 0:
-    #         min_dist = float(distances[search_index][start_row])
-    #         print(f'distances[{search_index}][{start_row}] is: {distances[search_index][start_row]}')
+    search_data = {
+        'min_horizontal_index': 0,
+        'min_vertical_index': 0,
+        'traversal_direction': 'horizontal',
+        'min_dist': float(distances[start_row][1]),
+        'min_dist_location': 'horizontal'
+    }
+
+    for search_index in range(1, len(distances[start_row])):
+        if search_index in addresses:
+            continue
+        # print(f'\ndistances[start_row:{start_row}][search_index:{search_index}] is: {distances[start_row][search_index]}')
+        # print(f'distances[search_index:{search_index}][start_row:{start_row}] is: {distances[search_index][start_row]}')
+        if distances[start_row][search_index] == '0.0':
+            search_data['traversal_direction'] = 'vertical'
+
+        if search_data['traversal_direction'] == 'horizontal':
+            if distances[start_row][search_index] != '':
+                if float(distances[start_row][search_index]) < search_data['min_dist']:
+                    if float(distances[start_row][search_index]) != 0:
+                        search_data['min_dist'] = float(distances[start_row][search_index])
+                        search_data['min_dist_location'] = 'horizontal'
+                        search_data['min_horizontal_index'] = search_index
+        if search_data['traversal_direction'] == 'vertical':
+            if distances[search_index][start_row] != '':
+                if float(distances[search_index][start_row]) < search_data['min_dist']:
+                    if float(distances[search_index][start_row]) != 0:
+                        search_data['min_dist'] = float(distances[search_index][start_row])
+                        search_data['min_dist_location'] = 'vertical'
+                        search_data['min_vertical_index'] = search_index
+    #     print(f'search_data is: {search_data}')
+    # print(f'\nmin_dist: {search_data["min_dist"]} miles')
+    if start_row not in addresses:
+        addresses.append(start_row)
+    # print(f'addresses is: {addresses}')
+    if search_data['min_dist_location'] == 'horizontal':
+        # print(f'min_horizontal_index is: {search_data["min_horizontal_index"]}\n')
+        return search_data["min_horizontal_index"]
+    if search_data['min_dist_location'] == 'vertical':
+        # print(f'min_vertical_index is: {search_data["min_vertical_index"]}\n')
+        return search_data['min_vertical_index']
 
 
 def sync_csv_data():
 
     record = {}
 
-    package_data = get_input_data()
-    data = get_distance_data()
-    name_data = get_distance_name_data()
+    package_data = pcd.get_input_data()
+    data = pcd.get_distance_data()
+    name_data = pcd.get_distance_name_data()
 
     for index in name_data:
         package_count = 1
@@ -184,11 +223,11 @@ def calc_delivery_time(truck_list):
 # need to know where each package is at any given time
 
 # def load_trucks(package_id):
-def load_trucks(package_id):
+def load_trucks(package_id, num_of_packages):
     
     # print(f'\npackage_id: {package_id}')
     # print(f'type(package_id): {type(package_id)}')
-    package_id_data = get_input_data()[package_id - 1]
+    package_id_data = pcd.get_input_data()[package_id - 1]
     # print(f'package_id_data is: {package_id_data}')
     # print(f'package_id_data[1] is: {package_id_data[1]}, package_id_data[0] is {package_id_data[0]}')
 
@@ -208,22 +247,28 @@ def load_trucks(package_id):
     # ppd.load_trucks(ppd.match_distance_files_to_package_id[], distance_list)
     # print(f'Shortest distance is: {ppd.find_shortest_distance(distance_list)}')
 
-    if len(first_truck) < 17:
+    if len(first_truck) < 16 and num_of_packages == 1:
         for package_num in range(1, len(distance_list.get('Package ID')) + 1):
             if distance_list.get('Package ID').get(package_num) not in first_truck:
                 first_truck.append(distance_list.get('Package ID').get(package_num))
+            else:
+                print(f'Package ID: {distance_list.get("Package ID").get(package_num)} is already on the first truck')
         print(f'Truck 1 Packages: {first_truck}')
 
-    elif len(second_truck) < 17:
+    elif len(second_truck) < 16 and num_of_packages == 1:
         for package_num in range(1, len(distance_list.get('Package ID')) + 1):
             if distance_list.get('Package ID').get(package_num) not in second_truck:
                 second_truck.append(distance_list.get('Package ID').get(package_num))
+            else:
+                print(f'Package ID: {distance_list.get("Package ID").get(package_num)} is already on the second truck')
         print(f'Truck 2 Packages: {second_truck}')
 
-    elif len(third_truck) < 17:
+    elif len(third_truck) < 16 and num_of_packages == 1:
         for package_num in range(1, len(distance_list.get('Package ID')) + 1):
             if distance_list.get('Package ID').get(package_num) not in third_truck:
                 third_truck.append(distance_list.get('Package ID').get(package_num))
+            else:
+                print(f'Package ID: {distance_list.get("Package ID").get(package_num)} is already on the third truck')
         print(f'Truck 3 Packages: {third_truck}')
 
     else:
@@ -233,10 +278,12 @@ def load_trucks(package_id):
     # load_trucks(sync_csv_data()[get_distance_name_data()[find_shortest_distance(get_distance_data()[distance_list.get("Index")])][2]].get("Package ID")[1])
 
     # print(f'type(distance_list) is: {type(distance_list)}')
-    y = find_shortest_distance(get_distance_data(), distance_list.get("Index"))
+    # y = find_shortest_distance(get_distance_data(), distance_list.get("Index"))
     # print(f'\nget_distance_name_data()[2] is: {get_distance_name_data()[y][2]}')
     # print(f'find_shortest_distance(get_distance_data(), distance_list.get("Index") is: {[x, y]}')
     # print(f'Distance Name Data[{y}]: {get_distance_name_data()[y]}')
     # print(f'get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))] is: {get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))][2]}')
-    print(f'sync_csv_data()[get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))][2]] is: {sync_csv_data()[get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))][2]]}')
-    # load_trucks(sync_csv_data()[get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))][2]]["Package ID"][1])
+    num_of_packages = len(sync_csv_data()[pcd.get_distance_name_data()[find_shortest_distance(pcd.get_distance_data(), distance_list.get("Index"))][2]]["Package ID"])
+    print(f'Number of Packages: {num_of_packages}')
+    print(f'sync_csv_data()[get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))][2]]["Package ID"][1] is: {sync_csv_data()[pcd.get_distance_name_data()[find_shortest_distance(pcd.get_distance_data(), distance_list.get("Index"))][2]]["Package ID"]}')
+    # load_trucks(sync_csv_data()[get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))][2]]["Package ID"][1], num_of_packages)
