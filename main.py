@@ -2,9 +2,10 @@
 # Student ID: 011039990
 
 # from packages import total_distance
-import parse_package_data as ppd
+from parse_package_data import Packages
 import calulate_distance
 import datetime
+
 
 class Main:
     # This is the display message that is shown when the user runs the program. The interface is accessible from here
@@ -18,6 +19,8 @@ class Main:
     print('+      +++   +++        ++++++        ++++     ++           +++++     +')
     print('+                                                                     +')
     print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')
+
+    ppd = Packages()
 
     while True:
 
@@ -66,7 +69,7 @@ Selection: """)
         # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
         elif user_input == '5':
             input_package_id = int(input('Enter a package ID: '))
-            ppd.load_trucks(input_package_id, num_of_packages)
+            ppd.load_trucks(input_package_id)
 
             # index = ppd.get_input_data()[input_package_id - 1]
             # # print(f'index[1] is: {index[1]}, index[0] is {index[0]}')
