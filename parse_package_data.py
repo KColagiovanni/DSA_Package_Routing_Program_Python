@@ -2,7 +2,7 @@ import csv
 from hash_table import HashTable
 
 ht = HashTable()
-addresses = [0.0]
+addresses = [0]
 num_of_packages = 0
 
 class ParseCsvData:
@@ -188,11 +188,17 @@ class Packages(ParseCsvData):
         if start_row not in addresses:
             addresses.append(start_row)
         print(f'addresses is: {addresses}')
+        if search_data["min_horizontal_index"] == 0 and search_data["min_vertical_index"] == 0:
+            if search_data['min_dist_location'] == 'horizontal':
+                search_data['min_horizontal_index'] += 1
+            if search_data['min_dist_location'] == 'vertical':
+                search_data['min_vertical_index'] += 1
+
         if search_data['min_dist_location'] == 'horizontal':
-            # print(f'min_horizontal_index is: {search_data["min_horizontal_index"]}\n')
+            print(f'returning {search_data["min_horizontal_index"]} from find_shortest_distance()\n')
             return search_data["min_horizontal_index"]
         if search_data['min_dist_location'] == 'vertical':
-            # print(f'min_vertical_index is: {search_data["min_vertical_index"]}\n')
+            print(f'returning {search_data["min_vertical_index"]} from find_shortest_distance()\n')
             return search_data['min_vertical_index']
 
 
