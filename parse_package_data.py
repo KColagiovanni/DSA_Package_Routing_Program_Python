@@ -4,6 +4,7 @@ from hash_table import HashTable
 ht = HashTable()
 addresses = [0]
 num_of_packages = 0
+distance_traveled = []
 
 class ParseCsvData:
 
@@ -162,10 +163,9 @@ class Packages(ParseCsvData):
         }
 
         for search_index in range(1, len(distances[start_row])):
-            print(f'\ndistances[start_row:{start_row}][search_index:{search_index}] is: {distances[start_row][search_index]}')
-            print(f'distances[search_index:{search_index}][start_row:{start_row}] is: {distances[search_index][start_row]}')
+            # print(f'\ndistances[start_row:{start_row}][search_index:{search_index}] is: {distances[start_row][search_index]}')
+            # print(f'distances[search_index:{search_index}][start_row:{start_row}] is: {distances[search_index][start_row]}')
             if distances[start_row][search_index] == '0.0':
-                print('it = 0')
                 search_data['traversal_direction'] = 'vertical'
 
             if search_index in addresses:
@@ -184,11 +184,15 @@ class Packages(ParseCsvData):
                             search_data['min_dist'] = float(distances[search_index][start_row])
                             search_data['min_dist_location'] = 'vertical'
                             search_data['min_vertical_index'] = search_index
-            print(f'search_data is: {search_data}')
+            # print(f'search_data is: {search_data}')
         print(f'\nmin_dist: {search_data["min_dist"]} miles')
+        distance_traveled.append(search_data["min_dist"])
+        # distance_traveled += search_data['min_dist']
+        print(distance_traveled)
+        print(sum(distance_traveled))
         if start_row not in addresses:
             addresses.append(start_row)
-        print(f'addresses is: {addresses.sort()}')
+        # print(f'addresses is: {addresses.sort()}')
         if search_data["min_horizontal_index"] == 0 and search_data["min_vertical_index"] == 0:
             for index in range(1, len(distances[start_row])):
                 if index not in addresses:
@@ -199,10 +203,10 @@ class Packages(ParseCsvData):
                     search_data['min_vertical_index'] = index
 
         if search_data['min_dist_location'] == 'horizontal':
-            print(f'returning {search_data["min_horizontal_index"]} from find_shortest_distance()\n')
+            # print(f'returning {search_data["min_horizontal_index"]} from find_shortest_distance()\n')
             return search_data["min_horizontal_index"]
         if search_data['min_dist_location'] == 'vertical':
-            print(f'returning {search_data["min_vertical_index"]} from find_shortest_distance()\n')
+            # print(f'returning {search_data["min_vertical_index"]} from find_shortest_distance()\n')
             return search_data['min_vertical_index']
 
 
@@ -231,7 +235,8 @@ class Packages(ParseCsvData):
         return record
 
 
-    def calc_delivery_time(self, truck_list):
+    def calc_delivery_time(self, distance):
+
         # Trucks move at 18MPH
         # for delivery in truck_list:
         pass
@@ -242,7 +247,7 @@ class Packages(ParseCsvData):
 
     # def load_trucks(package_id):
     def load_trucks(self, package_id):
-        print(f'\npackage_id added to load_trucks() is: {package_id}')
+        # print(f'\npackage_id added to load_trucks() is: {package_id}')
         package_id_data = self.get_input_data()[package_id - 1]
         distance_list = self.sync_csv_data()[package_id_data[1]]
         been_loaded = []
@@ -251,7 +256,7 @@ class Packages(ParseCsvData):
         # print(f'package_id_data is: {package_id_data}')
         # print(f'package_id_data[1] is: {package_id_data[1]}, package_id_data[0] is {package_id_data[0]}')
 
-        print(f'distance list: {distance_list}')
+        # print(f'distance list: {distance_list}')
         # print(f'package_id_data is: {package_id_data}')
         # print(f'distance_list[Index]: {distance_list["Index"]}')
         # print(f'Distance List:Package ID(#{package_id_data[0]}) is: {distance_list.get("Package ID")}')
@@ -266,7 +271,7 @@ class Packages(ParseCsvData):
         # ppd.load_trucks(ppd.match_distance_files_to_package_id[], distance_list)
         # print(f'Shortest distance is: {ppd.find_shortest_distance(distance_list)}')
 
-        if len(self.first_truck) < 14:
+        if len(self.first_truck) + len(distance_list.get('Package ID')) < 16:
             for package_num in range(1, len(distance_list.get('Package ID')) + 1):
                 if distance_list.get('Package ID').get(package_num) not in self.first_truck:
                     if distance_list.get('Package ID').get(package_num) not in been_loaded:
@@ -274,45 +279,48 @@ class Packages(ParseCsvData):
                         self.first_truck.append(distance_list.get('Package ID').get(package_num))
                         been_loaded.append(distance_list.get('Package ID').get(package_num))
                         self.total_packages_loaded += 1
-                    else:
-                        print(f'Package ID: {distance_list.get("Package ID").get(package_num)} has already been loaded')
-                else:
-                    print(f'Package ID: {distance_list.get("Package ID").get(package_num)} is already on the first truck')
+                #     else:
+                #         print(f'Package ID: {distance_list.get("Package ID").get(package_num)} has already been loaded')
+                # else:
+                #     print(f'Package ID: {distance_list.get("Package ID").get(package_num)} is already on the first truck')
 
-        elif len(self.second_truck) < 14:
+        elif len(self.second_truck) + len(distance_list.get('Package ID')) < 16:
             for package_num in range(1, len(distance_list.get('Package ID')) + 1):
                 if distance_list.get('Package ID').get(package_num) not in self.second_truck:
                     if distance_list.get('Package ID').get(package_num) not in been_loaded:
                         self.second_truck.append(distance_list.get('Package ID').get(package_num))
                         been_loaded.append(distance_list.get('Package ID').get(package_num))
                         self.total_packages_loaded += 1
-                    else:
-                        print(f'Package ID: {distance_list.get("Package ID").get(package_num)} has already been loaded')
-                else:
-                    print(f'Package ID: {distance_list.get("Package ID").get(package_num)} is already on the second truck')
+                #     else:
+                #         print(f'Package ID: {distance_list.get("Package ID").get(package_num)} has already been loaded')
+                # else:
+                #     print(f'Package ID: {distance_list.get("Package ID").get(package_num)} is already on the second truck')
 
-        elif len(self.third_truck) < 14:
+        elif len(self.third_truck) + len(distance_list.get('Package ID')) < 16:
             for package_num in range(1, len(distance_list.get('Package ID')) + 1):
                 if distance_list.get('Package ID').get(package_num) not in self.third_truck:
                     if distance_list.get('Package ID').get(package_num) not in been_loaded:
                         self.third_truck.append(distance_list.get('Package ID').get(package_num))
                         been_loaded.append(distance_list.get('Package ID').get(package_num))
                         self.total_packages_loaded += 1
-                    else:
-                        print(f'Package ID: {distance_list.get("Package ID").get(package_num)} has already been loaded')
-                else:
-                    print(f'Package ID: {distance_list.get("Package ID").get(package_num)} is already on the third truck')
+                #     else:
+                #         print(f'Package ID: {distance_list.get("Package ID").get(package_num)} has already been loaded')
+                # else:
+                #     print(f'Package ID: {distance_list.get("Package ID").get(package_num)} is already on the third truck')
 
         else:
             return
 
-        print(f'number of packages: {len(self.get_input_data())}')
-        print(f'total_packages_loaded is: {self.total_packages_loaded}')
+        # print(f'number of packages: {len(self.get_input_data())}')
+        # print(f'total_packages_loaded is: {self.total_packages_loaded}')
         if self.total_packages_loaded == len(self.get_input_data()):
+            print()
+            print('#' * 30)
             print('All packages have been loaded')
+            print('#' * 30)
             return
         
-        print(been_loaded)
+        # print(been_loaded)
         # print(f'package ID: {sync_csv_data()[get_distance_name_data()[find_shortest_distance(get_distance_data()[distance_list.get("Index")])][2]].get("Package ID")[1]}')
         # load_trucks(sync_csv_data()[get_distance_name_data()[find_shortest_distance(get_distance_data()[distance_list.get("Index")])][2]].get("Package ID")[1])
 
@@ -322,11 +330,11 @@ class Packages(ParseCsvData):
         # print(f'find_shortest_distance(get_distance_data(), distance_list.get("Index") is: {[x, y]}')
         # print(f'Distance Name Data[{y}]: {get_distance_name_data()[y]}')
         # print(f'get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))] is: {get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))][2]}')
-        print(f'distance_list.get("Package ID") is: {distance_list.get("Package ID")[1]}')
+        # print(f'distance_list.get("Package ID") is: {distance_list.get("Package ID")[1]}')
         print(f'Truck 1 Packages: {self.first_truck}')
         print(f'Truck 2 Packages: {self.second_truck}')
         print(f'Truck 3 Packages: {self.third_truck}')
-        num_of_packages = len(self.sync_csv_data()[self.get_distance_name_data()[self.find_shortest_distance(self.get_distance_data(), distance_list.get("Index"))][2]]["Package ID"])
-        print(f'Number of Packages: {num_of_packages}')
-        print(f'sync_csv_data()[get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))][2]]["Package ID"][1] is: {self.sync_csv_data()[self.get_distance_name_data()[self.find_shortest_distance(self.get_distance_data(), distance_list.get("Index"))][2]]["Package ID"]}')
+        # num_of_packages = len(self.sync_csv_data()[self.get_distance_name_data()[self.find_shortest_distance(self.get_distance_data(), distance_list.get("Index"))][2]]["Package ID"])
+        # print(f'Number of Packages: {num_of_packages}')
+        # print(f'sync_csv_data()[get_distance_name_data()[find_shortest_distance(get_distance_data(), distance_list.get("Index"))][2]]["Package ID"][1] is: {self.sync_csv_data()[self.get_distance_name_data()[self.find_shortest_distance(self.get_distance_data(), distance_list.get("Index"))][2]]["Package ID"]}')
         self.load_trucks(self.sync_csv_data()[self.get_distance_name_data()[self.find_shortest_distance(self.get_distance_data(), distance_list.get("Index"))][2]]["Package ID"][1])
