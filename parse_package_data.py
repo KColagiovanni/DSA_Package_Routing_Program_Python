@@ -129,7 +129,11 @@ class Packages(ParseCsvData):
             'min_dist_location': 'horizontal'
         }
 
+        print(f'start_row is: {start_row}')
+
         for search_index in range(1, len(distances[start_row])):
+            print(f'\ndistances[{start_row}][{search_index}] is: {distances[start_row][search_index]}')
+            print(f'distances[{search_index}][{start_row}] is: {distances[search_index][start_row]}')
             if distances[start_row][search_index] == '0.0':
                 search_data['traversal_direction'] = 'vertical'
 
@@ -142,6 +146,7 @@ class Packages(ParseCsvData):
                             search_data['min_dist'] = float(distances[start_row][search_index])
                             search_data['min_dist_location'] = 'horizontal'
                             search_data['min_horizontal_index'] = search_index
+                            print(f'min_dist is: {search_data["min_dist"]}')
             if search_data['traversal_direction'] == 'vertical':
                 if distances[search_index][start_row] != '':
                     if float(distances[search_index][start_row]) < search_data['min_dist']:
@@ -149,10 +154,11 @@ class Packages(ParseCsvData):
                             search_data['min_dist'] = float(distances[search_index][start_row])
                             search_data['min_dist_location'] = 'vertical'
                             search_data['min_vertical_index'] = search_index
+                            print(f'min_dist is: {search_data["min_dist"]}')
         print(f'\nmin_dist: {search_data["min_dist"]} miles')
         distance_traveled.append(float(search_data["min_dist"]))
-        print(distance_traveled)
-        print(round(sum(distance_traveled), 2))
+        print(f'Distance traveled list: {distance_traveled}')
+        print(f'Total Distance Traveled: {round(sum(distance_traveled), 2)} miles')
         if start_row not in addresses:
             addresses.append(start_row)
         if search_data["min_horizontal_index"] == 0 and search_data["min_vertical_index"] == 0:
@@ -242,8 +248,14 @@ class Packages(ParseCsvData):
             print(f'Truck 1 Packages: {self.first_truck}')
             print(f'Truck 2 Packages: {self.second_truck}')
             print(f'Truck 3 Packages: {self.third_truck}')
-            distance_traveled.clear() 
+            distance_traveled.clear()
+
             return 
 
         else:
-            self.load_trucks(self.sync_csv_data()[self.get_distance_name_data()[self.find_shortest_distance(self.get_distance_data(), distance_list.get("Index"))][2]]["Package ID"][1])
+            dist_list_index = distance_list.get("Index")
+            shortest_dist = self.find_shortest_distance(
+                self.get_distance_data(), dist_list_index
+            )
+            dist_name = self.get_distance_name_data()[shortest_dist][2]
+            self.load_trucks(self.sync_csv_data()[dist_name]["Package ID"][1])
