@@ -68,9 +68,9 @@ Selection: """)
 
         # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
         elif user_input == '5':
-            ppd.first_truck.clear()
-            ppd.second_truck.clear()
-            ppd.third_truck.clear()
+            # ppd.first_truck.clear()
+            # ppd.second_truck.clear()
+            # ppd.third_truck.clear()
             input_package_id = int(input('Enter a package ID: '))
             ppd.load_trucks(input_package_id)
 
