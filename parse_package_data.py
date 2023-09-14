@@ -137,8 +137,11 @@ class Packages(ParseCsvData):
             if distances[start_row][search_index] == '0.0':
                 search_data['traversal_direction'] = 'vertical'
 
+            print(f'search_index is: {search_index}')
+            print(f'addresses is: {addresses}')
             if search_index in addresses:
                 continue
+            print(f'search_data is {search_data}')
             if search_data['traversal_direction'] == 'horizontal':
                 if distances[start_row][search_index] != '':
                     if float(distances[start_row][search_index]) < search_data['min_dist']:
@@ -213,22 +216,30 @@ class Packages(ParseCsvData):
         distance_list = self.sync_csv_data()[package_id_data[1]]
         been_loaded = []
 
+        # Load First Truck
         if len(self.first_truck) + len(distance_list.get('Package ID')) < 16:
+            print(f'len(self.first_truck) + len(distance_list.get("Package ID")) is {len(self.first_truck) + len(distance_list.get("Package ID"))}')
             for package_num in range(1, len(distance_list.get('Package ID')) + 1):
+                print(f'package_num is: {package_num}')
                 if distance_list.get('Package ID').get(package_num) not in self.first_truck:
+                    print(f'distance_list.get("Package ID").get(package_num) is {distance_list.get("Package ID").get(package_num)}')
+                    print(f'self.first_truck is: {self.first_truck}')
                     if distance_list.get('Package ID').get(package_num) not in been_loaded:
+                        print(f'been_loaded is: {been_loaded}')
                         self.first_truck.append(distance_list.get('Package ID').get(package_num))
                         been_loaded.append(distance_list.get('Package ID').get(package_num))
                         self.total_packages_loaded += 1
 
+        # Load Second Truck
         elif len(self.second_truck) + len(distance_list.get('Package ID')) < 16:
             for package_num in range(1, len(distance_list.get('Package ID')) + 1):
-                if distance_list.get('Package ID').get(package_num) not in self.second_truck:
+                if distance_list.get('Package ID').get(package_num) not in self.second_truck:   
                     if distance_list.get('Package ID').get(package_num) not in been_loaded:
                         self.second_truck.append(distance_list.get('Package ID').get(package_num))
                         been_loaded.append(distance_list.get('Package ID').get(package_num))
                         self.total_packages_loaded += 1
 
+        # Load Third Truck
         elif len(self.third_truck) + len(distance_list.get('Package ID')) < 16:
             for package_num in range(1, len(distance_list.get('Package ID')) + 1):
                 if distance_list.get('Package ID').get(package_num) not in self.third_truck:
@@ -249,7 +260,10 @@ class Packages(ParseCsvData):
             print(f'Truck 2 Packages: {self.second_truck}')
             print(f'Truck 3 Packages: {self.third_truck}')
             distance_traveled.clear()
-
+            addresses.clear()
+            print(f'distance_traveled is: {distance_traveled}')
+            addresses.append(0)
+            print(f'addresses is now: {addresses}')
             return 
 
         else:
