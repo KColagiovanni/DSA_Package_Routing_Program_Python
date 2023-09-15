@@ -1,9 +1,7 @@
 # Author: Kevin Colagiovanni
 # Student ID: 011039990
 
-# from packages import total_distance
 from parse_package_data import Packages
-import calulate_distance
 import datetime
 
 
@@ -68,8 +66,20 @@ Selection: """)
 
         # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
         elif user_input == '5':
-            input_package_id = int(input('Enter a package ID: '))
-            ppd.load_trucks(input_package_id)
+            while True:
+                input_package_id = int(input(f'Enter a package ID(1 - {len(ppd.get_input_data())}): '))
+                try:
+                    ppd.load_trucks(input_package_id)
+                except IndexError:
+                    print('!!!!! Invalid Package ID !!!!!\n')
+                    continue
+                except ValueError:
+                    print('!!!!! Invalid Package ID !!!!!\n')
+                    continue
+                else:
+                    break
+
+
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
         # Case 'exit'
