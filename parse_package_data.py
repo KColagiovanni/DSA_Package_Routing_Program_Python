@@ -258,41 +258,57 @@ class Packages(ParseCsvData):
             return
 
         if self.total_packages_loaded == len(self.get_input_data()):
+
+            loaded_trucks = []
+            loaded_trucks.append(self.first_truck)
+            loaded_trucks.append(self.second_truck)
+            loaded_trucks.append(self.third_truck)
             
-            print(f'\nself.get_distance_name_data() is: {self.get_distance_name_data()}')
-            print(f'\nself.sync_csv_data() is: {self.sync_csv_data()}')
-            print(f'\ndistance_list.get("Index") is: {distance_list.get("Index")}')
-            print(f'\ndistancelist is: {distance_list}')
-            print(f'\ntest is: {self.sync_csv_data()}')
-            print(f'\nself.get_input_data() is: {self.get_input_data()}')
+            # print(f'\nself.get_distance_name_data() is: {self.get_distance_name_data()}')
+            # print(f'\nself.sync_csv_data() is: {self.sync_csv_data()}')
+            # print(f'\ndistance_list.get("Index") is: {distance_list.get("Index")}')
+            # print(f'\ndistance_list is: {distance_list}')
+            # print(f'\nself.get_input_data() is: {self.get_input_data()}')
             # print(f'\nself.sync_csv_data()[self.get_distance_name_data()[distance_list.get("Index")][2]] is: {self.sync_csv_data()[self.get_distance_name_data()[distance_list.get("Index")][2]]["Package ID"]}')
             # print(self.sync_csv_data()[self.get_distance_name_data()[self.find_shortest_distance(self.get_distance_data(), distance_list.get("Index"))][2]])
 
-            print(f'\nself.first_truck[0] is: {self.first_truck[0]}')
-            print(f'\nself.first_truck[-1] is: {self.first_truck[-1]}')
-            # print(f'\nself.get_input_data()[self.first_truck[-1]][1]["Index"] is: {self.get_input_data()[self.first_truck[-1]][1]}')
-            print(f'\nself.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[0]][1]]["Index"]] is: {self.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[0]][1]]["Index"]]}')
-            print(f'\nself.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[-1]][1]]["Index"]] is: {self.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[-1]][1]]["Index"]]}')
-            print(f'\nself.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[0]][1]]["Index"]][0] is: {self.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[0]][1]]["Index"]][0]}')
-            print(f'\nself.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[-1]][1]]["Index"]][0] is: {self.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[-1]][1]]["Index"]][0]}')
-            print(f'\nself.sync_csv_data()[self.get_input_data()[self.first_truck[-1]][1]]["Index"] is: {self.sync_csv_data()[self.get_input_data()[self.first_truck[-1]][1]]["Index"]}')
-            # hub_to_first_delivery = self.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[0]][1]]["Index"]][self.get_distance_data[0]]
-            # last_delivery_to_hub = self.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[-1]][1]]["Index"]][self.get_distance_data[0]]
-            # print(f'\nhun_to_first_delivery is: {hub_to_first_delivery} miles')
-            # print(f'\nlast_delivery_to_hub is: {last_delivery_to_hub} miles')
+            # print(f'\nself.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[0]][1]]["Index"]][0] is: {self.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[0]][1]]["Index"]][0]}')
+            # print(f'\nself.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[-1]][1]]["Index"]][0] is: {self.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[-1] - 1][1]]["Index"]][0]}')
+            hub_to_first_delivery = float(self.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[0]][1]]["Index"]][0])
+            last_delivery_to_hub = float(self.get_distance_data()[self.sync_csv_data()[self.get_input_data()[self.first_truck[-1] - 1][1]]["Index"]][0])
+            print(f'\nhub_to_first_delivery is: {hub_to_first_delivery} miles')
+            print(f'last_delivery_to_hub is: {last_delivery_to_hub} miles')
 
-            for distance in range(len(self.first_truck)):
-                package_num = self.first_truck[distance]
-                print(self.first_truck[distance], self.sync_csv_data()[self.get_input_data()[package_num - 1][1]]["Index"])
+            self.first_truck_distance_list.append(hub_to_first_delivery)
 
-            
+            for distance in range(1, len(self.first_truck)):
+                # print(f'{self.first_truck[distance - 1]} is {self.get_distance_name_data()[self.first_truck[distance - 1]][2]}')
+                index1 = self.sync_csv_data()[self.get_input_data()[self.first_truck[distance - 1] - 1][1]]["Index"]
+                index2 = self.sync_csv_data()[self.get_input_data()[self.first_truck[distance] - 1][1]]["Index"]
+
+                print(f'\ndistance is: {distance}')
+                print(f'first_truck[distance - 1] is: {self.first_truck[distance - 1]}')# & {self.first_truck[distance]}')
+                print(f'get_input_data()[first_truck[distance - 1] - 1] is: {self.get_input_data()[self.first_truck[distance - 1] - 1][1]}')
+                print(f'get_input_data()[first_truck[distance] - 1] is: {self.get_input_data()[self.first_truck[distance] - 1][1]}')
+
+                if index1 > index2:
+                    indexes = [index1, index2]
+                else:
+                    indexes = [index2, index1]
+                    
+                print(f'get_distance_data()[{indexes[0]}][{indexes[1]}] is: {self.get_distance_data()[indexes[0]][indexes[1]]}')
+                self.first_truck_distance_list.append(float(self.get_distance_data()[indexes[0]][indexes[1]]))
+
+            self.first_truck_distance_list.append(float(last_delivery_to_hub))
+
+            print(f'\nself.first_truck_distance_list is: {self.first_truck_distance_list}')            
             print()
             print('#' * 80)
             print(' ' * 25 + 'All packages have been loaded')
             print('#' * 80)
-            print(f'Truck 1 Packages: {self.first_truck}(# of packages: {len(self.first_truck)}, Distance: {sum(self.first_truck_distance_list)} miles)')
-            print(f'Truck 2 Packages: {self.second_truck}(# of packages: {len(self.second_truck)}, Distance: {sum(self.second_truck_distance_list)} miles)')
-            print(f'Truck 3 Packages: {self.third_truck}(# of packages: {len(self.third_truck)}, Distance: {sum(self.third_truck_distance_list)} miles)')
+            print(f'Truck 1 Packages: {self.first_truck}(# of packages: {len(self.first_truck)}, Distance: {round(sum(self.first_truck_distance_list), 2)} miles)')
+            print(f'Truck 2 Packages: {self.second_truck}(# of packages: {len(self.second_truck)}, Distance: {round(sum(self.second_truck_distance_list), 2)} miles)')
+            print(f'Truck 3 Packages: {self.third_truck}(# of packages: {len(self.third_truck)}, Distance: {round(sum(self.third_truck_distance_list), 2)} miles)')
             print('#' * 80)
 
             print('\n\n|><|><|><|><|><| Clearing Lists and Zeroing variables to be ready for another search |><|><|><|><|><|')
