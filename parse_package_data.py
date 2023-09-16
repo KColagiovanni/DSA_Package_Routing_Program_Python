@@ -117,7 +117,7 @@ class Packages(ParseCsvData):
         return desired_data, first_delivery
 
     @staticmethod
-    def get_hash(self):
+    def get_hash():
         return ht
 
     # Returns the index of the shortest distance
@@ -324,16 +324,19 @@ class Packages(ParseCsvData):
             print('#' * 120)
 
             print(f'\nTruck 1 Package IDs: {self.first_truck}(# of packages: {len(self.first_truck)}, Distance: {total_dist_first_truck[0]} miles)')
+            print(f'Truck 1 Distance List: {self.calculate_truck_distance(self.first_truck)[1]}(miles)')
             print(f'Truck 1 Delivery Times: {self.calc_delivery_time(total_dist_first_truck[1], "8:00:00")[1]}')
             print(f'Truck 1 Duration Times: {self.calc_delivery_time(total_dist_first_truck[1], "8:00:00")[0]}')
 
             print(f'\nTruck 2 Package IDs: {self.second_truck}(# of packages: {len(self.second_truck)}, Distance: {total_dist_second_truck[0]} miles)')
+            print(f'Truck 2 Distance List: {self.calculate_truck_distance(self.second_truck)[1]}(miles)')
             print(f'Truck 2 Delivery Times: {self.calc_delivery_time(total_dist_second_truck[1], "9:10:00")[1]}')
             print(f'Truck 2 Duration Times: {self.calc_delivery_time(total_dist_second_truck[1], "9:10:00")[0]}')
 
             print(f'\nTruck 3 Package IDs: {self.third_truck}(# of packages: {len(self.third_truck)}, Distance: {total_dist_third_truck[0]} miles)')
-            print(f'Truck 3 Delivery Times: {self.calc_delivery_time(total_dist_third_truck[1], "10:00:00")[1]}')
-            print(f'Truck 3 Duration Times: {self.calc_delivery_time(total_dist_third_truck[1], "10:00:00")[0]}')
+            print(f'Truck 3 Distance List: {self.calculate_truck_distance(self.third_truck)[1]}(miles)')
+            print(f'Truck 3 Delivery Times: {self.calc_delivery_time(total_dist_third_truck[1], "10:20:00")[1]}')
+            print(f'Truck 3 Duration Times: {self.calc_delivery_time(total_dist_third_truck[1], "10:20:00")[0]}')
 
             print(f'\nTotal Distance traveled: {round(total_dist_first_truck[0] + total_dist_second_truck[0] + total_dist_third_truck[0], 2)} miles')
             print('#' * 120)
