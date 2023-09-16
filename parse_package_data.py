@@ -1,4 +1,5 @@
 import csv
+import datetime
 from hash_table import HashTable
 
 ht = HashTable()
@@ -6,7 +7,7 @@ addresses = [0]
 num_of_packages = 0
 distance_traveled = []
 been_loaded = []
-
+DELIVERY_TRUCK_SPEED_MPH = 18
 
 class ParseCsvData:
 
@@ -234,13 +235,37 @@ class Packages(ParseCsvData):
 
         # print(f'\nself.first_truck_distance_list is: {truck_distance_list}')
 
-        return round(sum(truck_distance_list), 2)
+        return round(sum(truck_distance_list), 2), truck_distance_list
 
 
-    def calc_delivery_time(self, package_list):
+    def calc_delivery_time(self, package_distance_list, departure_time):
         # Trucks move at 18MPH
-        # for delivery in truck_list:
-        pass
+        # Avg Speed = Distance/Time --> Avg Speed * Time = Distance --> Time = Distance / Avg Speed
+
+        # print(type(departure_time))
+        (hours, minutes, seconds) = departure_time.split(':')
+        converted_departure_time = datetime.timedelta(hours=int(hours), minutes=int(minutes), seconds=int(seconds))
+        # print(type(converted_departure_time))
+
+        # dept_time = datetime.timedelta(departure_time)
+
+        cumlative_delivery_duration_list = []
+        # individual_delivery_duration_list = []
+        delivery_time_list = []
+        total_duration = 0
+        
+        for package_distance in package_distance_list:
+            duration = round((package_distance / DELIVERY_TRUCK_SPEED_MPH), 2)
+            total_duration += duration    
+            # individual_delivery_duration_list.append(duration)
+            cumlative_delivery_duration_list.append(str(converted_departure_time + datetime.timedelta(hours=float(total_duration))))
+            # print(f'\nfloat(duration) is: {float(duration)}')
+            # print(f'delivery_time is: {converted_departure_time + datetime.timedelta(hours=float(duration))}')
+            # print(f'cumlative_delivery_duration_list is: {converted_departure_time + datetime.timedelta(hours=float(total_duration))}')
+            delivery_time_list.append(str(datetime.timedelta(hours=float(duration))))
+        # print(f'Delivery Times: {delivery_time_list}')
+        # print(f'Cumlative Delivery Times: {cumlative_delivery_duration_list}')
+        return delivery_time_list, cumlative_delivery_duration_list      
 
     # Need to calc min time in each delivery
     # Need to know total distance
@@ -297,10 +322,20 @@ class Packages(ParseCsvData):
             print('#' * 120)
             print(' ' * 45 + 'All packages have been loaded')
             print('#' * 120)
-            print(f'Truck 1 Packages: {self.first_truck}(# of packages: {len(self.first_truck)}, Distance: {total_dist_first_truck} miles)')
-            print(f'Truck 2 Packages: {self.second_truck}(# of packages: {len(self.second_truck)}, Distance: {total_dist_second_truck} miles)')
-            print(f'Truck 3 Packages: {self.third_truck}(# of packages: {len(self.third_truck)}, Distance: {total_dist_third_truck} miles)')
-            print(f'Total Distance traveled: {round(total_dist_first_truck + total_dist_second_truck + total_dist_third_truck, 2)} miles')
+
+            print(f'\nTruck 1 Package IDs: {self.first_truck}(# of packages: {len(self.first_truck)}, Distance: {total_dist_first_truck[0]} miles)')
+            print(f'Truck 1 Delivery Times: {self.calc_delivery_time(total_dist_first_truck[1], "8:00:00")[1]}')
+            print(f'Truck 1 Duration Times: {self.calc_delivery_time(total_dist_first_truck[1], "8:00:00")[0]}')
+
+            print(f'\nTruck 2 Package IDs: {self.second_truck}(# of packages: {len(self.second_truck)}, Distance: {total_dist_second_truck[0]} miles)')
+            print(f'Truck 2 Delivery Times: {self.calc_delivery_time(total_dist_second_truck[1], "9:10:00")[1]}')
+            print(f'Truck 2 Duration Times: {self.calc_delivery_time(total_dist_second_truck[1], "9:10:00")[0]}')
+
+            print(f'\nTruck 3 Package IDs: {self.third_truck}(# of packages: {len(self.third_truck)}, Distance: {total_dist_third_truck[0]} miles)')
+            print(f'Truck 3 Delivery Times: {self.calc_delivery_time(total_dist_third_truck[1], "10:00:00")[1]}')
+            print(f'Truck 3 Duration Times: {self.calc_delivery_time(total_dist_third_truck[1], "10:00:00")[0]}')
+
+            print(f'\nTotal Distance traveled: {round(total_dist_first_truck[0] + total_dist_second_truck[0] + total_dist_third_truck[0], 2)} miles')
             print('#' * 120)
 
             # print('\n\n|><|><|><|><|><| Clearing Lists and Zeroing variables to be ready for another search |><|><|><|><|><|')
