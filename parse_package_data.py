@@ -114,6 +114,9 @@ class Packages(ParseCsvData):
 
             ht.add_package(package_id, desired_data)
 
+        print(f'\nfrom get_package_data() desired_data: {desired_data}')
+        print(f'\nfrom get_package_data() first_delivery: {first_delivery}')
+
         return desired_data, first_delivery
 
     @staticmethod

@@ -69,6 +69,7 @@ Selection: """)
             while True:
                 input_package_id = int(input(f'Enter a package ID(1 - {len(ppd.get_input_data())}): '))
                 try:
+                    print(f'sending {input_package_id} to load_trucks()')
                     ppd.load_trucks(input_package_id)
                 except IndexError:
                     print('!!!!! Invalid Package ID !!!!!\n')
@@ -78,8 +79,12 @@ Selection: """)
                     continue
                 else:
                     break
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-
+        # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
+        elif user_input == '6':
+            print(f'Sending {int(ppd.get_package_data(ppd.get_input_data())[1][1])} to load_trucks()')
+            print(f'Starting program... {ppd.load_trucks(int(ppd.get_package_data(ppd.get_input_data())[1][1]))}')
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
         # Case 'exit'
