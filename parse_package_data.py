@@ -88,12 +88,15 @@ class Packages(ParseCsvData):
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
             if 'Can only be on truck' in special_note:
-                if special_note[-1] == '1':
+                if special_note[-1] == '1' and int(package_id) not in self.first_truck:
                     self.first_truck.append(int(package_id))
-                elif special_note[-1] == '2':
+                    print(f'Added package {package_id} to truck 1')
+                elif special_note[-1] == '2' and int(package_id) not in self.second_truck:
                     self.second_truck.append(int(package_id))
-                elif special_note[-1] == '3':
+                    print(f'Added package {package_id} to truck 2')
+                elif special_note[-1] == '3' and int(package_id) not in self.third_truck:
                     self.third_truck.append(int(package_id))
+                    print(f'Added package {package_id} to truck 3')
 
             if deliver_by != 'EOD' and special_note == "None":
                 hour = int(deliver_by[0:deliver_by.find(':')])
@@ -368,4 +371,7 @@ class Packages(ParseCsvData):
                 self.get_distance_data(), dist_list_index
             )
             dist_name = self.get_distance_name_data()[shortest_dist][2]
+            print(f'\ndist_list_index is {dist_list_index}')
+            print(f'shortest_dist is: {shortest_dist}')
+            print(f'dist_name is: {dist_name}')
             self.load_trucks(self.sync_csv_data()[dist_name]["Package ID"][1])
