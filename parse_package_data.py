@@ -279,6 +279,8 @@ class Packages(ParseCsvData):
 
     def load_trucks(self, package_id):
 
+        print('HI FROM LOAD TRUCKS!!!!!')
+
         package_id_data = self.get_input_data()[package_id - 1]
         distance_list = self.sync_csv_data()[package_id_data[1]]
 
