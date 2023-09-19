@@ -83,7 +83,7 @@ Selection: """)
 
         # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
         elif user_input == '6':
-            print(f'Sending {int(ppd.get_package_data(ppd.get_input_data())[1][1])} to load_trucks()')
+            # print(f'Sending {int(ppd.get_package_data(ppd.get_input_data())[1][1])} to load_trucks()')
             print(f'Starting program... {ppd.load_trucks(int(ppd.get_package_data(ppd.get_input_data())[1][1]))}')
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
