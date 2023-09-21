@@ -63,7 +63,7 @@ class Packages(ParseCsvData):
         # Define dictionaries
         deliver = {}
         note = {}
-        # addresses = {}
+        addresses = {}
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
         for package_details in list(package_list):
@@ -80,7 +80,6 @@ class Packages(ParseCsvData):
             desired_data = [package_id, address, deliver_by, city, zipcode, package_weight, delivery_status[0]]
 
             # ~~~~~~~~~~ Try using REGEX here ~~~~~~~~~~ #
-            # Grouping the packages together that are going to the same address.
             if 'Must be delivered with' in special_note:
                 package1 = int(special_note[-7:-5])
                 packages_to_be_delivered_together.add(package1)
@@ -88,29 +87,23 @@ class Packages(ParseCsvData):
                 packages_to_be_delivered_together.add(package2)
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-            # Loading packages onto trucks that are required to only be on a specific truck.
             if 'Can only be on truck' in special_note:
-                
                 if special_note[-1] == '1':
-                    if int(package_id) not in self.first_truck and int(package_id) not in been_loaded:
+                    if int(package_id) not in self.first_truck:
                         self.first_truck.append(int(package_id))
                         been_loaded.append(int(package_id))
-                        print(f'Added package {package_id} to truck 1')
-                
+                        self.total_packages_loaded += 1
                 elif special_note[-1] == '2':
-                    if int(package_id) not in self.second_truck and int(package_id) not in been_loaded:
+                    if int(package_id) not in self.second_truck:
                         self.second_truck.append(int(package_id))
                         been_loaded.append(int(package_id))
-                        print(f'Added package {package_id} to truck 2')
-                
+                        self.total_packages_loaded += 1
                 elif special_note[-1] == '3':
-                    if int(package_id) not in self.third_truck and int(package_id) not in been_loaded:
+                    if int(package_id) not in self.third_truck:
                         self.third_truck.append(int(package_id))
                         been_loaded.append(int(package_id))
-                        print(f'Added package {package_id} to truck 3')
+                        self.total_packages_loaded += 1
 
-            # Determining which package to deliver first based on the earliest "Deliver By" time.
-            ##### WHAT IF THERE ARE MORE THAN ONE PACKAGE WITH THE EARLIEST TIME? #####
             if deliver_by != 'EOD' and special_note == "None":
                 hour = int(deliver_by[0:deliver_by.find(':')])
                 minute = int(deliver_by[-5:-3])
@@ -121,7 +114,6 @@ class Packages(ParseCsvData):
                     min_minute = minute
                     first_delivery = [deliver_by, package_id]
 
-            # Checking package special note for delays
             if 'Delayed on flight' in special_note:
                 package_eta = special_note[-7:]
                 if deliver_by != 'EOD':
@@ -129,11 +121,14 @@ class Packages(ParseCsvData):
                 else:
                     print(f'DELAYED | {package_id} - ETA: {package_eta} (Deliver by: {deliver_by})')
 
-            # Adding package to hash table
             ht.add_package(package_id, desired_data)
 
         print(f'\nfrom get_package_data() desired_data: {desired_data}')
         print(f'\nfrom get_package_data() first_delivery: {first_delivery}')
+
+        print(f'From get_package_data(), self.first_truck is: {self.first_truck}')
+        print(f'From get_package_data(), self.second_truck is: {self.second_truck}')
+        print(f'From get_package_data(), self.third_truck is: {self.third_truck}')
 
         return desired_data, first_delivery
 
@@ -144,8 +139,6 @@ class Packages(ParseCsvData):
     # Returns the index of the shortest distance
     def find_shortest_distance(self, distances, start_row=1):
 
-        print('\nHI FROM FIND_SHORTEST_DISTANCE!!!')
-
         search_data = {
             'min_horizontal_index': 0,
             'min_vertical_index': 0,
@@ -154,29 +147,17 @@ class Packages(ParseCsvData):
             'min_dist_location': 'horizontal'
         }
 
-        # if search_data['min_dist'] == 0:
-        #     search_data['min_dist'] = float(distances[start_row][0])
-        #     print(f'search_data["min_dist"] is: {search_data["min_dist"]}')
-
         # print(f'\nstart_row is: {start_row}')
-        print(f'len(distances[start_row]) is: {len(distances[start_row])}')
-        print(f'distances[start_row] is: {distances[start_row]}')
 
-        # Traverse the row/column to find the shortest distance to the next package
         for search_index in range(1, len(distances[start_row])):
-            print(f'\ndistances[{start_row}][{search_index}] is: {distances[start_row][search_index]}')
-            print(f'distances[{search_index}][{start_row}] is: {distances[search_index][start_row]}')
+            # print(f'\ndistances[{start_row}][{search_index}] is: {distances[start_row][search_index]}')
+            # print(f'distances[{search_index}][{start_row}] is: {distances[search_index][start_row]}')
             if distances[start_row][search_index] == '0.0':
-                print(f'distances[start_row][search_index] == 0.0')
                 search_data['traversal_direction'] = 'vertical'
 
-            print(f'search_data["traversal_direction"] is: {search_data["traversal_direction"]}')
-            print(f'search_index is: {search_index}')
-            print(f'addresses is: {addresses}')
-            print(f'There are {len(addresses)} addresses in the addresses list')
+            # print(f'search_index is: {search_index}')
+            # print(f'addresses is: {addresses}')
             if search_index in addresses:
-                # if len(addresses) =>  
-                print('search_index IS in address, skipping logic and continuing next iteration')
                 continue
             # print(f'search_data is {search_data}')
             if search_data['traversal_direction'] == 'horizontal':
@@ -186,28 +167,22 @@ class Packages(ParseCsvData):
                             search_data['min_dist'] = float(distances[start_row][search_index])
                             search_data['min_dist_location'] = 'horizontal'
                             search_data['min_horizontal_index'] = search_index
-                            print(f'min_dist is: {search_data["min_dist"]}')
+                            # print(f'min_dist is: {search_data["min_dist"]}')
             if search_data['traversal_direction'] == 'vertical':
-                # print('search_data is vertical')
                 if distances[search_index][start_row] != '':
-                    # print('distance[search_index][start_row] != ""')
                     if float(distances[search_index][start_row]) < search_data['min_dist']:
-                        # print(f"{float(distances[search_index][start_row])} < {search_data['min_dist']}")
                         if float(distances[search_index][start_row]) != 0:
-                            # print('float(distances[search_index][start_row]) != 0')
                             search_data['min_dist'] = float(distances[search_index][start_row])
                             search_data['min_dist_location'] = 'vertical'
                             search_data['min_vertical_index'] = search_index
-                            print(f'min_dist is: {search_data["min_dist"]}')
-        print(f'\nmin_dist: {search_data["min_dist"]} miles')
+                            # print(f'min_dist is: {search_data["min_dist"]}')
+        # print(f'\nmin_dist: {search_data["min_dist"]} miles')
         distance_traveled.append(float(search_data["min_dist"]))
         # print(f'Distance traveled list: {distance_traveled}')
         # print(f'Total Distance Traveled: {round(sum(distance_traveled), 2)} miles')
         if start_row not in addresses:
             addresses.append(start_row)
         if search_data["min_horizontal_index"] == 0 and search_data["min_vertical_index"] == 0:
-            
-            ##### THIS ADDS TIME, CAN IT BE REDONE AS O(n)? #####
             for index in range(1, len(distances[start_row])):
                 if index not in addresses:
                     search_data['min_horizontal_index'] = index
@@ -219,7 +194,6 @@ class Packages(ParseCsvData):
             return search_data['min_vertical_index']
 
 
-    # Try to make this function >O(N^2)
     def sync_csv_data(self):
 
         record = {}
@@ -230,16 +204,9 @@ class Packages(ParseCsvData):
 
         for index in name_data:
             package_count = 1
-
             record.update({index[2]: {'Index': int(index[0]), 'Package ID': {}}})
 
             for package_details in package_data:
-                # print(f'\npackage_details[1] is: {package_details[1]}')
-                # print(f'package_details[0] is: {package_details[0]}')
-                # print(f'index[0] is: {index[0]}')
-                # print(f'index[1] is: {index[1]}')
-                # print(f'index[2] is: {index[2]}')
-                # print(f'package_count is: {package_count}')
                 if package_details[1] == index[2]:
                     if package_count == 1:
                         record[index[2]]['Package ID'][package_count] = (int(package_details[0]))
@@ -248,7 +215,6 @@ class Packages(ParseCsvData):
                         record[index[2]]['Package ID'][package_count] = (int(package_details[0]))
                         package_count += 1
 
-        # print(f'record is:\n {record}')
         return record
 
 
@@ -299,7 +265,7 @@ class Packages(ParseCsvData):
 
         # dept_time = datetime.timedelta(departure_time)
 
-        cumulative_delivery_duration_list = []
+        cumlative_delivery_duration_list = []
         # individual_delivery_duration_list = []
         delivery_time_list = []
         total_duration = 0
@@ -308,14 +274,14 @@ class Packages(ParseCsvData):
             duration = round((package_distance / DELIVERY_TRUCK_SPEED_MPH), 2)
             total_duration += duration    
             # individual_delivery_duration_list.append(duration)
-            cumulative_delivery_duration_list.append(str(converted_departure_time + datetime.timedelta(hours=float(total_duration))))
+            cumlative_delivery_duration_list.append(str(converted_departure_time + datetime.timedelta(hours=float(total_duration))))
             # print(f'\nfloat(duration) is: {float(duration)}')
             # print(f'delivery_time is: {converted_departure_time + datetime.timedelta(hours=float(duration))}')
-            # print(f'cumulative_delivery_duration_list is: {converted_departure_time + datetime.timedelta(hours=float(total_duration))}')
+            # print(f'cumlative_delivery_duration_list is: {converted_departure_time + datetime.timedelta(hours=float(total_duration))}')
             delivery_time_list.append(str(datetime.timedelta(hours=float(duration))))
         # print(f'Delivery Times: {delivery_time_list}')
-        # print(f'Cumlative Delivery Times: {cumulative_delivery_duration_list}')
-        return delivery_time_list, cumulative_delivery_duration_list
+        # print(f'Cumlative Delivery Times: {cumlative_delivery_duration_list}')
+        return delivery_time_list, cumlative_delivery_duration_list      
 
     # Need to calc min time in each delivery
     # Need to know total distance
@@ -323,15 +289,12 @@ class Packages(ParseCsvData):
 
     def load_trucks(self, package_id):
 
-        print('HI FROM LOAD TRUCKS!!!!!')
-
         package_id_data = self.get_input_data()[package_id - 1]
         distance_list = self.sync_csv_data()[package_id_data[1]]
 
         # Load First Truck
         if len(self.first_truck) + len(distance_list.get('Package ID')) <= self.max_packages_per_truck:
             # print(f'{distance_list.get("Package ID")} are together')
-            # For loop to load all the packages that are going to the same address
             for package_num in range(1, len(distance_list.get('Package ID')) + 1):
                 if distance_list.get('Package ID').get(package_num) not in self.first_truck:
                     if distance_list.get('Package ID').get(package_num) not in been_loaded:
@@ -364,9 +327,6 @@ class Packages(ParseCsvData):
 
         else:
             return
-
-        print(f'been_loaded: {been_loaded}')
-        print(f'{len(been_loaded)} packages have been loaded')
 
         if self.total_packages_loaded == len(self.get_input_data()):
 
@@ -421,11 +381,4 @@ class Packages(ParseCsvData):
                 self.get_distance_data(), dist_list_index
             )
             dist_name = self.get_distance_name_data()[shortest_dist][2]
-            print(f'\ndist_list_index is {dist_list_index}')
-            print(f'shortest_dist is: {shortest_dist}')
-            print(f'dist_name is: {dist_name}')
-            print(f'self.sync_csv_data()[dist_name]["Package ID"][1] is: {self.sync_csv_data()[dist_name]["Package ID"][1]}')
-            # if
-
-            # Try to rethink this, sycn_csv_data() is already O(n^2), calling it recursively makes this call O(n^3)
             self.load_trucks(self.sync_csv_data()[dist_name]["Package ID"][1])
