@@ -8,6 +8,8 @@ num_of_packages = 0
 distance_traveled = []
 been_loaded = []
 DELIVERY_TRUCK_SPEED_MPH = 18
+FIRST_TRUCK_DEPARTURE_TIME = '8:00:00'
+SECOND_TRUCK_DEPARTUTE_TIME = '9:10:00'
 
 class ParseCsvData:
 
@@ -34,9 +36,6 @@ class ParseCsvData:
             distance_name_data = csv.reader(distance_name_data, delimiter=',')
 
             return list(distance_name_data)
-
-
-# pcd = ParseCsvData()
 
 
 class Packages(ParseCsvData):
@@ -104,15 +103,17 @@ class Packages(ParseCsvData):
                         been_loaded.append(int(package_id))
                         self.total_packages_loaded += 1
 
+            # Determine package with the highest priority
             if deliver_by != 'EOD' and special_note == "None":
                 hour = int(deliver_by[0:deliver_by.find(':')])
                 minute = int(deliver_by[-5:-3])
-                second = int(deliver_by[-2:])
 
+                # Determine highest priority package by earliest deliver_by time
                 if hour < min_hour and minute < min_minute:
                     min_hour = hour
                     min_minute = minute
                     first_delivery = [deliver_by, package_id]
+
 
             if 'Delayed on flight' in special_note:
                 package_eta = special_note[-7:]
@@ -193,7 +194,6 @@ class Packages(ParseCsvData):
         if search_data['min_dist_location'] == 'vertical':
             return search_data['min_vertical_index']
 
-
     def sync_csv_data(self):
 
         record = {}
@@ -216,7 +216,6 @@ class Packages(ParseCsvData):
                         package_count += 1
 
         return record
-
 
     def calculate_truck_distance(self, package_list):
 
@@ -339,20 +338,24 @@ class Packages(ParseCsvData):
             print(' ' * 45 + 'All packages have been loaded')
             print('#' * 120)
 
+            first_truck_delivery_times = self.calc_delivery_time(total_dist_first_truck[1], FIRST_TRUCK_DEPARTURE_TIME)
+            second_truck_delivery_times = self.calc_delivery_time(total_dist_second_truck[1], SECOND_TRUCK_DEPARTUTE_TIME)
+            third_truck_departure_times = self.calc_delivery_time(total_dist_third_truck[1], first_truck_delivery_times[1][-1])
+
             print(f'\nTruck 1 Package IDs: {self.first_truck}(# of packages: {len(self.first_truck)}, Distance: {total_dist_first_truck[0]} miles)')
             print(f'Truck 1 Distance List: {self.calculate_truck_distance(self.first_truck)[1]}(miles)')
-            print(f'Truck 1 Delivery Times: {self.calc_delivery_time(total_dist_first_truck[1], "8:00:00")[1]}')
-            print(f'Truck 1 Duration Times: {self.calc_delivery_time(total_dist_first_truck[1], "8:00:00")[0]}')
+            print(f'Truck 1 Delivery Times: {first_truck_delivery_times[1]}')
+            print(f'Truck 1 Duration Times: {first_truck_delivery_times[0]}')
 
             print(f'\nTruck 2 Package IDs: {self.second_truck}(# of packages: {len(self.second_truck)}, Distance: {total_dist_second_truck[0]} miles)')
             print(f'Truck 2 Distance List: {self.calculate_truck_distance(self.second_truck)[1]}(miles)')
-            print(f'Truck 2 Delivery Times: {self.calc_delivery_time(total_dist_second_truck[1], "9:10:00")[1]}')
-            print(f'Truck 2 Duration Times: {self.calc_delivery_time(total_dist_second_truck[1], "9:10:00")[0]}')
+            print(f'Truck 2 Delivery Times: {second_truck_delivery_times[1]}')
+            print(f'Truck 2 Duration Times: {second_truck_delivery_times[0]}')
 
             print(f'\nTruck 3 Package IDs: {self.third_truck}(# of packages: {len(self.third_truck)}, Distance: {total_dist_third_truck[0]} miles)')
             print(f'Truck 3 Distance List: {self.calculate_truck_distance(self.third_truck)[1]}(miles)')
-            print(f'Truck 3 Delivery Times: {self.calc_delivery_time(total_dist_third_truck[1], "10:20:00")[1]}')
-            print(f'Truck 3 Duration Times: {self.calc_delivery_time(total_dist_third_truck[1], "10:20:00")[0]}')
+            print(f'Truck 3 Delivery Times: {third_truck_departure_times[1]}')
+            print(f'Truck 3 Duration Times: {third_truck_departure_times[0]}')
 
             print(f'\nTotal Distance traveled: {round(total_dist_first_truck[0] + total_dist_second_truck[0] + total_dist_third_truck[0], 2)} miles')
             print('#' * 120)

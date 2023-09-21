@@ -5,7 +5,7 @@ from parse_package_data import Packages
 import datetime
 
 
-class Main:
+def main():
     # This is the display message that is shown when the user runs the program. The interface is accessible from here
     print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
     print('+                                                                     +')
@@ -97,3 +97,7 @@ Selection: """)
         else:
             print('Invalid entry! Please try again.')
             continue
+
+
+if __name__ == '__main__':
+    main()
