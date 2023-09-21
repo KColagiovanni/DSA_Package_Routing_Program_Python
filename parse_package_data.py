@@ -9,7 +9,6 @@ distance_traveled = []
 been_loaded = []
 DELIVERY_TRUCK_SPEED_MPH = 18
 FIRST_TRUCK_DEPARTURE_TIME = '8:00:00'
-SECOND_TRUCK_DEPARTUTE_TIME = '9:10:00'
 
 class ParseCsvData:
 
@@ -45,15 +44,18 @@ class Packages(ParseCsvData):
         self.first_truck = []
         self.second_truck = []
         self.third_truck = []
+        self.second_truck_departure_time = ''
         # self.truck_distance_list = []
         self.total_packages_loaded = 0
         self.max_packages_per_truck = 16
 
+    # Parse package data, then check and handle requirements [O(n)]
     def get_package_data(self, package_list):
 
         delivery_status = ['At the hub', 'En route', 'Delivered']
-        min_hour = 25
-        min_minute = 60
+        minimum_hour = 25
+        minimum_minute = 60
+        highest_priority = 0
         packages_to_be_delivered_together = set(())
         first_delivery = []
         desired_data =[]
@@ -86,6 +88,23 @@ class Packages(ParseCsvData):
                 packages_to_be_delivered_together.add(package2)
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
+            # Determine priority and load delayed packages on later trucks
+            if 'Delayed on flight' in special_note:
+                package_eta = special_note[-7:-3]
+                if deliver_by != 'EOD':
+                    print(f'DELAYED | HIGH PRIORITY: {package_id} - ETA: {package_eta} (Deliver by: {deliver_by})')
+                    self.second_truck.insert(highest_priority, int(package_id))
+                    highest_priority += 1
+                    been_loaded.append(int(package_id))
+                    self.total_packages_loaded += 1
+                    self.second_truck_departure_time = package_eta + ':00'
+                else:
+                    print(f'DELAYED | {package_id} - ETA: {package_eta} (Deliver by: {deliver_by})')
+                    self.third_truck.append(int(package_id))
+                    been_loaded.append(int(package_id))
+                    self.total_packages_loaded += 1
+
+            # Loading packages into the specific trucks that special instructions request.
             if 'Can only be on truck' in special_note:
                 if special_note[-1] == '1':
                     if int(package_id) not in self.first_truck:
@@ -103,24 +122,16 @@ class Packages(ParseCsvData):
                         been_loaded.append(int(package_id))
                         self.total_packages_loaded += 1
 
-            # Determine package with the highest priority
+            # Get "delivery by" time hour and minute
             if deliver_by != 'EOD' and special_note == "None":
                 hour = int(deliver_by[0:deliver_by.find(':')])
                 minute = int(deliver_by[-5:-3])
 
-                # Determine highest priority package by earliest deliver_by time
-                if hour < min_hour and minute < min_minute:
-                    min_hour = hour
-                    min_minute = minute
+                # Determine the highest priority package based on the earliest "deliver by" time
+                if hour < minimum_hour and minute < minimum_minute:
+                    minimum_hour = hour
+                    minimum_minute = minute
                     first_delivery = [deliver_by, package_id]
-
-
-            if 'Delayed on flight' in special_note:
-                package_eta = special_note[-7:]
-                if deliver_by != 'EOD':
-                    print(f'DELAYED | HIGH PRIORITY: {package_id} - ETA: {package_eta} (Deliver by: {deliver_by})')
-                else:
-                    print(f'DELAYED | {package_id} - ETA: {package_eta} (Deliver by: {deliver_by})')
 
             ht.add_package(package_id, desired_data)
 
@@ -137,7 +148,7 @@ class Packages(ParseCsvData):
     def get_hash():
         return ht
 
-    # Returns the index of the shortest distance
+    # Returns the index of the shortest distance [O(n^2)]
     def find_shortest_distance(self, distances, start_row=1):
 
         search_data = {
@@ -194,6 +205,12 @@ class Packages(ParseCsvData):
         if search_data['min_dist_location'] == 'vertical':
             return search_data['min_vertical_index']
 
+    # Check if a truck can be loaded more efficiently if it was initially loaded with
+    # required packages prior to beling loaded by the shortest distance method
+    def maximize_efficientcy(truck_list, index):
+        pass
+
+    # Match input_data.csv with distance_name_data.csv and return a dict with the important data [O(n^2)]
     def sync_csv_data(self):
 
         record = {}
@@ -217,10 +234,12 @@ class Packages(ParseCsvData):
 
         return record
 
+    # Calculate the delivery distance between each package in the pre-loaded list [O(n^3)]
     def calculate_truck_distance(self, package_list):
 
         truck_distance_list = []
 
+        # Getting the next two lines is O(n^2) each
         hub_to_first_delivery = float(self.get_distance_data()[self.sync_csv_data()[self.get_input_data()[package_list[0]][1]]["Index"]][0])
         last_delivery_to_hub = float(self.get_distance_data()[self.sync_csv_data()[self.get_input_data()[package_list[-1] - 1][1]]["Index"]][0])
         # print(f'\nhub_to_first_delivery is: {hub_to_first_delivery} miles')
@@ -230,6 +249,8 @@ class Packages(ParseCsvData):
 
         for distance in range(1, len(package_list)):
             # print(f'{self.first_truck[distance - 1]} is {self.get_distance_name_data()[self.first_truck[distance - 1]][2]}')
+
+            # Getting the next two lines is O(n^2) each, and they're in a for loop, which makes it O(n^3)
             index1 = self.sync_csv_data()[self.get_input_data()[package_list[distance - 1] - 1][1]]["Index"]
             index2 = self.sync_csv_data()[self.get_input_data()[package_list[distance] - 1][1]]["Index"]
 
@@ -252,19 +273,14 @@ class Packages(ParseCsvData):
 
         return round(sum(truck_distance_list), 2), truck_distance_list
 
-
+    # Calculates the time it takes to go from one delivery to the next and also the total delivery time for the truck [O(n)]
     def calc_delivery_time(self, package_distance_list, departure_time):
         # Trucks move at 18MPH
-        # Avg Speed = Distance/Time --> Avg Speed * Time = Distance --> Time = Distance / Avg Speed
 
-        # print(type(departure_time))
         (hours, minutes, seconds) = departure_time.split(':')
         converted_departure_time = datetime.timedelta(hours=int(hours), minutes=int(minutes), seconds=int(seconds))
-        # print(type(converted_departure_time))
 
-        # dept_time = datetime.timedelta(departure_time)
-
-        cumlative_delivery_duration_list = []
+        cumulative_delivery_duration_list = []
         # individual_delivery_duration_list = []
         delivery_time_list = []
         total_duration = 0
@@ -273,28 +289,25 @@ class Packages(ParseCsvData):
             duration = round((package_distance / DELIVERY_TRUCK_SPEED_MPH), 2)
             total_duration += duration    
             # individual_delivery_duration_list.append(duration)
-            cumlative_delivery_duration_list.append(str(converted_departure_time + datetime.timedelta(hours=float(total_duration))))
+            cumulative_delivery_duration_list.append(str(converted_departure_time + datetime.timedelta(hours=float(total_duration))))
             # print(f'\nfloat(duration) is: {float(duration)}')
             # print(f'delivery_time is: {converted_departure_time + datetime.timedelta(hours=float(duration))}')
             # print(f'cumlative_delivery_duration_list is: {converted_departure_time + datetime.timedelta(hours=float(total_duration))}')
             delivery_time_list.append(str(datetime.timedelta(hours=float(duration))))
         # print(f'Delivery Times: {delivery_time_list}')
         # print(f'Cumlative Delivery Times: {cumlative_delivery_duration_list}')
-        return delivery_time_list, cumlative_delivery_duration_list      
+        return delivery_time_list, cumulative_delivery_duration_list
 
-    # Need to calc min time in each delivery
-    # Need to know total distance
-    # need to know where each package is at any given time
-
+    # Loads packages onto the trucks, using recursion [O(n^3)]
     def load_trucks(self, package_id):
 
         package_id_data = self.get_input_data()[package_id - 1]
-        distance_list = self.sync_csv_data()[package_id_data[1]]
+        distance_list = self.sync_csv_data()[package_id_data[1]] # [O(n^2)]
 
         # Load First Truck
         if len(self.first_truck) + len(distance_list.get('Package ID')) <= self.max_packages_per_truck:
             # print(f'{distance_list.get("Package ID")} are together')
-            for package_num in range(1, len(distance_list.get('Package ID')) + 1):
+            for package_num in range(1, len(distance_list.get('Package ID')) + 1): # [O(n)]
                 if distance_list.get('Package ID').get(package_num) not in self.first_truck:
                     if distance_list.get('Package ID').get(package_num) not in been_loaded:
                         self.first_truck.append(distance_list.get('Package ID').get(package_num))
@@ -305,7 +318,7 @@ class Packages(ParseCsvData):
         # Load Second Truck
         elif len(self.second_truck) + len(distance_list.get('Package ID')) <= self.max_packages_per_truck:
             # print(f'{distance_list.get("Package ID")} are together')
-            for package_num in range(1, len(distance_list.get('Package ID')) + 1):
+            for package_num in range(1, len(distance_list.get('Package ID')) + 1): # [O(n)]
                 if distance_list.get('Package ID').get(package_num) not in self.second_truck:   
                     if distance_list.get('Package ID').get(package_num) not in been_loaded:
                         self.second_truck.append(distance_list.get('Package ID').get(package_num))
@@ -316,7 +329,7 @@ class Packages(ParseCsvData):
         # Load Third Truck
         elif len(self.third_truck) + len(distance_list.get('Package ID')) <= self.max_packages_per_truck:
             # print(f'{distance_list.get("Package ID")} are together')
-            for package_num in range(1, len(distance_list.get('Package ID')) + 1):
+            for package_num in range(1, len(distance_list.get('Package ID')) + 1): # [O(n)]
                 if distance_list.get('Package ID').get(package_num) not in self.third_truck:
                     if distance_list.get('Package ID').get(package_num) not in been_loaded:
                         self.third_truck.append(distance_list.get('Package ID').get(package_num))
@@ -329,18 +342,18 @@ class Packages(ParseCsvData):
 
         if self.total_packages_loaded == len(self.get_input_data()):
 
-            total_dist_first_truck = self.calculate_truck_distance(self.first_truck)
-            total_dist_second_truck = self.calculate_truck_distance(self.second_truck)
-            total_dist_third_truck = self.calculate_truck_distance(self.third_truck)
+            total_dist_first_truck = self.calculate_truck_distance(self.first_truck) # [O(n^3)]
+            total_dist_second_truck = self.calculate_truck_distance(self.second_truck) # [O(n^3)]
+            total_dist_third_truck = self.calculate_truck_distance(self.third_truck) # [O(n^3)]
 
             print()
             print('#' * 120)
             print(' ' * 45 + 'All packages have been loaded')
             print('#' * 120)
 
-            first_truck_delivery_times = self.calc_delivery_time(total_dist_first_truck[1], FIRST_TRUCK_DEPARTURE_TIME)
-            second_truck_delivery_times = self.calc_delivery_time(total_dist_second_truck[1], SECOND_TRUCK_DEPARTUTE_TIME)
-            third_truck_departure_times = self.calc_delivery_time(total_dist_third_truck[1], first_truck_delivery_times[1][-1])
+            first_truck_delivery_times = self.calc_delivery_time(total_dist_first_truck[1], FIRST_TRUCK_DEPARTURE_TIME) # [O(n)]
+            second_truck_delivery_times = self.calc_delivery_time(total_dist_second_truck[1], self.second_truck_departure_time) # [O(n)]
+            third_truck_departure_times = self.calc_delivery_time(total_dist_third_truck[1], first_truck_delivery_times[1][-1]) # [O(n)]
 
             print(f'\nTruck 1 Package IDs: {self.first_truck}(# of packages: {len(self.first_truck)}, Distance: {total_dist_first_truck[0]} miles)')
             print(f'Truck 1 Distance List: {self.calculate_truck_distance(self.first_truck)[1]}(miles)')
@@ -379,9 +392,7 @@ class Packages(ParseCsvData):
             return
 
         else:
-            dist_list_index = distance_list.get("Index")
-            shortest_dist = self.find_shortest_distance(
-                self.get_distance_data(), dist_list_index
-            )
-            dist_name = self.get_distance_name_data()[shortest_dist][2]
-            self.load_trucks(self.sync_csv_data()[dist_name]["Package ID"][1])
+            dist_list_index = distance_list.get("Index") # [O(n)]
+            shortest_dist = self.find_shortest_distance(self.get_distance_data(), dist_list_index) # [O(n^2)]
+            dist_name = self.get_distance_name_data()[shortest_dist][2] # [O(n^2)]
+            self.load_trucks(self.sync_csv_data()[dist_name]["Package ID"][1]) # [O(n^2)]
