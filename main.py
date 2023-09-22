@@ -2,6 +2,7 @@
 # Student ID: 011039990
 
 from parse_package_data import Packages
+from hash_table import HashTable
 import datetime
 
 
@@ -19,6 +20,7 @@ def main():
     print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')
 
     ppd = Packages()
+    ht = HashTable()
 
     while True:
 
@@ -83,8 +85,11 @@ Selection: """)
 
         # ~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
         elif user_input == '6':
+            print(f'int(ppd.get_package_data(ppd.get_input_data())[1][1]) is {ppd.get_package_data(ppd.get_input_data())}')
+            # print(f'int(ppd.get_package_data(ppd.get_input_data())[1][1]) is {int(ppd.get_package_data(ppd.get_input_data())[1][1])}')
             # print(f'Sending {int(ppd.get_package_data(ppd.get_input_data())[1][1])} to load_trucks()')
-            print(f'Starting program... {ppd.load_trucks(int(ppd.get_package_data(ppd.get_input_data())[1][1]))}')
+            # print(f'Starting program... {ppd.load_trucks(int(ppd.get_package_data(ppd.get_input_data())[1][1]))}')
+            print(f'Starting program... {ppd.load_trucks(int(ppd.analyze_package_data(ppd.get_package_data(ppd.get_input_data()))[1][1]))}')
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
         # Case 'exit'

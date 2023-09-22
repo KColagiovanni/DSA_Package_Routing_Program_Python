@@ -52,13 +52,8 @@ class Packages(ParseCsvData):
     # Parse package data, then check and handle requirements [O(n)]
     def get_package_data(self, package_list):
 
+        desired_data = []
         delivery_status = ['At the hub', 'En route', 'Delivered']
-        minimum_hour = 25
-        minimum_minute = 60
-        highest_priority = 0
-        packages_to_be_delivered_together = set(())
-        first_delivery = []
-        desired_data =[]
 
         #~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
         # Define dictionaries
@@ -80,69 +75,79 @@ class Packages(ParseCsvData):
 
             desired_data = [package_id, address, deliver_by, city, zipcode, package_weight, delivery_status[0]]
 
-            # ~~~~~~~~~~ Try using REGEX here ~~~~~~~~~~ #
-            if 'Must be delivered with' in special_note:
-                package1 = int(special_note[-7:-5])
-                packages_to_be_delivered_together.add(package1)
-                package2 = int(special_note[-2:])
-                packages_to_be_delivered_together.add(package2)
-            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
-            # Determine priority and load delayed packages on later trucks
-            if 'Delayed on flight' in special_note:
-                package_eta = special_note[-7:-3]
-                if deliver_by != 'EOD':
-                    print(f'DELAYED | HIGH PRIORITY: {package_id} - ETA: {package_eta} (Deliver by: {deliver_by})')
-                    self.second_truck.insert(highest_priority, int(package_id))
-                    highest_priority += 1
-                    been_loaded.append(int(package_id))
-                    self.total_packages_loaded += 1
-                    self.second_truck_departure_time = package_eta + ':00'
-                else:
-                    print(f'DELAYED | {package_id} - ETA: {package_eta} (Deliver by: {deliver_by})')
-                    self.third_truck.append(int(package_id))
-                    been_loaded.append(int(package_id))
-                    self.total_packages_loaded += 1
-
-            # Loading packages into the specific trucks that special instructions request.
-            if 'Can only be on truck' in special_note:
-                if special_note[-1] == '1':
-                    if int(package_id) not in self.first_truck:
-                        self.first_truck.append(int(package_id))
-                        been_loaded.append(int(package_id))
-                        self.total_packages_loaded += 1
-                elif special_note[-1] == '2':
-                    if int(package_id) not in self.second_truck:
-                        self.second_truck.append(int(package_id))
-                        been_loaded.append(int(package_id))
-                        self.total_packages_loaded += 1
-                elif special_note[-1] == '3':
-                    if int(package_id) not in self.third_truck:
-                        self.third_truck.append(int(package_id))
-                        been_loaded.append(int(package_id))
-                        self.total_packages_loaded += 1
-
-            # Get "delivery by" time hour and minute
-            if deliver_by != 'EOD' and special_note == "None":
-                hour = int(deliver_by[0:deliver_by.find(':')])
-                minute = int(deliver_by[-5:-3])
-
-                # Determine the highest priority package based on the earliest "deliver by" time
-                if hour < minimum_hour and minute < minimum_minute:
-                    minimum_hour = hour
-                    minimum_minute = minute
-                    first_delivery = [deliver_by, package_id]
-
             ht.add_package(package_id, desired_data)
 
-        print(f'\nfrom get_package_data() desired_data: {desired_data}')
+        return desired_data
+
+    def analyze_package_data(self, package_list):
+
+        minimum_hour = 25
+        minimum_minute = 60
+        highest_priority = 0
+        packages_to_be_delivered_together = set(())
+        first_delivery = []
+
+        # ~~~~~~~~~~ Try using REGEX here ~~~~~~~~~~ #
+        if 'Must be delivered with' in package_list[7]:
+            package1 = int(package_list[7][-7:-5])
+            packages_to_be_delivered_together.add(package1)
+            package2 = int(package_list[7][-2:])
+            packages_to_be_delivered_together.add(package2)
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+        # Determine priority and load delayed packages on later trucks
+        if 'Delayed on flight' in package_list[7]:
+            package_eta = package_list[7][-7:-3]
+            if package_list[5] != 'EOD':
+                print(f'DELAYED | HIGH PRIORITY: {package_list[0]} - ETA: {package_eta} (Deliver by: {package_list[5]})')
+                self.second_truck.insert(highest_priority, int(package_list[0]))
+                highest_priority += 1
+                been_loaded.append(int(package_list[0]))
+                self.total_packages_loaded += 1
+                self.second_truck_departure_time = package_eta + ':00'
+            else:
+                print(f'DELAYED | {package_list[0]} - ETA: {package_eta} (Deliver by: {package_list[5]})')
+                self.third_truck.append(int(package_list[0]))
+                been_loaded.append(int(package_list[0]))
+                self.total_packages_loaded += 1
+
+        # Loading packages into the specific trucks that special instructions request.
+        if 'Can only be on truck' in package_list[7]:
+            if package_list[7][-1] == '1':
+                if int(package_list[0]) not in self.first_truck:
+                    self.first_truck.append(int(package_list[0]))
+                    been_loaded.append(int(package_list[0]))
+                    self.total_packages_loaded += 1
+            elif package_list[7][-1] == '2':
+                if int(package_list[0]) not in self.second_truck:
+                    self.second_truck.append(int(package_list[0]))
+                    been_loaded.append(int(package_list[0]))
+                    self.total_packages_loaded += 1
+            elif package_list[7][-1] == '3':
+                if int(package_list[0]) not in self.third_truck:
+                    self.third_truck.append(int(package_list[0]))
+                    been_loaded.append(int(package_list[0]))
+                    self.total_packages_loaded += 1
+
+        # Get "delivery by" time hour and minute
+        if package_list[5] != 'EOD' and package_list[7] == "None":
+            hour = int(package_list[5][0:package_list[5].find(':')])
+            minute = int(package_list[5][-5:-3])
+
+            # Determine the highest priority package based on the earliest "deliver by" time
+            if hour < minimum_hour and minute < minimum_minute:
+                minimum_hour = hour
+                minimum_minute = minute
+                first_delivery = [package_list[5], package_list[0]]
+
+        print(f'\nfrom get_package_data() desired_data: {package_list}')
         print(f'\nfrom get_package_data() first_delivery: {first_delivery}')
 
         print(f'From get_package_data(), self.first_truck is: {self.first_truck}')
         print(f'From get_package_data(), self.second_truck is: {self.second_truck}')
         print(f'From get_package_data(), self.third_truck is: {self.third_truck}')
 
-        return desired_data, first_delivery
+        return first_delivery
 
     @staticmethod
     def get_hash():
@@ -295,7 +300,7 @@ class Packages(ParseCsvData):
             # print(f'cumlative_delivery_duration_list is: {converted_departure_time + datetime.timedelta(hours=float(total_duration))}')
             delivery_time_list.append(str(datetime.timedelta(hours=float(duration))))
         # print(f'Delivery Times: {delivery_time_list}')
-        # print(f'Cumlative Delivery Times: {cumlative_delivery_duration_list}')
+        # print(f'Cumulative Delivery Times: {cumulative_delivery_duration_list}')
         return delivery_time_list, cumulative_delivery_duration_list
 
     # Loads packages onto the trucks, using recursion [O(n^3)]
