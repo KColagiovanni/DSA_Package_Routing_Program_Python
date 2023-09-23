@@ -8,7 +8,10 @@ num_of_packages = 0
 distance_traveled = []
 been_loaded = []
 DELIVERY_TRUCK_SPEED_MPH = 18
+MAX_PACKAGES_PER_TRUCK = 16
 FIRST_TRUCK_DEPARTURE_TIME = '8:00:00'
+record = {}
+
 
 class ParseCsvData:
 
@@ -43,16 +46,17 @@ class Packages(ParseCsvData):
 
         self.first_truck = []
         self.second_truck = []
-        self.third_truck = []
         self.second_truck_departure_time = ''
-        # self.truck_distance_list = []
+        self.third_truck = []
         self.total_packages_loaded = 0
-        self.max_packages_per_truck = 16
+        self.high_priority_count = 0
 
-    # Parse package data, then check and handle requirements [O(n)]
-    def get_package_data(self, package_list):
+    # Parse package data and send it to the hash table [O(n)]
+    @staticmethod
+    def get_package_data(package_list):
 
         desired_data = []
+        special_note = ''
         delivery_status = ['At the hub', 'En route', 'Delivered']
 
         #~~~~~~~~~~~~~ TESTING PURPOSES ONLY. DELETE WHEN DONE ~~~~~~~~~~~~~#
@@ -73,81 +77,75 @@ class Packages(ParseCsvData):
             package_weight = package_details[6]
             special_note = package_details[7]
 
-            desired_data = [package_id, address, deliver_by, city, zipcode, package_weight, delivery_status[0]]
+            desired_data = [package_id, address, deliver_by, city, zipcode, package_weight, delivery_status[0], special_note]
 
-            ht.add_package(package_id, desired_data)
+            ht.add_package(int(package_id), desired_data)  # O(1)
 
-        return desired_data
+            print(f'{package_id} and {desired_data} have been added to the hash table')
 
-    def analyze_package_data(self, package_list):
+        return len(package_list)
+
+    # Analyze the special notes and deliver by times and add packages to trucks as needed [O(1)]
+    def analyze_package_data(self, key):
+
+        package_data = ht.lookup_item(key)  # O(1)
+
+        print(f'package_data is: {package_data}')
 
         minimum_hour = 25
         minimum_minute = 60
-        highest_priority = 0
         packages_to_be_delivered_together = set(())
-        first_delivery = []
+        # first_delivery = []
+
+        print(f'Special Note is: {package_data[1][7]}')
 
         # ~~~~~~~~~~ Try using REGEX here ~~~~~~~~~~ #
-        if 'Must be delivered with' in package_list[7]:
-            package1 = int(package_list[7][-7:-5])
+        if 'Must be delivered with' in package_data[1][7]:
+            package1 = int(package_data[1][7][-7:-5])
             packages_to_be_delivered_together.add(package1)
-            package2 = int(package_list[7][-2:])
+            package2 = int(package_data[1][7][-2:])
             packages_to_be_delivered_together.add(package2)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
         # Determine priority and load delayed packages on later trucks
-        if 'Delayed on flight' in package_list[7]:
-            package_eta = package_list[7][-7:-3]
-            if package_list[5] != 'EOD':
-                print(f'DELAYED | HIGH PRIORITY: {package_list[0]} - ETA: {package_eta} (Deliver by: {package_list[5]})')
-                self.second_truck.insert(highest_priority, int(package_list[0]))
-                highest_priority += 1
-                been_loaded.append(int(package_list[0]))
+        if 'Delayed on flight' in package_data[1][7]:
+            package_eta = package_data[1][7][-7:-3]
+            if package_data[1][2] != 'EOD':
+                print(f'DELAYED | HIGH PRIORITY: {package_data[0]} - ETA: {package_eta} (Deliver by: {package_data[1][2]})')
+                self.second_truck.insert(self.high_priority_count, int(package_data[0]))
+                self.high_priority_count += 0
+                been_loaded.append(int(package_data[0]))
                 self.total_packages_loaded += 1
                 self.second_truck_departure_time = package_eta + ':00'
             else:
-                print(f'DELAYED | {package_list[0]} - ETA: {package_eta} (Deliver by: {package_list[5]})')
-                self.third_truck.append(int(package_list[0]))
-                been_loaded.append(int(package_list[0]))
+                print(f'DELAYED | {package_data[0]} - ETA: {package_eta} (Deliver by: {package_data[1][2]})')
+                self.third_truck.append(int(package_data[0]))
+                been_loaded.append(int(package_data[0]))
                 self.total_packages_loaded += 1
 
         # Loading packages into the specific trucks that special instructions request.
-        if 'Can only be on truck' in package_list[7]:
-            if package_list[7][-1] == '1':
-                if int(package_list[0]) not in self.first_truck:
-                    self.first_truck.append(int(package_list[0]))
-                    been_loaded.append(int(package_list[0]))
+        if 'Can only be on truck' in package_data[1][7]:
+            if package_data[1][7][-1] == '1':
+                if int(package_data[0]) not in self.first_truck:
+                    self.first_truck.append(int(package_data[0]))
+                    been_loaded.append(int(package_data[0]))
                     self.total_packages_loaded += 1
-            elif package_list[7][-1] == '2':
-                if int(package_list[0]) not in self.second_truck:
-                    self.second_truck.append(int(package_list[0]))
-                    been_loaded.append(int(package_list[0]))
+            elif package_data[1][7][-1] == '2':
+                if int(package_data[0]) not in self.second_truck:
+                    self.second_truck.append(int(package_data[0]))
+                    been_loaded.append(int(package_data[0]))
                     self.total_packages_loaded += 1
-            elif package_list[7][-1] == '3':
-                if int(package_list[0]) not in self.third_truck:
-                    self.third_truck.append(int(package_list[0]))
-                    been_loaded.append(int(package_list[0]))
+            elif package_data[1][7][-1] == '3':
+                if int(package_data[0]) not in self.third_truck:
+                    self.third_truck.append(int(package_data[0]))
+                    been_loaded.append(int(package_data[0]))
                     self.total_packages_loaded += 1
-
-        # Get "delivery by" time hour and minute
-        if package_list[5] != 'EOD' and package_list[7] == "None":
-            hour = int(package_list[5][0:package_list[5].find(':')])
-            minute = int(package_list[5][-5:-3])
-
-            # Determine the highest priority package based on the earliest "deliver by" time
-            if hour < minimum_hour and minute < minimum_minute:
-                minimum_hour = hour
-                minimum_minute = minute
-                first_delivery = [package_list[5], package_list[0]]
-
-        print(f'\nfrom get_package_data() desired_data: {package_list}')
-        print(f'\nfrom get_package_data() first_delivery: {first_delivery}')
 
         print(f'From get_package_data(), self.first_truck is: {self.first_truck}')
         print(f'From get_package_data(), self.second_truck is: {self.second_truck}')
         print(f'From get_package_data(), self.third_truck is: {self.third_truck}')
 
-        return first_delivery
+        # return first_delivery
 
     @staticmethod
     def get_hash():
@@ -212,31 +210,66 @@ class Packages(ParseCsvData):
 
     # Check if a truck can be loaded more efficiently if it was initially loaded with
     # required packages prior to beling loaded by the shortest distance method
-    def maximize_efficientcy(truck_list, index):
+    def maximize_efficiency(self, index):
         pass
 
     # Match input_data.csv with distance_name_data.csv and return a dict with the important data [O(n^2)]
-    def sync_csv_data(self):
+    def sync_csv_data(self, package_data):
 
-        record = {}
-
-        package_data = self.get_input_data()
-        data = self.get_distance_data()
+        # package_data = self.get_input_data()
+        # data = self.get_distance_data()
         name_data = self.get_distance_name_data()
+        package_count = 1
 
-        for index in name_data:
-            package_count = 1
-            record.update({index[2]: {'Index': int(index[0]), 'Package ID': {}}})
+        # print(f'\npackage_data from sync_csv_data() is: {package_data}')
+        # print(f'package_data[1] is: {package_data[1]}')
+        #
+        # print(f'name_data is: {name_data}')
 
-            for package_details in package_data:
-                if package_details[1] == index[2]:
-                    if package_count == 1:
-                        record[index[2]]['Package ID'][package_count] = (int(package_details[0]))
-                        package_count += 1
-                    else:
-                        record[index[2]]['Package ID'][package_count] = (int(package_details[0]))
-                        package_count += 1
+        print()
+        for delivery_address in name_data:
+            print(f'delivery_address is: {delivery_address}')
+            # print(f'package_data[0] is {package_data[0]}')
+            # print(f'package_data[1] is: {package_data[1]}')
+            record.update({delivery_address[2]: {'Index': int(delivery_address[0]), 'Package ID': {}}})
+            if delivery_address[2] == package_data[1][1]:
+                # print(f'\nmatch at index {delivery_address[0]}')
+                # print(f'record[delivery_address[2]] is {record[delivery_address[2]]}')
+                print(f'package_count is {package_count}')
+                if package_count == 1:
+                    print(f'package_data[0] is: {package_data[0]}')
+                    record[delivery_address[2]].update({'Package ID': {package_count: package_data[0]}})
+                    # record[delivery_address[2]]['Package ID'][package_count] = package_data[0]
+                    # print(
+                    #     f"record[delivery_address[2]]['Package ID'][package_count] is {record[delivery_address[2]]['Package ID'][package_count]}")
+                    print(f'package_data from sync_csv_data() is: {package_data}')
+                    print(f'({package_count})-if: package_data[0] is {package_data[0]}')
+                    print(f'({package_count})-if: record[delivery_address[2]]["Package ID"[package_count] is {record[delivery_address[2]]["Package ID"][package_count]}')
+                    package_count += 1
+                else:
+                    # record[delivery_address[2]].update({'Package ID': {package_count: package_data[0]}})
+                    record[delivery_address[2]]['Package ID'][package_count] = package_data[0]
+                    # print(
+                    #     f"record[delivery_address[2]]['Package ID'][package_count] is {record[delivery_address[2]]['Package ID'][package_count]}")
+                    print(f'({package_count})-else: package_data[0] is {package_data[0]}')
+                    print(f'({package_count})-else: record[delivery_address[2]]["Package ID"[package_count] is {record[delivery_address[2]]["Package ID"][package_count]}')
+                    package_count += 1
 
+        #
+        # for index in name_data:
+        #     package_count = 1
+        #     record.update({index[2]: {'Index': int(index[0]), 'Package ID': {}}})
+        #
+        #     for package_details in package_data:
+        #         if package_details[1] == index[2]:
+        #             if package_count == 1:
+        #                 record[index[2]]['Package ID'][package_count] = (int(package_details[0]))
+        #                 package_count += 1
+        #             else:
+        #                 record[index[2]]['Package ID'][package_count] = (int(package_details[0]))
+        #                 package_count += 1
+
+        # print(f'\nrecord is: {record}')
         return record
 
     # Calculate the delivery distance between each package in the pre-loaded list [O(n^3)]
@@ -306,11 +339,14 @@ class Packages(ParseCsvData):
     # Loads packages onto the trucks, using recursion [O(n^3)]
     def load_trucks(self, package_id):
 
-        package_id_data = self.get_input_data()[package_id - 1]
-        distance_list = self.sync_csv_data()[package_id_data[1]] # [O(n^2)]
+        package_id_data = self.get_input_data()[int(package_id) - 1]
+        print(f'package_id_data is: {package_id_data}')
+        print(f'\nself.get_hash().lookup_item(package_id)) is: {self.get_hash().lookup_item(package_id)}')
+
+        distance_list = self.sync_csv_data(self.get_hash().lookup_item(package_id))[package_id_data[1]]  # [O(n)]
 
         # Load First Truck
-        if len(self.first_truck) + len(distance_list.get('Package ID')) <= self.max_packages_per_truck:
+        if len(self.first_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
             # print(f'{distance_list.get("Package ID")} are together')
             for package_num in range(1, len(distance_list.get('Package ID')) + 1): # [O(n)]
                 if distance_list.get('Package ID').get(package_num) not in self.first_truck:
@@ -321,7 +357,7 @@ class Packages(ParseCsvData):
                         self.total_packages_loaded += 1
 
         # Load Second Truck
-        elif len(self.second_truck) + len(distance_list.get('Package ID')) <= self.max_packages_per_truck:
+        elif len(self.second_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
             # print(f'{distance_list.get("Package ID")} are together')
             for package_num in range(1, len(distance_list.get('Package ID')) + 1): # [O(n)]
                 if distance_list.get('Package ID').get(package_num) not in self.second_truck:   
@@ -332,7 +368,7 @@ class Packages(ParseCsvData):
                         self.total_packages_loaded += 1
 
         # Load Third Truck
-        elif len(self.third_truck) + len(distance_list.get('Package ID')) <= self.max_packages_per_truck:
+        elif len(self.third_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
             # print(f'{distance_list.get("Package ID")} are together')
             for package_num in range(1, len(distance_list.get('Package ID')) + 1): # [O(n)]
                 if distance_list.get('Package ID').get(package_num) not in self.third_truck:
@@ -347,9 +383,9 @@ class Packages(ParseCsvData):
 
         if self.total_packages_loaded == len(self.get_input_data()):
 
-            total_dist_first_truck = self.calculate_truck_distance(self.first_truck) # [O(n^3)]
-            total_dist_second_truck = self.calculate_truck_distance(self.second_truck) # [O(n^3)]
-            total_dist_third_truck = self.calculate_truck_distance(self.third_truck) # [O(n^3)]
+            total_dist_first_truck = self.calculate_truck_distance(self.first_truck)  # [O(n^3)]
+            total_dist_second_truck = self.calculate_truck_distance(self.second_truck)  # [O(n^3)]
+            total_dist_third_truck = self.calculate_truck_distance(self.third_truck)  # [O(n^3)]
 
             print()
             print('#' * 120)
@@ -398,6 +434,11 @@ class Packages(ParseCsvData):
 
         else:
             dist_list_index = distance_list.get("Index") # [O(n)]
+            print(f'type(dist_list_index) is: {type(dist_list_index)}')
             shortest_dist = self.find_shortest_distance(self.get_distance_data(), dist_list_index) # [O(n^2)]
             dist_name = self.get_distance_name_data()[shortest_dist][2] # [O(n^2)]
-            self.load_trucks(self.sync_csv_data()[dist_name]["Package ID"][1]) # [O(n^2)]
+            print(f'self.get_hash().lookup_item(package_id) is: {self.get_hash().lookup_item(package_id)}')
+            print(f'self.sync_csv_data(self.get_hash().lookup_item(package_id)) is: {self.sync_csv_data(self.get_hash().lookup_item(package_id))}')
+            print(f'self.sync_csv_data(self.get_hash().lookup_item(package_id))[dist_name] is: {self.sync_csv_data(self.get_hash().lookup_item(package_id))[dist_name]}')
+            print(f'self.sync_csv_data(self.get_hash().lookup_item(package_id))[dist_name]["Package ID"] is: {self.sync_csv_data(self.get_hash().lookup_item(package_id))[dist_name]["Package ID"]}')
+            self.load_trucks(self.sync_csv_data(self.get_hash().lookup_item(package_id))[dist_name]["Package ID"][1]) # [O(n^2)]

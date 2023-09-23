@@ -33,7 +33,7 @@ need to stop.
 • There are no collisions.
 • Three trucks and two drivers are available for deliveries. Each driver stays with the same truck as long
 as that truck is in service.
-• Drivers leave the hub no earlier than 8:00 a.m., with the truck loaded, and can return to the hub for
+• Drivers leave the hub no earlier  than 8:00 a.m., with the truck loaded, and can return to the hub for
 packages if needed.
 • The delivery and loading times are instantaneous, i.e., no time passes while at a delivery or when
 moving packages to a truck at the hub (that time is factored into the calculation of the average speed of
