@@ -4,13 +4,13 @@ from hash_table import HashTable
 
 ht = HashTable()
 addresses = [0]
-num_of_packages = 0
+# num_of_packages = 0
 distance_traveled = []
 been_loaded = []
 DELIVERY_TRUCK_SPEED_MPH = 18
 MAX_PACKAGES_PER_TRUCK = 16
 FIRST_TRUCK_DEPARTURE_TIME = '8:00:00'
-record = {}
+# record = {}
 
 
 class ParseCsvData:
@@ -50,6 +50,7 @@ class Packages(ParseCsvData):
         self.third_truck = []
         self.total_packages_loaded = 0
         self.high_priority_count = 0
+        self.record = {}
 
     # Parse package data and send it to the hash table [O(n)]
     @staticmethod
@@ -92,8 +93,8 @@ class Packages(ParseCsvData):
 
         print(f'package_data is: {package_data}')
 
-        minimum_hour = 25
-        minimum_minute = 60
+        # minimum_hour = 25
+        # minimum_minute = 60
         packages_to_be_delivered_together = set(())
         # first_delivery = []
 
@@ -145,14 +146,13 @@ class Packages(ParseCsvData):
         print(f'From get_package_data(), self.second_truck is: {self.second_truck}')
         print(f'From get_package_data(), self.third_truck is: {self.third_truck}')
 
-        # return first_delivery
-
     @staticmethod
     def get_hash():
         return ht
 
-    # Returns the index of the shortest distance [O(n^2)]
-    def find_shortest_distance(self, distances, start_row=1):
+    # Returns the index of the shortest distance [O(n)]
+    @staticmethod
+    def find_shortest_distance(distances, start_row=1):
 
         search_data = {
             'min_horizontal_index': 0,
@@ -183,6 +183,7 @@ class Packages(ParseCsvData):
                             search_data['min_dist_location'] = 'horizontal'
                             search_data['min_horizontal_index'] = search_index
                             # print(f'min_dist is: {search_data["min_dist"]}')
+
             if search_data['traversal_direction'] == 'vertical':
                 if distances[search_index][start_row] != '':
                     if float(distances[search_index][start_row]) < search_data['min_dist']:
@@ -191,6 +192,7 @@ class Packages(ParseCsvData):
                             search_data['min_dist_location'] = 'vertical'
                             search_data['min_vertical_index'] = search_index
                             # print(f'min_dist is: {search_data["min_dist"]}')
+
         # print(f'\nmin_dist: {search_data["min_dist"]} miles')
         distance_traveled.append(float(search_data["min_dist"]))
         # print(f'Distance traveled list: {distance_traveled}')
@@ -219,58 +221,71 @@ class Packages(ParseCsvData):
         # package_data = self.get_input_data()
         # data = self.get_distance_data()
         name_data = self.get_distance_name_data()
-        package_count = 1
 
-        # print(f'\npackage_data from sync_csv_data() is: {package_data}')
-        # print(f'package_data[1] is: {package_data[1]}')
-        #
+        # print(f'package_data is: {package_data}')
+        # print(f'package_data[1][1] is: {package_data[1][1]}')
         # print(f'name_data is: {name_data}')
 
-        print()
-        for delivery_address in name_data:
-            print(f'delivery_address is: {delivery_address}')
-            # print(f'package_data[0] is {package_data[0]}')
-            # print(f'package_data[1] is: {package_data[1]}')
-            record.update({delivery_address[2]: {'Index': int(delivery_address[0]), 'Package ID': {}}})
-            if delivery_address[2] == package_data[1][1]:
-                # print(f'\nmatch at index {delivery_address[0]}')
-                # print(f'record[delivery_address[2]] is {record[delivery_address[2]]}')
-                print(f'package_count is {package_count}')
-                if package_count == 1:
-                    print(f'package_data[0] is: {package_data[0]}')
-                    record[delivery_address[2]].update({'Package ID': {package_count: package_data[0]}})
-                    # record[delivery_address[2]]['Package ID'][package_count] = package_data[0]
-                    # print(
-                    #     f"record[delivery_address[2]]['Package ID'][package_count] is {record[delivery_address[2]]['Package ID'][package_count]}")
-                    print(f'package_data from sync_csv_data() is: {package_data}')
-                    print(f'({package_count})-if: package_data[0] is {package_data[0]}')
-                    print(f'({package_count})-if: record[delivery_address[2]]["Package ID"[package_count] is {record[delivery_address[2]]["Package ID"][package_count]}')
-                    package_count += 1
-                else:
-                    # record[delivery_address[2]].update({'Package ID': {package_count: package_data[0]}})
-                    record[delivery_address[2]]['Package ID'][package_count] = package_data[0]
-                    # print(
-                    #     f"record[delivery_address[2]]['Package ID'][package_count] is {record[delivery_address[2]]['Package ID'][package_count]}")
-                    print(f'({package_count})-else: package_data[0] is {package_data[0]}')
-                    print(f'({package_count})-else: record[delivery_address[2]]["Package ID"[package_count] is {record[delivery_address[2]]["Package ID"][package_count]}')
-                    package_count += 1
+        if package_data[1][1] in name_data:
+            print(f'\nname_data is: {name_data[2]}\n')
 
-        #
+        if package_data[1][1] in self.record.keys():
+            # print(f"len(self.record[package_data[1][1]]['Package ID']) is: {len(self.record[package_data[1][1]]['Package ID'])}")
+            # self.record[package_data[1][1]]['Package ID'][2] = package_data[0]
+            self.record[package_data[1][1]]['Package ID'].update({len(self.record[package_data[1][1]]['Package ID']) + 1: package_data[0]})
+
+        # self.record.update({package_data[1][1]: {'Index': {}, 'Package ID': {len(self.record[package_data[1][1]]['Package ID']) + 1: package_data[0]}}})
+        else:
+            self.record.update({package_data[1][1]: {'Index': {}, 'Package ID': {1: package_data[0]}}})
+
+            # self.record.update({package_data[1][1]: {'Index': {}, 'Package ID': {1: package_data[0]}}})
+
+        for delivery_address in name_data:
+            if package_data[1][1] == delivery_address[2]:
+                self.record[package_data[1][1]]['Index'] = delivery_address[0]
+        #     # print(f'delivery_address is: {delivery_address}')
+        #     # print(f'package_data[0] is {package_data[0]}')
+        #     # print(f'package_data[1] is: {package_data[1]}')
+        #     if delivery_address[2] == package_data[1][1]:
+        #         print(f'{delivery_address[2]} == {package_data[1][1]}')
+        #         # print(f'\nmatch at index {delivery_address[0]}')
+        #         # print(f'record[delivery_address[2]] is {record[delivery_address[2]]}')
+        #         self.record.update({delivery_address[2]: {'Index': int(delivery_address[0]), 'Package ID': {}}})
+        #         # num_of_packages = len(self.record[delivery_address[2]]['Package ID'])
+        #         # print(f'num_of_packages is {num_of_packages}')
+        #         print(f'self.record.get(delivery_address[2]) is: {delivery_address[2] in self.record}')
+        #         print(f"len(self.record[delivery_address[2]]['Package ID']) is: {len(self.record[delivery_address[2]]['Package ID'])}")
+        #         if not delivery_address[2] in self.record:
+        #             print(f'if: package_data[0] is {package_data[0]}')
+        #             print(f'if: record[delivery_address[2]] is {self.record[delivery_address[2]]}')
+        #             # self.record.update({delivery_address[2]: {'Index': int(delivery_address[0]), 'Package ID': {1: int(package_data[0])}}})
+        #             self.record[delivery_address[2]]['Package ID'].update({1: int(package_data[0])})
+        #             # print(f"record[delivery_address[2]]['Package ID'][package_count] is {record[delivery_address[2]]['Package ID'][package_count]}")
+        #             # print(f'package_data from sync_csv_data() is: {package_data}')
+        #         else:
+        #             print(f'else: package_data[0] is {package_data[0]}')
+        #             print(f'else: record[delivery_address[2]] is {self.record[delivery_address[2]]}')
+        #             # record[delivery_address[2]]['Package ID'][package_count] = package_data[0]
+        #             self.record[delivery_address[2]]['Package ID'].update({len(self.record[delivery_address[2]]['Package ID']) + 1: int(package_data[0])})
+        #             # self.record.update({delivery_address[2]: {'Index': int(delivery_address[0]), 'Package ID': {num_of_packages: int(package_data[0])}}})
+        #             # print(f"record[delivery_address[2]]['Package ID'][package_count] is {record[delivery_address[2]]['Package ID'][package_count]}")
+        #             # self.package_count += 1
+
         # for index in name_data:
         #     package_count = 1
-        #     record.update({index[2]: {'Index': int(index[0]), 'Package ID': {}}})
+        #     self.record.update({index[2]: {'Index': int(index[0]), 'Package ID': {}}})
         #
         #     for package_details in package_data:
         #         if package_details[1] == index[2]:
         #             if package_count == 1:
-        #                 record[index[2]]['Package ID'][package_count] = (int(package_details[0]))
+        #                 self.record[index[2]]['Package ID'][package_count] = (int(package_details[0]))
         #                 package_count += 1
         #             else:
-        #                 record[index[2]]['Package ID'][package_count] = (int(package_details[0]))
+        #                 self.record[index[2]]['Package ID'][package_count] = (int(package_details[0]))
         #                 package_count += 1
 
         # print(f'\nrecord is: {record}')
-        return record
+        return self.record
 
     # Calculate the delivery distance between each package in the pre-loaded list [O(n^3)]
     def calculate_truck_distance(self, package_list):

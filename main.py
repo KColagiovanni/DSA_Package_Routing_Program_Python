@@ -110,8 +110,6 @@ Selection: """)
 
                 package = ppd.get_hash().lookup_item(package_key)  # O(1)
 
-                print(f'package is: {package}')
-
                 # Get "delivery by" time hour and minute
                 if package[1][2] != 'EOD' and package[1][7] == "None":
                     hour = int(package[1][2][0:package[1][2].find(':')])
@@ -124,11 +122,12 @@ Selection: """)
                         first_package_id, first_package_delivery_by_time = package[0], package[1][5]
 
                 print(f'package[0] is: {package[0]}')
-
                 ppd.analyze_package_data(package[0])  # O(1)
+
+                print(f'package is: {package}')
                 matched_data = ppd.sync_csv_data(package)
 
-            print(f'matched_data is: {matched_data}')
+            print(f'\nmatched_data is: {matched_data}')
             print(f'\nfirst_package_id is: {first_package_id}')
 
             # print(f'int(ppd.get_package_data(ppd.get_input_data())[1][1]) is {int(ppd.get_package_data(ppd.get_input_data())[1][1])}')
