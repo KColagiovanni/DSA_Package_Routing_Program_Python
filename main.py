@@ -101,12 +101,8 @@ Selection: """)
 
             number_of_packages = ppd.get_package_data(ppd.get_input_data())
 
-            # print(f'\nnumber_of_packages is: {number_of_packages}')
-
             # Determine which package has the highest priority
             for package_key in range(1, number_of_packages + 1):
-
-                # print(f'\npackage_key is: {package_key}')
 
                 package = ppd.get_hash().lookup_item(package_key)  # O(1)
 
@@ -121,21 +117,10 @@ Selection: """)
                         minimum_minute = minute
                         first_package_id, first_package_delivery_by_time = package[0], package[1][5]
 
-                # print(f'package[0] is: {package[0]}')
                 ppd.analyze_package_data(package[0])  # O(1)
+                ppd.sync_csv_data(package)
 
-                # print(f'package is: {package}')
-                matched_data = ppd.sync_csv_data(package)
-
-                # ppd.find_shortest_distance()
-            # print(f'\nmatched_data is: {matched_data}')
-            # print(f'\nfirst_package_id is: {first_package_id}')
-
-            # print(f'int(ppd.get_package_data(ppd.get_input_data())[1][1]) is {int(ppd.get_package_data(ppd.get_input_data())[1][1])}')
-            # print(f'Sending {int(ppd.get_package_data(ppd.get_input_data())[1][1])} to load_trucks()')
-            # print(f'Starting program... {ppd.load_trucks(int(ppd.get_package_data(ppd.get_input_data())[1][1]))}')
-            # print('Starting program...')
-            ppd.load_trucks(first_package_id)
+            ppd.load_trucks(first_package_id)  # O(n^2)
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
         # Case 'exit'
