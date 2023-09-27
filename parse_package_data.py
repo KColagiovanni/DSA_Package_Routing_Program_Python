@@ -41,7 +41,7 @@ class Packages(ParseCsvData):
     def get_hash():
         return ht
 
-    # Parse package data and send it to the hash table [O(n)]
+    # Parse package data and send it to the hash table - [O(n)]
     @staticmethod
     def get_package_data():
 
@@ -74,7 +74,7 @@ class Packages(ParseCsvData):
 
         return package_data_list
 
-    # Match input_data.csv with distance_name_data.csv and return a dict with the important data [O(n)]
+    # Match input_data.csv with distance_name_data.csv and return a dict with the important data - [O(n)]
     def sync_csv_data(self, package_data):
 
         name_data = self.get_distance_name_data()

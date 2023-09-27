@@ -64,12 +64,14 @@ Selection: """)
 
             dp.load_trucks(first_package_id, ppd.record)  # O(n^2)
 
-            # for package_key in range(1, number_of_packages + 1):  # O(n)
+            dp.update_package_delivery_status(dp.first_truck, dp.first_truck_delivery_times, lookup_time)
+            # for package_id in range(len(number_of_packages) + 2):  # O(n)
             #     (hours, minutes, seconds) = dp.first_truck_delivery_times[package_key].split(':')
             #     ftd_times = datetime.timedelta(hours=int(hours), minutes=int(minutes), seconds=int(seconds))
             #
             #     if ftd_times > lookup_time:
             #         print('been delivered')
+            #         dp.update_package_delivery_status(package_key)
 
             cont_or_quit = input('Press any key, then enter to continue or type "quit" to quit')
             if cont_or_quit != 'quit':

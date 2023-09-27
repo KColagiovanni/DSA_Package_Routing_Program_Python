@@ -1,6 +1,7 @@
 from parse_package_data import Packages
 from hash_table import HashTable
 import datetime
+from datetime import time
 
 ppd = Packages()
 ht = HashTable()
@@ -30,7 +31,7 @@ class DeliverPackages:
         self.total_packages_loaded = 0
         self.high_priority_count = 0
 
-    # Analyze the special notes and deliver by times and add packages to trucks as needed [O(1)]
+    # Analyze the special notes and deliver by times and add packages to trucks as needed - [O(1)]
     def analyze_package_data(self, key):
 
         package_data = ppd.get_hash().lookup_item(key)  # O(1)
@@ -85,7 +86,7 @@ class DeliverPackages:
                     self.been_loaded.append(int(package_data[0]))
                     self.total_packages_loaded += 1
 
-    # Returns the index of the shortest distance [O(n)]
+    # Returns the index of the shortest distance - [O(n)]
     def find_shortest_distance(self, distances, search_row_index):
 
         search_data = {
@@ -141,7 +142,7 @@ class DeliverPackages:
     def maximize_efficiency(self, index):
         pass
 
-    # Calculate the delivery distance between each package in the loaded truck [O(n)]
+    # Calculate the delivery distance between each package in the loaded truck - [O(n)]
     @staticmethod
     def calculate_truck_distance(package_list, delivery_info_dict):
 
@@ -177,7 +178,7 @@ class DeliverPackages:
         return round(sum(truck_distance_list), 2), truck_distance_list
 
     # Calculates the time it takes to go from one delivery to the next
-    # and also the total delivery time for the truck [O(n)]
+    # and also the total delivery time for the truck - [O(n)]
     @staticmethod
     def calculate_delivery_time(package_distance_list, departure_time):
 
@@ -197,7 +198,7 @@ class DeliverPackages:
 
         return delivery_time_list, cumulative_delivery_duration_list
 
-    # Loads packages onto the trucks, using recursion [O(n^2)]
+    # Loads packages onto the trucks, using recursion - [O(n^2)]
     def load_trucks(self, package_id, delivery_info_dict):
 
         package_id_data = ppd.get_input_data()[int(package_id) - 1]
@@ -296,11 +297,36 @@ class DeliverPackages:
             dist_name = ppd.get_distance_name_data()[shortest_dist][2]  # [O(1)]
             self.load_trucks(delivery_info_dict.get(dist_name)["Package ID"][1], delivery_info_dict)  # [O(n^2)]
 
+    # Update package status - [O(1)]
+    # status_value --> 1 for "At the Hub", 2 for "En Route", or 3 for "Delivered at <time of delivery>
     @staticmethod
-    def update_package_delivery_status(key, status_value, **kwargs):
+    def update_package_delivery_status(truck_list, delivery_time_list, lookup_time):
+    # def update_package_delivery_status(key, status_value, **kwargs):
 
-        status = ['At the hub', 'En route', f'Delivered at {kwargs["time"]}']
+        # status = ['At the hub', 'En route', f'Delivered at {kwargs["time"]}']
+        #
+        # value_index = 6  # The package status index
+        #
+        # ppd.get_hash().update_item(key, value_index, status[status_value])
+
+        (converted_lookup_hour, converted_lookup_min, converted_lookup_sec) = lookup_time.split(':')
+
+        lookup = time(hour=converted_lookup_hour, minute=converted_lookup_min, second=converted_lookup_sec)
+
+        print(f'lookup is: {lookup}')
+
+        status = ['At the hub', 'En route', f'Delivered']
 
         value_index = 6  # The package status index
 
-        ppd.get_hash().update_item(key, value_index, status[status_value])
+        for package_index in range(len(truck_list) + 1):
+
+            print(f'\npackage_index is: {package_index}')
+            print(f'delivery_time_list[package_index] is: {delivery_time_list[1][package_index]}')
+            print(f'lookup_time is: {lookup_time}')
+            if package_index >= len(truck_list):
+                continue
+            print(f'truck_list[package_index] is: {truck_list[package_index]}')
+
+            # ppd.get_hash().update_item(package_id, value_index, status)
+
