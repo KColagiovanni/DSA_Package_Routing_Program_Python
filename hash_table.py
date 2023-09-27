@@ -16,3 +16,6 @@ class HashTable:
 
     def lookup_item(self, key):
         return self.hash_table[self.create_key(key)]
+
+    def update_item(self, key, value_index, new_value):
+        self.hash_table[self.create_key(key)][1][value_index] = new_value
