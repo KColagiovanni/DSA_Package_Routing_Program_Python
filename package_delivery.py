@@ -309,7 +309,7 @@ class DeliverPackages:
             self.delivery_data.append([self.second_truck, self.second_truck_delivery_times[1]])
             self.delivery_data.append([self.third_truck, self.third_truck_delivery_times[1]])
 
-            # self.print_verbose_output()
+            self.print_verbose_output()
 
         else:
             dist_list_index = distance_list.get("Index")  # [O(n)]
@@ -351,7 +351,9 @@ class DeliverPackages:
         converted_delivery_time_list = list(map(self.convert_time, delivery_time_list))
 
         # If user entered look up time is prior to the truck leaving the hub
-        if converted_delivery_time_list[0] > lookup_time:
+        if ((truck_num == 1 and self.convert_time(FIRST_TRUCK_DEPARTURE_TIME) > lookup_time) or
+                (truck_num == 2 and self.convert_time(self.second_truck_departure_time) > lookup_time) or
+                (truck_num == 3 and self.convert_time(self.first_truck_delivery_times[1][-1]) > lookup_time)):
             truck_status = truck_status_options[0]
 
         # If user entered time is past the time that the truck has returned to the hub
@@ -370,11 +372,11 @@ class DeliverPackages:
                 print(f'\n\nTruck {truck_num} left the the hub at {FIRST_TRUCK_DEPARTURE_TIME}')
 
             # Second truck
-            elif truck_num == 2:
+            if truck_num == 2:
                 print(f'\n\nTruck {truck_num} left the the hub at {self.second_truck_departure_time}')
 
             # Third truck
-            else:
+            if truck_num == 3:
                 print(f'\n\nTruck {truck_num} left the the hub at {self.first_truck_delivery_times[1][-1]}')
 
             # If truck is currently delivering packages
@@ -404,11 +406,10 @@ class DeliverPackages:
 
             # Package has been delivered
             if converted_delivery_time_list[package_index] <= lookup_time:
-                print(f'Package {package_id} Status: {package_status_options[2]} at '
-                      f'{converted_delivery_time_list[package_index]}')
+                print(f'Package {package_id} Status: {package_status_options[2]} at {converted_delivery_time_list[package_index]}')
 
             # Package is en route
-            elif truck_status == truck_status_options[1] and converted_delivery_time_list[package_index] >= lookup_time:
+            elif truck_status == truck_status_options[1]:# and converted_delivery_time_list[package_index] >= lookup_time:
                 print(f'Package {package_id} Status: {package_status_options[1]}')
 
             # Package is still at the hub
@@ -430,7 +431,7 @@ class DeliverPackages:
                 seconds=int(FIRST_TRUCK_DEPARTURE_TIME.split(':')[2])
             ))
 
-            # Calculate first truck delivery duration
+            # Calculate second truck delivery duration
             second_truck_diff = (datetime.timedelta(
                 hours=int(self.second_truck_delivery_times[1][-1].split(':')[0]),
                 minutes=int(self.second_truck_delivery_times[1][-1].split(':')[1]),
@@ -441,7 +442,7 @@ class DeliverPackages:
                 seconds=int(self.second_truck_departure_time.split(':')[2])
             ))
 
-            # Calculate first truck delivery duration
+            # Calculate third truck delivery duration
             third_truck_diff = (datetime.timedelta(
                 hours=int(self.third_truck_delivery_times[1][-1].split(':')[0]),
                 minutes=int(self.third_truck_delivery_times[1][-1].split(':')[1]),
@@ -454,9 +455,9 @@ class DeliverPackages:
 
             if truck_num == 1:
                 print(f'Truck 1 delivered {len(self.first_truck)} packages in {first_truck_diff} and traveled {self.total_dist_first_truck[0]} miles.')
-            elif truck_num == 2:
+            if truck_num == 2:
                 print(f'Truck 2 delivered {len(self.second_truck)} packages in {second_truck_diff} and traveled {self.total_dist_second_truck[0]} miles.')
-            else:
+            if truck_num == 3:
                 print(f'Truck 3 delivered {len(self.third_truck)} packages in {third_truck_diff} and traveled {self.total_dist_third_truck[0]} miles.')
 
             # All packages have been delivered and all trucks have returned to the hub
@@ -466,12 +467,14 @@ class DeliverPackages:
                 self.total_dist_third_truck[0], 2
             )
 
-            # print(f'Total Distance Traveled: {self.total_distance_traveled}')
-
             self.total_delivery_time = (
                     first_truck_diff +
                     second_truck_diff +
                     third_truck_diff
             )
 
-            # print(f'Total delivery time: {self.total_delivery_time}')
+        if self.convert_time(self.second_truck_delivery_times[1][-1]) > self.convert_time(self.third_truck_delivery_times[1][-1]):
+            if self.convert_time(self.second_truck_delivery_times[1][-1]) < lookup_time and truck_num == 3:
+                print(f'\nTotal Distance Traveled: {self.total_distance_traveled} miles')
+                print(f'Total delivery time: {self.total_delivery_time} (HH:MM:SS)')
+            # else:

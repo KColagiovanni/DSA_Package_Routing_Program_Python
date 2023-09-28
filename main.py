@@ -10,7 +10,7 @@ NUMBER_OF_TRUCKS = 3
 INVALID_ENTRY = 'Invalid Entry!'
 
 def main():
-    # This is the display message that is shown when the user runs the program. The interface is accessible from here
+
     print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
     print('+                                                                     +')
     print('+   ++           ++     ++++++     ++      ++  +++++++      +++++     +')
