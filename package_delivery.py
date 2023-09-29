@@ -249,6 +249,8 @@ class DeliverPackages:
         package_id_data = ppd.get_input_data()[int(package_id) - 1]
         distance_list = delivery_info_dict[ppd.get_hash().lookup_item(int(package_id_data[0]))[1][1]]  # [O(1)]
 
+        # print(f'distance_list is: {distance_list}')
+
         # Load First Truck
         if len(self.first_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
 
@@ -309,7 +311,7 @@ class DeliverPackages:
             self.delivery_data.append([self.second_truck, self.second_truck_delivery_times[1]])
             self.delivery_data.append([self.third_truck, self.third_truck_delivery_times[1]])
 
-            self.print_verbose_output()
+            # self.print_verbose_output()
 
         else:
             dist_list_index = distance_list.get("Index")  # [O(n)]
@@ -391,7 +393,11 @@ class DeliverPackages:
         else:
             print(f'\n\nTruck {truck_num} status is: {truck_status}')
 
-        print('-' * 40)
+        print('-' * 126)
+
+        print('|', 'ID'.center(2), '|', 'Address'.center(38), '|', 'Deliver By'.center(11), '|', 'City'.center(18), '|', 'Zip Code'.center(8), '|', 'Weight'.center(6), '|', 'Status'.center(21), '|')
+
+        print('-' * 126)
 
         for package_index in range(len(truck_list) + 1):
 
@@ -406,72 +412,100 @@ class DeliverPackages:
 
             # Package has been delivered
             if converted_delivery_time_list[package_index] <= lookup_time:
-                print(f'Package {package_id} Status: {package_status_options[2]} at {converted_delivery_time_list[package_index]}')
+                ppd.get_hash().update_item(package_id, value_index, f'{package_status_options[2]} at {converted_delivery_time_list[package_index]}')
+                # print(f'Package {package_id} Status: {package_status_options[2]} at {converted_delivery_time_list[package_index]}')
 
             # Package is en route
             elif truck_status == truck_status_options[1]:# and converted_delivery_time_list[package_index] >= lookup_time:
-                print(f'Package {package_id} Status: {package_status_options[1]}')
+                ppd.get_hash().update_item(package_id, value_index, package_status_options[1])
+                # print(f'Package {package_id} Status: {package_status_options[1]}')
 
             # Package is still at the hub
             else:
-                print(f'Package {package_id} Status: {package_status_options[0]}')
+                ppd.get_hash().update_item(package_id, value_index, package_status_options[0])
+                # print(f'Package {package_id} Status: {package_status_options[0]}')
 
+            id = ppd.get_hash().lookup_item(package_id)[1][0]
+            if int(id) < 10:
+                id = ' ' + id
+            address = ppd.get_hash().lookup_item(package_id)[1][1]
+            deliver_by = ppd.get_hash().lookup_item(package_id)[1][2]
+            city = ppd.get_hash().lookup_item(package_id)[1][3]
+            zip_code = ppd.get_hash().lookup_item(package_id)[1][4]
+            weight = ppd.get_hash().lookup_item(package_id)[1][5]
+            status = ppd.get_hash().lookup_item(package_id)[1][6]
+
+            print(f'| {id}'.ljust(3),f'| {address}'.ljust(40), f'| {deliver_by}'.ljust(13), f'| {city}'.ljust(20), f'| {zip_code}'.ljust(10), f'| {weight}'.ljust(8), f'| {status}'.ljust(23), '|')
+
+        print('-' * 126)
+
+        # Calculate first truck delivery duration
+        first_truck_diff = (datetime.timedelta(
+            hours=int(self.first_truck_delivery_times[1][-1].split(':')[0]),
+            minutes=int(self.first_truck_delivery_times[1][-1].split(':')[1]),
+            seconds=int(self.first_truck_delivery_times[1][-1].split(':')[2])) -
+                            datetime.timedelta(
+            hours=int(FIRST_TRUCK_DEPARTURE_TIME.split(':')[0]),
+            minutes=int(FIRST_TRUCK_DEPARTURE_TIME.split(':')[1]),
+            seconds=int(FIRST_TRUCK_DEPARTURE_TIME.split(':')[2])
+        ))
+
+        # Calculate second truck delivery duration
+        second_truck_diff = (datetime.timedelta(
+            hours=int(self.second_truck_delivery_times[1][-1].split(':')[0]),
+            minutes=int(self.second_truck_delivery_times[1][-1].split(':')[1]),
+            seconds=int(self.second_truck_delivery_times[1][-1].split(':')[2])) -
+                            datetime.timedelta(
+            hours=int(self.second_truck_departure_time.split(':')[0]),
+            minutes=int(self.second_truck_departure_time.split(':')[1]),
+            seconds=int(self.second_truck_departure_time.split(':')[2])
+        ))
+
+        # Calculate third truck delivery duration
+        third_truck_diff = (datetime.timedelta(
+            hours=int(self.third_truck_delivery_times[1][-1].split(':')[0]),
+            minutes=int(self.third_truck_delivery_times[1][-1].split(':')[1]),
+            seconds=int(self.third_truck_delivery_times[1][-1].split(':')[2])) -
+                            datetime.timedelta(
+            hours=int(self.first_truck_delivery_times[1][-1].split(':')[0]),
+            minutes=int(self.first_truck_delivery_times[1][-1].split(':')[1]),
+            seconds=int(self.first_truck_delivery_times[1][-1].split(':')[2])
+        ))
 
         if truck_status == truck_status_options[2]:
-            print('-' * 40)
-
-            # Calculate first truck delivery duration
-            first_truck_diff = (datetime.timedelta(
-                hours=int(self.first_truck_delivery_times[1][-1].split(':')[0]),
-                minutes=int(self.first_truck_delivery_times[1][-1].split(':')[1]),
-                seconds=int(self.first_truck_delivery_times[1][-1].split(':')[2])) -
-                                datetime.timedelta(
-                hours=int(FIRST_TRUCK_DEPARTURE_TIME.split(':')[0]),
-                minutes=int(FIRST_TRUCK_DEPARTURE_TIME.split(':')[1]),
-                seconds=int(FIRST_TRUCK_DEPARTURE_TIME.split(':')[2])
-            ))
-
-            # Calculate second truck delivery duration
-            second_truck_diff = (datetime.timedelta(
-                hours=int(self.second_truck_delivery_times[1][-1].split(':')[0]),
-                minutes=int(self.second_truck_delivery_times[1][-1].split(':')[1]),
-                seconds=int(self.second_truck_delivery_times[1][-1].split(':')[2])) -
-                                datetime.timedelta(
-                hours=int(self.second_truck_departure_time.split(':')[0]),
-                minutes=int(self.second_truck_departure_time.split(':')[1]),
-                seconds=int(self.second_truck_departure_time.split(':')[2])
-            ))
-
-            # Calculate third truck delivery duration
-            third_truck_diff = (datetime.timedelta(
-                hours=int(self.third_truck_delivery_times[1][-1].split(':')[0]),
-                minutes=int(self.third_truck_delivery_times[1][-1].split(':')[1]),
-                seconds=int(self.third_truck_delivery_times[1][-1].split(':')[2])) -
-                                datetime.timedelta(
-                hours=int(self.first_truck_delivery_times[1][-1].split(':')[0]),
-                minutes=int(self.first_truck_delivery_times[1][-1].split(':')[1]),
-                seconds=int(self.first_truck_delivery_times[1][-1].split(':')[2])
-            ))
 
             if truck_num == 1:
-                print(f'Truck 1 delivered {len(self.first_truck)} packages in {first_truck_diff} and traveled {self.total_dist_first_truck[0]} miles.')
+                print('|', f'Truck 1 delivered {len(self.first_truck)} packages in {first_truck_diff} and traveled {self.total_dist_first_truck[0]} miles.'.center(122), '|')
             if truck_num == 2:
-                print(f'Truck 2 delivered {len(self.second_truck)} packages in {second_truck_diff} and traveled {self.total_dist_second_truck[0]} miles.')
+                print('|', f'Truck 2 delivered {len(self.second_truck)} packages in {second_truck_diff} and traveled {self.total_dist_second_truck[0]} miles.'.center(122), '|')
             if truck_num == 3:
-                print(f'Truck 3 delivered {len(self.third_truck)} packages in {third_truck_diff} and traveled {self.total_dist_third_truck[0]} miles.')
+                print('|', f'Truck 3 delivered {len(self.third_truck)} packages in {third_truck_diff} and traveled {self.total_dist_third_truck[0]} miles.'.center(122), '|')
 
-            # All packages have been delivered and all trucks have returned to the hub
-            self.total_distance_traveled = round(
-                self.total_dist_first_truck[0] +
-                self.total_dist_second_truck[0] +
-                self.total_dist_third_truck[0], 2
-            )
+        elif truck_status == truck_status_options[1]:
+            if truck_num == 1:
+                print('|', f'Truck 1 has delivered <enter # of packages delivered>/{len(self.first_truck)} packages in {first_truck_diff} and traveled {self.total_dist_first_truck[0]} miles.'.center(122), '|')
+            if truck_num == 2:
+                print('|', f'Truck 2 has delivered <enter # of packages delivered>/{len(self.second_truck)} packages in {second_truck_diff} and traveled {self.total_dist_second_truck[0]} miles.'.center(122), '|')
+            if truck_num == 3:
+                print('|', f'Truck 3 has delivered <enter # of packages delivered>/{len(self.third_truck)} packages in {third_truck_diff} and traveled {self.total_dist_third_truck[0]} miles.'.center(122), '|')
 
-            self.total_delivery_time = (
-                    first_truck_diff +
-                    second_truck_diff +
-                    third_truck_diff
-            )
+        else:
+            print('|', f'Truck {truck_num} has not left the hub yet.'.center(122), '|')
+
+        print('-' * 126)
+
+        # All packages have been delivered and all trucks have returned to the hub
+        self.total_distance_traveled = round(
+            self.total_dist_first_truck[0] +
+            self.total_dist_second_truck[0] +
+            self.total_dist_third_truck[0], 2
+        )
+
+        self.total_delivery_time = (
+                first_truck_diff +
+                second_truck_diff +
+                third_truck_diff
+        )
 
         if self.convert_time(self.second_truck_delivery_times[1][-1]) > self.convert_time(self.third_truck_delivery_times[1][-1]):
             if self.convert_time(self.second_truck_delivery_times[1][-1]) < lookup_time and truck_num == 3:
