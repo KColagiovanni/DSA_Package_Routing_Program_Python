@@ -311,7 +311,7 @@ class DeliverPackages:
             self.delivery_data.append([self.second_truck, self.second_truck_delivery_times[1]])
             self.delivery_data.append([self.third_truck, self.third_truck_delivery_times[1]])
 
-            # self.print_verbose_output()
+            self.print_verbose_output()
 
         else:
             dist_list_index = distance_list.get("Index")  # [O(n)]
@@ -342,9 +342,10 @@ class DeliverPackages:
         #
         # ppd.get_hash().update_item(key, value_index, status[status_value])
 
+        delivered_count = 0
         truck_status = ''
         package_status = ''
-        truck_status_options = ['Has not left the hub', 'Delivering packages', 'Returned to the hub']
+        truck_status_options = ['At the hub', 'Delivering packages', 'Returned to the hub']
         package_status_options = ['At the hub', 'En route', 'Delivered']
 
         value_index = 6  # The package status index
@@ -366,43 +367,53 @@ class DeliverPackages:
         else:
             truck_status = truck_status_options[1]
 
+        print('\n\n')
+        print('-' * 126)
+
         # If the truck is either currently delivering packages or already returned to the hub
         if truck_status == truck_status_options[1] or truck_status == truck_status_options[2]:
 
             # First truck
             if truck_num == 1:
-                print(f'\n\nTruck {truck_num} left the the hub at {FIRST_TRUCK_DEPARTURE_TIME}')
+                print('|', f'Truck {truck_num} left the the hub at {FIRST_TRUCK_DEPARTURE_TIME}'.center(122), '|')
 
             # Second truck
             if truck_num == 2:
-                print(f'\n\nTruck {truck_num} left the the hub at {self.second_truck_departure_time}')
+                print('|', f'Truck {truck_num} left the the hub at {self.second_truck_departure_time}'.center(122), '|')
 
             # Third truck
             if truck_num == 3:
-                print(f'\n\nTruck {truck_num} left the the hub at {self.first_truck_delivery_times[1][-1]}')
+                print('|', f'Truck {truck_num} left the the hub at {self.first_truck_delivery_times[1][-1]}'.center(122), '|')
 
             # If truck is currently delivering packages
             if truck_status == truck_status_options[1]:
-                print(f'Truck {truck_num} status is: {truck_status}')
+                print('|', f'Truck {truck_num} status: {truck_status}'.center(122), '|')
 
             # If truck is not currently delivering packages
             else:
-                print(f'Truck {truck_num} status is: {truck_status} at {converted_delivery_time_list[-1]}')
+                print('|', f'Truck {truck_num} status: {truck_status} at {converted_delivery_time_list[-1]}'.center(122), '|')
 
         # If truck has not left the hub to deliver packages
         else:
-            print(f'\n\nTruck {truck_num} status is: {truck_status}')
+            print(f'|', f'Truck {truck_num} status: {truck_status}'.center(122), '|')
 
         print('-' * 126)
 
-        print('|', 'ID'.center(2), '|', 'Address'.center(38), '|', 'Deliver By'.center(11), '|', 'City'.center(18), '|', 'Zip Code'.center(8), '|', 'Weight'.center(6), '|', 'Status'.center(21), '|')
+        print(
+            '|', 'ID'.center(2),
+            '|', 'Address'.center(38),
+            '|', 'Deliver By'.center(11),
+            '|', 'City'.center(18),
+            '|', 'Zip Code'.center(8),
+            '|', 'Weight'.center(6),
+            '|', 'Status'.center(21), '|'
+        )
 
         print('-' * 126)
 
         for package_index in range(len(truck_list) + 1):
 
             if package_index >= len(truck_list):
-                # print()
                 continue
 
             if truck_list[package_index] < 10:
@@ -413,21 +424,22 @@ class DeliverPackages:
             # Package has been delivered
             if converted_delivery_time_list[package_index] <= lookup_time:
                 ppd.get_hash().update_item(package_id, value_index, f'{package_status_options[2]} at {converted_delivery_time_list[package_index]}')
-                # print(f'Package {package_id} Status: {package_status_options[2]} at {converted_delivery_time_list[package_index]}')
+                delivered_count += 1
 
             # Package is en route
             elif truck_status == truck_status_options[1]:# and converted_delivery_time_list[package_index] >= lookup_time:
                 ppd.get_hash().update_item(package_id, value_index, package_status_options[1])
-                # print(f'Package {package_id} Status: {package_status_options[1]}')
 
             # Package is still at the hub
             else:
                 ppd.get_hash().update_item(package_id, value_index, package_status_options[0])
-                # print(f'Package {package_id} Status: {package_status_options[0]}')
 
-            id = ppd.get_hash().lookup_item(package_id)[1][0]
-            if int(id) < 10:
-                id = ' ' + id
+            package_id = ppd.get_hash().lookup_item(package_id)[1][0]
+
+            # Padding the single digits with a leading space for prettier output
+            if int(package_id) < 10:
+                package_id = ' ' + package_id
+
             address = ppd.get_hash().lookup_item(package_id)[1][1]
             deliver_by = ppd.get_hash().lookup_item(package_id)[1][2]
             city = ppd.get_hash().lookup_item(package_id)[1][3]
@@ -435,7 +447,15 @@ class DeliverPackages:
             weight = ppd.get_hash().lookup_item(package_id)[1][5]
             status = ppd.get_hash().lookup_item(package_id)[1][6]
 
-            print(f'| {id}'.ljust(3),f'| {address}'.ljust(40), f'| {deliver_by}'.ljust(13), f'| {city}'.ljust(20), f'| {zip_code}'.ljust(10), f'| {weight}'.ljust(8), f'| {status}'.ljust(23), '|')
+            print(
+                f'| {package_id}'.ljust(3),
+                f'| {address}'.ljust(40),
+                f'| {deliver_by}'.ljust(13),
+                f'| {city}'.ljust(20),
+                f'| {zip_code}'.ljust(10),
+                f'| {weight}'.ljust(8),
+                f'| {status}'.ljust(23), '|'
+            )
 
         print('-' * 126)
 
@@ -483,11 +503,11 @@ class DeliverPackages:
 
         elif truck_status == truck_status_options[1]:
             if truck_num == 1:
-                print('|', f'Truck 1 has delivered <enter # of packages delivered>/{len(self.first_truck)} packages in {first_truck_diff} and traveled {self.total_dist_first_truck[0]} miles.'.center(122), '|')
+                print('|', f'Truck 1 has delivered {delivered_count}/{len(self.first_truck)} packages in {first_truck_diff} and traveled {self.total_dist_first_truck[0]} miles.'.center(122), '|')
             if truck_num == 2:
-                print('|', f'Truck 2 has delivered <enter # of packages delivered>/{len(self.second_truck)} packages in {second_truck_diff} and traveled {self.total_dist_second_truck[0]} miles.'.center(122), '|')
+                print('|', f'Truck 2 has delivered {delivered_count}/{len(self.second_truck)} packages in {second_truck_diff} and traveled {self.total_dist_second_truck[0]} miles.'.center(122), '|')
             if truck_num == 3:
-                print('|', f'Truck 3 has delivered <enter # of packages delivered>/{len(self.third_truck)} packages in {third_truck_diff} and traveled {self.total_dist_third_truck[0]} miles.'.center(122), '|')
+                print('|', f'Truck 3 has delivered {delivered_count}/{len(self.third_truck)} packages in {third_truck_diff} and traveled {self.total_dist_third_truck[0]} miles.'.center(122), '|')
 
         else:
             print('|', f'Truck {truck_num} has not left the hub yet.'.center(122), '|')
