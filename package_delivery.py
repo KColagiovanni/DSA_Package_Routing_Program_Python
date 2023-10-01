@@ -115,7 +115,7 @@ class DeliverPackages:
     def find_shortest_distance_from_and_to_hub(self, distances):
 
         for row in range(len(distances)):
-            print
+            # print
             print(f'distances[row][0] is: {distances[row][0]}')
 
 

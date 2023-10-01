@@ -86,6 +86,8 @@ Selection: """)
                 #         minimum_minute = minute
                 #         first_package_id, first_package_delivery_by_time = package[0], package[1][5]
 
+            dp.find_shortest_distance_from_and_to_hub(ppd.get_distance_data())
+
             for distance_index in range(1, len(ppd.get_distance_data())):
                 dist = ppd.get_distance_data()[distance_index][0]
                 if dist < min_dist:
