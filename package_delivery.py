@@ -47,6 +47,7 @@ class DeliverPackages:
         packages_to_be_delivered_together = set(())
 
         # ~~~~~~~~~~ Try using REGEX here ~~~~~~~~~~ #
+        # Get packages that need to be delivered to the same address
         if 'Must be delivered with' in package_data[1][7]:
             package1 = int(package_data[1][7][-7:-5])
             packages_to_be_delivered_together.add(package1)
@@ -70,6 +71,21 @@ class DeliverPackages:
                 self.third_truck.append(int(package_data[0]))
                 self.been_loaded.append(int(package_data[0]))
                 self.total_packages_loaded += 1
+
+        # Get "delivery by" time hour and minute
+        # if package_data[1][2] != 'EOD' and package_data[1][7] == "None":
+        #     hour = int(package_data[1][2][0:package_data[1][2].find(':')])
+        #     minute = int(package_data[1][2][-5:-3])
+        #     # if hour < 10 and minute <= 30:
+        #     # self.first_truck.append(int(package_data[0]))
+        #     self.second_truck.insert(self.high_priority_count, int(package_data[0]))
+        #     self.been_loaded.append(int(package_data[0]))
+        #     self.total_packages_loaded += 1
+        #     # else:
+        #     #     # self.second_truck.append(int(package_data[0]))
+        #     #     self.been_loaded.append(int(package_data[0]))
+        #     #     self.total_packages_loaded += 1
+        #     #     self.second_truck.insert(self.high_priority_count, int(package_data[0]))
 
         # Loading packages into the specific trucks that special instructions request.
         if 'Can only be on truck' in package_data[1][7]:
@@ -95,6 +111,14 @@ class DeliverPackages:
                     self.been_loaded.append(int(package_data[0]))
                     self.total_packages_loaded += 1
 
+    # Find shortest distance from and to the hub
+    def find_shortest_distance_from_and_to_hub(self, distances):
+
+        for row in range(len(distances)):
+            print
+            print(f'distances[row][0] is: {distances[row][0]}')
+
+
     # Returns the index of the shortest distance - [O(n)]
     def find_shortest_distance(self, distances, search_row_index):
 
@@ -106,7 +130,15 @@ class DeliverPackages:
             'min_dist_location': 'horizontal'
         }
 
+        row_data = ppd.get_hash().lookup_item(search_row_index)
+
+        print(f'row_data is: {row_data}')
+
+        ##### IF TRUCK IS EMPTY AND ABOUT TO START BEING PACKED, LOAD FIRST PACKAGE #####
+
         for row in range(1, len(distances[search_row_index])):
+
+            ##### iF THE TRUCK IS FULLY PACKED MINUS 1 PACKAGE, CHECK SHORTEST DISTANCE BACK TO HUB #####
 
             if distances[search_row_index][row] == '0.0':
                 search_data['traversal_direction'] = 'vertical'
@@ -131,6 +163,8 @@ class DeliverPackages:
                             search_data['min_vertical_index'] = row
 
         self.distance_traveled.append(float(search_data["min_dist"]))
+
+        print(f'distance_traveled is: {self.distance_traveled}')
 
         if search_row_index not in self.addresses:
             self.addresses.append(search_row_index)
@@ -252,6 +286,12 @@ class DeliverPackages:
         # print(f'distance_list is: {distance_list}')
 
         # Load First Truck
+        if len(self.first_truck) == 0:
+            self.find_shortest_distance_from_and_to_hub(distance_list)
+            # self.first_truck.append()
+            # self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+            # self.total_packages_loaded += 1
+
         if len(self.first_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
 
             # For loop to get all the packages that are all going to the same address. For this program, worse case
@@ -333,7 +373,7 @@ class DeliverPackages:
 
     # Update package status - [O(1)]
     # status_value --> 1 for "At the Hub", 2 for "En Route", or 3 for "Delivered at <time of delivery>
-    def update_package_delivery_status(self, truck_list, truck_num, delivery_time_list, lookup_time):
+    def update_package_delivery_status_and_print_output(self, truck_list, truck_num, delivery_time_list, lookup_time):
     # def update_package_delivery_status(key, status_value, **kwargs):
 
         # status = ['At the hub', 'En route', f'Delivered at {kwargs["time"]}']
@@ -462,7 +502,6 @@ class DeliverPackages:
 
             print(package_index)
 
-
         print('-' * 126)
 
         # Calculate first truck delivery duration
@@ -569,8 +608,14 @@ class DeliverPackages:
                 third_total_truck_diff
         )
 
-        if self.convert_time(self.second_truck_delivery_times[1][-1]) > self.convert_time(self.third_truck_delivery_times[1][-1]):
-            if self.convert_time(self.second_truck_delivery_times[1][-1]) < lookup_time and truck_num == 3:
-                print(f'\nTotal Distance Traveled: {self.total_distance_traveled} miles')
-                print(f'Total delivery time: {self.total_delivery_time} (HH:MM:SS)')
-            # else:
+        # Print output if truck 3 is the last truck to complete deliveries
+        if self.convert_time(self.second_truck_delivery_times[1][-1]) <= self.convert_time(self.third_truck_delivery_times[1][-1]):
+            if truck_status == truck_status_options[2] and truck_num == 3:
+                print(f'\nTotal combined distance traveled: {self.total_distance_traveled} miles')
+                print(f'Total time trucks were delivering packages: {self.total_delivery_time} (HH:MM:SS)')
+
+        # Print output if truck 2 is the last truck to complete deliveries
+        if self.convert_time(self.second_truck_delivery_times[1][-1]) >= self.convert_time(self.third_truck_delivery_times[1][-1]):
+            if truck_status == truck_status_options[2] and truck_num == 2:
+                print(f'\nTotal combined distance traveled: {self.total_distance_traveled} miles')
+                print(f'Total time trucks were delivering packages: {self.total_delivery_time} (HH:MM:SS)')

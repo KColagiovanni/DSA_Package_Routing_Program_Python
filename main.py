@@ -61,6 +61,7 @@ Selection: """)
             ppd = Packages()
             dp = DeliverPackages()
 
+            min_dist = ppd.get_distance_data()[1][0]
             minimum_hour = 25
             minimum_minute = 60
             first_package_id = 0
@@ -74,21 +75,30 @@ Selection: """)
                 ppd.sync_csv_data(package)  # O(n)
                 dp.analyze_package_data(package[0])  # O(1)
 
-                # Get "delivery by" time hour and minute
-                if package[1][2] != 'EOD' and package[1][7] == "None":
-                    hour = int(package[1][2][0:package[1][2].find(':')])
-                    minute = int(package[1][2][-5:-3])
+                # # Get "delivery by" time hour and minute
+                # if package[1][2] != 'EOD' and package[1][7] == "None":
+                #     hour = int(package[1][2][0:package[1][2].find(':')])
+                #     minute = int(package[1][2][-5:-3])
+                #
+                #     # Determine the highest priority package based on the earliest "deliver by" time
+                #     if hour < minimum_hour and minute < minimum_minute:
+                #         minimum_hour = hour
+                #         minimum_minute = minute
+                #         first_package_id, first_package_delivery_by_time = package[0], package[1][5]
 
-                    # Determine the highest priority package based on the earliest "deliver by" time
-                    if hour < minimum_hour and minute < minimum_minute:
-                        minimum_hour = hour
-                        minimum_minute = minute
-                        first_package_id, first_package_delivery_by_time = package[0], package[1][5]
+            for distance_index in range(1, len(ppd.get_distance_data())):
+                dist = ppd.get_distance_data()[distance_index][0]
+                if dist < min_dist:
+                    min_dist = dist
+                    print(f'min_dist is: {min_dist}; distance_index is: {distance_index}')
+                    print(f'ppd.get_distance_name_data()[distance_index] is: {ppd.get_distance_name_data()[distance_index]}')
+                    first_package_id = ppd.record[ppd.get_distance_name_data()[distance_index][2]]['Package ID'][1]
+                    print(f'first_package_id is: {first_package_id}')
 
             dp.load_trucks(first_package_id, ppd.record)  # O(n^2)
 
             for truck in range(len(dp.delivery_data)):
-                dp.update_package_delivery_status(
+                dp.update_package_delivery_status_and_print_output(
                     dp.delivery_data[truck][0], truck + 1, dp.delivery_data[truck][1], lookup_time
                 )
 

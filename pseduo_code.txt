@@ -1,0 +1,12 @@
+Delivery Algorithm:
+
+For each truck, the basics:
+1. Find the shortest distance from the hub to the first delivery.
+2. Find the shortest distance from one delivery to the next.
+3. Find the shortest distance from the last delivery back to the hub.
+
+Restrictions:
+- Some packages are delayed and wont arrive until a specified time.
+    - Some of the delayed packages have a "deliver by" time that is less than 90 minutes after they've arrived.
+- Some packages have a deliver by time that needs to be met.
+- Some packages are going to the same address and should be delivered together at the same time.
