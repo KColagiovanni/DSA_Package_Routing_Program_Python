@@ -112,11 +112,27 @@ class DeliverPackages:
                     self.total_packages_loaded += 1
 
     # Find shortest distance from and to the hub
-    def find_shortest_distance_from_and_to_hub(self, distances):
+    def find_shortest_distance_from_and_to_hub(self, distances, record_dict):
 
-        for row in range(len(distances)):
+        print(f'distances is: {distances}')
+        print(f'record_dict is: {record_dict}')
+
+        min_dist = distances[1][0]
+
+        for row in range(1, len(distances)):
             # print
-            print(f'distances[row][0] is: {distances[row][0]}')
+            # print(f'\ndistances[row][0] is: {distances[row][0]}')
+            if float(distances[row][0]) < float(min_dist):
+                min_dist = float(distances[row][0])
+                shortest_index = row
+
+        print(f'\nmin_dist is: {min_dist}')
+        print(f'\nshortest)index is: {shortest_index}')
+        print(f'\nppd.get_distance_name_data()[shortest_index][2] is: {ppd.get_distance_name_data()[shortest_index][2]}')
+        print(f'\nppd.record is: {record_dict}')
+        print(f'\nppd.record[ppd.get_distance_name_data()[shortest_index][2]] is: {record_dict[ppd.get_distance_name_data()[shortest_index][2]]}')
+        print(f"{record_dict[ppd.get_distance_name_data()[shortest_index][2]]['Package ID'][1]}")
+        return record_dict[ppd.get_distance_name_data()[shortest_index][2]]['Package ID'][1]
 
 
     # Returns the index of the shortest distance - [O(n)]
@@ -286,8 +302,8 @@ class DeliverPackages:
         # print(f'distance_list is: {distance_list}')
 
         # Load First Truck
-        if len(self.first_truck) == 0:
-            self.find_shortest_distance_from_and_to_hub(distance_list)
+        # if len(self.first_truck) == 0:
+        #     self.find_shortest_distance_from_and_to_hub(ppd.get_distance_data(), distance_list)
             # self.first_truck.append()
             # self.been_loaded.append(distance_list.get('Package ID').get(package_num))
             # self.total_packages_loaded += 1

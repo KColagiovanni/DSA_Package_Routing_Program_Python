@@ -86,16 +86,16 @@ Selection: """)
                 #         minimum_minute = minute
                 #         first_package_id, first_package_delivery_by_time = package[0], package[1][5]
 
-            dp.find_shortest_distance_from_and_to_hub(ppd.get_distance_data())
+            first_package_id = dp.find_shortest_distance_from_and_to_hub(ppd.get_distance_data(), ppd.record    )
 
-            for distance_index in range(1, len(ppd.get_distance_data())):
-                dist = ppd.get_distance_data()[distance_index][0]
-                if dist < min_dist:
-                    min_dist = dist
-                    print(f'min_dist is: {min_dist}; distance_index is: {distance_index}')
-                    print(f'ppd.get_distance_name_data()[distance_index] is: {ppd.get_distance_name_data()[distance_index]}')
-                    first_package_id = ppd.record[ppd.get_distance_name_data()[distance_index][2]]['Package ID'][1]
-                    print(f'first_package_id is: {first_package_id}')
+            # for distance_index in range(1, len(ppd.get_distance_data())):
+            #     dist = ppd.get_distance_data()[distance_index][0]
+            #     if dist < min_dist:
+            #         min_dist = dist
+            #         print(f'min_dist is: {min_dist}; distance_index is: {distance_index}')
+            #         print(f'ppd.get_distance_name_data()[distance_index] is: {ppd.get_distance_name_data()[distance_index]}')
+            #         first_package_id = ppd.record[ppd.get_distance_name_data()[distance_index][2]]['Package ID'][1]
+            #         print(f'first_package_id is: {first_package_id}')
 
             dp.load_trucks(first_package_id, ppd.record)  # O(n^2)
 
