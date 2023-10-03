@@ -47,6 +47,12 @@ class DeliverPackages:
         package_data = ppd.get_hash().lookup_item(key)  # O(1)
         packages_to_be_delivered_together = set(())
 
+        print(f'package_data[1][7] is: {package_data[1][7]}')
+        print(f'package_data[1][2] is: {package_data[1][2]}')
+
+        if 'Can only be on truck' in package_data[1][7] or package_data[1][2] != 'EOD':
+            self.high_priority_packages.update({package_data[0]: {}})
+
         # ~~~~~~~~~~ Try using REGEX here ~~~~~~~~~~ #
         # Get packages that need to be delivered to the same address
         if 'Must be delivered with' in package_data[1][7]:
@@ -73,19 +79,19 @@ class DeliverPackages:
                 self.been_loaded.append(int(package_data[0]))
                 self.total_packages_loaded += 1
 
+            self.high_priority_packages[package_data[0]].update({'Delayed ETA': self.convert_time(package_eta + ':00').strftime('%H:%M:%S')})
+
+
         # Get "delivery by" time hour and minute
-        if package_data[1][2] != 'EOD' and package_data[1][7] == "None":
+        if package_data[1][2] != 'EOD':# and package_data[1][7] == "None":
             hour = int(package_data[1][2][0:package_data[1][2].find(':')])
             minute = int(package_data[1][2][-5:-3])
 
             # if len(package_data[1][0]) < 2:
             #     package_data[1][0] = '0' + package_data[1][0]
 
-            self.high_priority_packages.update({package_data[1][0]: {'Deliver By': self.convert_time(package_data[1][2]).strftime('%H:%M:%S')}})
+            self.high_priority_packages[package_data[0]].update({'Deliver By': self.convert_time(package_data[1][2]).strftime('%H:%M:%S')})
             # self.high_priority_packages['Package ID'][package_data[0]]['Deliver By'] = f'{hour}:{minute}'
-
-        print(f'High Priority Packages: {self.high_priority_packages}')
-
 
         #     # if hour < 10 and minute <= 30:
         #     # self.first_truck.append(int(package_data[0]))
@@ -107,6 +113,7 @@ class DeliverPackages:
                     self.first_truck.append(int(package_data[0]))
                     self.been_loaded.append(int(package_data[0]))
                     self.total_packages_loaded += 1
+                    self.high_priority_packages[package_data[0]].update({'Truck': 1})
 
             # For truck 2
             elif package_data[1][7][-1] == '2':
@@ -114,6 +121,7 @@ class DeliverPackages:
                     self.second_truck.append(int(package_data[0]))
                     self.been_loaded.append(int(package_data[0]))
                     self.total_packages_loaded += 1
+                    self.high_priority_packages[package_data[0]].update({'Truck': 2})
 
             # For truck 3
             elif package_data[1][7][-1] == '3':
@@ -121,6 +129,10 @@ class DeliverPackages:
                     self.third_truck.append(int(package_data[0]))
                     self.been_loaded.append(int(package_data[0]))
                     self.total_packages_loaded += 1
+                    self.high_priority_packages[package_data[0]].update({'Truck': 3})
+
+        print(f'\nHigh Priority Packages: {self.high_priority_packages}')
+
 
     # Find shortest distance from and to the hub
     def find_shortest_distance_from_and_to_hub(self, distances, record_dict):
