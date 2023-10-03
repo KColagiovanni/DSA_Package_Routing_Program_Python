@@ -34,6 +34,7 @@ class DeliverPackages:
         self.total_distance_traveled = []
         self.total_delivery_time = []
 
+        self.high_priority_packages = {}
         self.delivery_status = {}
 
         self.second_truck_departure_time = ''
@@ -73,9 +74,19 @@ class DeliverPackages:
                 self.total_packages_loaded += 1
 
         # Get "delivery by" time hour and minute
-        # if package_data[1][2] != 'EOD' and package_data[1][7] == "None":
-        #     hour = int(package_data[1][2][0:package_data[1][2].find(':')])
-        #     minute = int(package_data[1][2][-5:-3])
+        if package_data[1][2] != 'EOD' and package_data[1][7] == "None":
+            hour = int(package_data[1][2][0:package_data[1][2].find(':')])
+            minute = int(package_data[1][2][-5:-3])
+
+            # if len(package_data[1][0]) < 2:
+            #     package_data[1][0] = '0' + package_data[1][0]
+
+            self.high_priority_packages.update({package_data[1][0]: {'Deliver By': self.convert_time(package_data[1][2]).strftime('%H:%M:%S')}})
+            # self.high_priority_packages['Package ID'][package_data[0]]['Deliver By'] = f'{hour}:{minute}'
+
+        print(f'High Priority Packages: {self.high_priority_packages}')
+
+
         #     # if hour < 10 and minute <= 30:
         #     # self.first_truck.append(int(package_data[0]))
         #     self.second_truck.insert(self.high_priority_count, int(package_data[0]))
@@ -113,6 +124,8 @@ class DeliverPackages:
 
     # Find shortest distance from and to the hub
     def find_shortest_distance_from_and_to_hub(self, distances, record_dict):
+
+        shortest_index = 0
 
         print(f'distances is: {distances}')
         print(f'record_dict is: {record_dict}')
