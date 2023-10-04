@@ -65,6 +65,8 @@ class DeliverPackages:
         # Determine priority and load delayed packages on later trucks
         if 'Delayed on flight' in package_data[1][7]:
             package_eta = package_data[1][7][-7:-3]
+            print(f'package_eta is: {package_eta}')
+
             if package_data[1][2] != 'EOD':
                 # print(f'DELAYED | HIGH PRIORITY: {package_data[0]}'
                 # f'- ETA: {package_eta} (Deliver by: {package_data[1][2]})')
@@ -81,7 +83,6 @@ class DeliverPackages:
 
             self.high_priority_packages[package_data[0]].update({'Delayed ETA': self.convert_time(package_eta + ':00').strftime('%H:%M:%S')})
 
-
         # Get "delivery by" time hour and minute
         if package_data[1][2] != 'EOD':# and package_data[1][7] == "None":
             hour = int(package_data[1][2][0:package_data[1][2].find(':')])
@@ -91,6 +92,9 @@ class DeliverPackages:
             #     package_data[1][0] = '0' + package_data[1][0]
 
             self.high_priority_packages[package_data[0]].update({'Deliver By': self.convert_time(package_data[1][2]).strftime('%H:%M:%S')})
+
+        else:
+            self.high_priority_packages[package_data[0]].update({'Deliver By': package_data[1][2]})
             # self.high_priority_packages['Package ID'][package_data[0]]['Deliver By'] = f'{hour}:{minute}'
 
         #     # if hour < 10 and minute <= 30:
