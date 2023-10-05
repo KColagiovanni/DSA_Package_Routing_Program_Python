@@ -67,14 +67,14 @@ class DeliverPackages:
 
             self.high_priority_packages[package_data[0]].update({'Delayed ETA': self.convert_time(package_eta + ':00').strftime('%H:%M:%S')})
 
-            # if package_data[1][2] != 'EOD':
+            if package_data[1][2] != 'EOD':
             #     # print(f'DELAYED | HIGH PRIORITY: {package_data[0]}'
             #     # f'- ETA: {package_eta} (Deliver by: {package_data[1][2]})')
             #     self.second_truck.insert(self.high_priority_count, int(package_data[0]))
             #     self.high_priority_count += 0
             #     self.been_loaded.append(int(package_data[0]))
             #     self.total_packages_loaded += 1
-            #     self.second_truck_departure_time = package_eta + ':00'
+                self.second_truck_departure_time = package_eta + ':00'
             # else:
             #     # print(f'DELAYED | {package_data[0]} - ETA: {package_eta} (Deliver by: {package_data[1][2]})')
             #     self.third_truck.append(int(package_data[0]))
@@ -133,16 +133,13 @@ class DeliverPackages:
                     # self.total_packages_loaded += 1
                     self.high_priority_packages[package_data[0]].update({'Truck': 3})
 
-        print(f'\nHigh Priority Packages: {self.high_priority_packages}')
+        # print(f'\nHigh Priority Packages: {self.high_priority_packages}')
 
 
     # Find shortest distance from and to the hub
     def find_shortest_distance_from_and_to_hub(self, distances, record_dict):
 
         shortest_index = 0
-
-        print(f'distances is: {distances}')
-        print(f'record_dict is: {record_dict}')
 
         min_dist = distances[1][0]
 
@@ -153,12 +150,12 @@ class DeliverPackages:
                 min_dist = float(distances[row][0])
                 shortest_index = row
 
-        print(f'\nmin_dist is: {min_dist}')
-        print(f'\nshortest)index is: {shortest_index}')
-        print(f'\nppd.get_distance_name_data()[shortest_index][2] is: {ppd.get_distance_name_data()[shortest_index][2]}')
-        print(f'\nppd.record is: {record_dict}')
-        print(f'\nppd.record[ppd.get_distance_name_data()[shortest_index][2]] is: {record_dict[ppd.get_distance_name_data()[shortest_index][2]]}')
-        print(f"{record_dict[ppd.get_distance_name_data()[shortest_index][2]]['Package ID'][1]}")
+        # print(f'\nmin_dist is: {min_dist}')
+        # print(f'\nshortest)index is: {shortest_index}')
+        # print(f'\nppd.get_distance_name_data()[shortest_index][2] is: {ppd.get_distance_name_data()[shortest_index][2]}')
+        # print(f'\nppd.record is: {record_dict}')
+        # print(f'\nppd.record[ppd.get_distance_name_data()[shortest_index][2]] is: {record_dict[ppd.get_distance_name_data()[shortest_index][2]]}')
+        # print(f"{record_dict[ppd.get_distance_name_data()[shortest_index][2]]['Package ID'][1]}")
         return record_dict[ppd.get_distance_name_data()[shortest_index][2]]['Package ID'][1]
 
 
@@ -175,7 +172,7 @@ class DeliverPackages:
 
         row_data = ppd.get_hash().lookup_item(search_row_index)
 
-        print(f'row_data is: {row_data}')
+        # print(f'row_data is: {row_data}')
 
         ##### IF TRUCK IS EMPTY AND ABOUT TO START BEING PACKED, LOAD FIRST PACKAGE #####
 
@@ -207,7 +204,7 @@ class DeliverPackages:
 
         self.distance_traveled.append(float(search_data["min_dist"]))
 
-        print(f'distance_traveled is: {self.distance_traveled}')
+        # print(f'distance_traveled is: {self.distance_traveled}')
 
         if search_row_index not in self.addresses:
             self.addresses.append(search_row_index)
@@ -268,8 +265,6 @@ class DeliverPackages:
     @staticmethod
     def calculate_delivery_time(package_distance_list, departure_time):
 
-        print(f'departure time is: {departure_time}')
-
         (hours, minutes, seconds) = departure_time.split(':')
         converted_departure_time = datetime.timedelta(hours=int(hours), minutes=int(minutes), seconds=int(seconds))
 
@@ -328,6 +323,9 @@ class DeliverPackages:
         package_id_data = ppd.get_input_data()[int(package_id) - 1]
         distance_list = delivery_info_dict[ppd.get_hash().lookup_item(int(package_id_data[0]))[1][1]]  # [O(1)]
 
+        if int(package_id) in self.high_priority_packages.keys():
+            print(f'\nself.high_priority_packages[{package_id}] is: {self.high_priority_packages[int(package_id)]}')
+
         # print(f'distance_list is: {distance_list}')
 
         # Load First Truck
@@ -344,9 +342,16 @@ class DeliverPackages:
             for package_num in range(1, len(distance_list.get('Package ID')) + 1):  # [O(n)]
                 if distance_list.get('Package ID').get(package_num) not in self.first_truck:
                     if distance_list.get('Package ID').get(package_num) not in self.been_loaded:
-                        self.first_truck.append(distance_list.get('Package ID').get(package_num))
-                        self.been_loaded.append(distance_list.get('Package ID').get(package_num))
-                        self.total_packages_loaded += 1
+                        if int(package_id) in self.high_priority_packages.keys():
+                            print(
+                                f'\nself.high_priority_packages[{package_id}] is: {self.high_priority_packages[int(package_id)]}')
+                            self.first_truck.append(distance_list.get('Package ID').get(package_num))
+                            self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+                            self.total_packages_loaded += 1
+                        else:
+                            self.first_truck.append(distance_list.get('Package ID').get(package_num))
+                            self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+                            self.total_packages_loaded += 1
 
         # Load Second Truck
         elif len(self.second_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
@@ -383,10 +388,6 @@ class DeliverPackages:
             self.total_dist_first_truck = self.calculate_truck_distance(self.first_truck, delivery_info_dict)  # [O(n)]
             self.total_dist_second_truck = self.calculate_truck_distance(self.second_truck, delivery_info_dict)  # [O(n)]
             self.total_dist_third_truck = self.calculate_truck_distance(self.third_truck, delivery_info_dict)  # [O(n)]
-
-            print(f'FIRST_TRUCK_DEPARTURE_TIME is {FIRST_TRUCK_DEPARTURE_TIME}')
-            print(f'self.second_truck_delivery_time is: {self.second_truck_departure_time}')
-            print(f'self.first_truck_delivery_times[1][-1] is: {self.first_truck_delivery_times[1][-1]}')
 
             # Calculate the time that each truck spent traveling to each destination.
             self.first_truck_delivery_times = self.calculate_delivery_time(
@@ -548,8 +549,6 @@ class DeliverPackages:
                 f'| {weight}'.ljust(8),
                 f'| {status}'.ljust(23), '|'
             )
-
-            print(package_index)
 
         print('-' * 126)
 
