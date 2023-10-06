@@ -336,45 +336,66 @@ class DeliverPackages:
 
         if len(self.first_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
 
-            if len(self.first_truck) == 0:
-                print(f'self.first_truck before is: {self.first_truck}')
-                self.first_truck.append(package_id)
-                self.been_loaded.append(package_id)
-                self.total_packages_loaded += 1
-                print(f'self.first_truck after is: {self.first_truck}')
+            # if len(self.first_truck) == 0:
+            #     self.first_truck.append(package_id)
+            #     self.been_loaded.append(package_id)
+            #     self.total_packages_loaded += 1
+            #
+            # else:
 
-            else:
+            # For loop to get all the packages that are all going to the same address. For this program, worse case
+            # is 3 iterations, best case is 1 iteration.
+            for package_num in range(1, len(distance_list.get('Package ID')) + 1):  # [O(n)]
+                if distance_list.get('Package ID').get(package_num) not in self.first_truck:
+                    if distance_list.get('Package ID').get(package_num) not in self.been_loaded:
+                        if int(package_id) in self.high_priority_packages.keys():
+                            if 'Deliver By' in self.high_priority_packages[package_id]:
+                                print(f"Deliver by {self.high_priority_packages[package_id]['Deliver By']}!!!!!")
+                            if 'Truck' in self.high_priority_packages[package_id] and self.high_priority_packages[package_id]['Truck'] == 1:
+                                print('Can only be on truck 1!!!!!')
 
-                # For loop to get all the packages that are all going to the same address. For this program, worse case
-                # is 3 iterations, best case is 1 iteration.
-                for package_num in range(1, len(distance_list.get('Package ID')) + 1):  # [O(n)]
-                    if distance_list.get('Package ID').get(package_num) not in self.first_truck:
-                        if distance_list.get('Package ID').get(package_num) not in self.been_loaded:
-                            if int(package_id) in self.high_priority_packages.keys():
-                                print(
-                                    f'\nself.high_priority_packages[{package_id}] is: {self.high_priority_packages[int(package_id)]}')
-                                self.first_truck.append(distance_list.get('Package ID').get(package_num))
-                                self.been_loaded.append(distance_list.get('Package ID').get(package_num))
-                                self.total_packages_loaded += 1
-                            else:
-                                self.first_truck.append(distance_list.get('Package ID').get(package_num))
-                                self.been_loaded.append(distance_list.get('Package ID').get(package_num))
-                                self.total_packages_loaded += 1
+                            print(f'\nself.high_priority_packages[{package_id}] is: {self.high_priority_packages[int(package_id)]}')
+                            self.first_truck.append(distance_list.get('Package ID').get(package_num))
+                            self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+                            self.total_packages_loaded += 1
+                        else:
+                            self.first_truck.append(distance_list.get('Package ID').get(package_num))
+                            self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+                            self.total_packages_loaded += 1
 
         # Load Second Truck
         elif len(self.second_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
+
+            # if len(self.second_truck) == 0:
+            #     self.second_truck.append(package_id)
+            #     self.been_loaded.append(package_id)
+            #     self.total_packages_loaded += 1
+            #
+            # else:
 
             # For loop to get all the packages that are all going to the same address. For this program, worse case
             # is 3 iterations, best case is 1 iteration.
             for package_num in range(1, len(distance_list.get('Package ID')) + 1):  # [O(n)]
                 if distance_list.get('Package ID').get(package_num) not in self.second_truck:
                     if distance_list.get('Package ID').get(package_num) not in self.been_loaded:
+                        if 'Deliver By' in self.high_priority_packages[package_id]:
+                            print(f"Deliver by {self.high_priority_packages[package_id]['Deliver By']}!!!!!")
+                        if 'Truck' in self.high_priority_packages[package_id] and self.high_priority_packages[package_id]['Truck'] == 2:
+                            print('Can only be on truck 2!!!!!')
+
                         self.second_truck.append(distance_list.get('Package ID').get(package_num))
                         self.been_loaded.append(distance_list.get('Package ID').get(package_num))
                         self.total_packages_loaded += 1
 
         # Load Third Truck
         elif len(self.third_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
+
+            # if len(self.third_truck) == 0:
+            #     self.third_truck.append(package_id)
+            #     self.been_loaded.append(package_id)
+            #     self.total_packages_loaded += 1
+            #
+            # else:
 
             # For loop to get all the packages that are all going to the same address. For this program, worse case
             # is 3 iterations, best case is 1 iteration.
