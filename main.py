@@ -88,7 +88,7 @@ Selection: """)
 
             first_package_id = dp.find_shortest_distance_from_and_to_hub(ppd.get_distance_data(), ppd.record)
 
-            print(f'\nfrom main(), dp.find_shortest_distance_from_and_to_hub is: {dp.find_shortest_distance_from_and_to_hub}')
+            print(f'\nfrom main(), dp.find_shortest_distance_from_and_to_hub is: {first_package_id}')
 
             # for distance_index in range(1, len(ppd.get_distance_data())):
             #     dist = ppd.get_distance_data()[distance_index][0]
