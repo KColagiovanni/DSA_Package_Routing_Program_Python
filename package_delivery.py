@@ -9,6 +9,7 @@ ht = HashTable()
 DELIVERY_TRUCK_SPEED_MPH = 18
 MAX_PACKAGES_PER_TRUCK = 16
 FIRST_TRUCK_DEPARTURE_TIME = '8:00:00'
+MAX_TRUCKS_TRAVEL_DISTANCE = 140
 
 
 class DeliverPackages:
@@ -152,14 +153,14 @@ class DeliverPackages:
         return record_dict[ppd.get_distance_name_data()[shortest_index][2]]['Package ID'][1]
 
 
-    # Returns the index of the shortest distance - [O(n)]
+    # Returns the index of the shortest distance - [O(n^2)]
     def find_shortest_distance(self, distances, search_row_index):
 
         search_data = {
             'min_horizontal_index': 0,
             'min_vertical_index': 0,
             'traversal_direction': 'horizontal',
-            'min_dist': float(distances[search_row_index][1]),
+            'min_dist': float(MAX_TRUCKS_TRAVEL_DISTANCE),
             'min_dist_location': 'horizontal'
         }
 
@@ -169,42 +170,59 @@ class DeliverPackages:
 
         ##### IF TRUCK IS EMPTY AND ABOUT TO START BEING PACKED, LOAD FIRST PACKAGE #####
 
-        for row in range(1, len(distances[search_row_index])):
+        # print(f'distances[search_row_index][1] is: {distances[search_row_index][1]}')
+
+        for row in range(1, len(distances[search_row_index])):  # O(n)
+
 
             ##### iF THE TRUCK IS FULLY PACKED MINUS 1 PACKAGE, CHECK SHORTEST DISTANCE BACK TO HUB #####
-
             if distances[search_row_index][row] == '0.0':
                 search_data['traversal_direction'] = 'vertical'
 
-            if row in self.addresses:
+            if row in self.addresses:  # O(n) (in a for loop makes this O(n^2))
+                print(f'{row} is in {self.addresses}')
                 continue
 
             if search_data['traversal_direction'] == 'horizontal':
+                print(f"\nsearch_data['traversal_direction'] is: {search_data['traversal_direction']}")
                 if distances[search_row_index][row] != '':
+                    print(f'distances[search_row_index][row] is: {distances[search_row_index][row]}')
+                    print(f"{float(distances[search_row_index][row])} < {search_data['min_dist']}({float(distances[search_row_index][row]) < search_data['min_dist']})")
                     if float(distances[search_row_index][row]) < search_data['min_dist']:
-                        if float(distances[search_row_index][row]) != 0:
+                        if float(distances[search_row_index][row]) != 0.0:
                             search_data['min_dist'] = float(distances[search_row_index][row])
+                            print(f"search_data['min_dist'] is: {search_data['min_dist']}")
                             search_data['min_dist_location'] = 'horizontal'
                             search_data['min_horizontal_index'] = row
 
             if search_data['traversal_direction'] == 'vertical':
+                print(f"\nsearch_data['traversal_direction'] is: {search_data['traversal_direction']}")
                 if distances[row][search_row_index] != '':
+                    print(f'float(distances[row][search_row_index]) is: {float(distances[row][search_row_index])}')
+                    print(f"{float(distances[row][search_row_index])} < {search_data['min_dist']}({float(distances[row][search_row_index]) < search_data['min_dist']})")
                     if float(distances[row][search_row_index]) < search_data['min_dist']:
-                        if float(distances[row][search_row_index]) != 0:
+                        print(f"{float(distances[row][search_row_index])} != 0.0 ({float(distances[row][search_row_index]) != 0.0})")
+                        if float(distances[row][search_row_index]) != 0.0:
                             search_data['min_dist'] = float(distances[row][search_row_index])
+                            print(f"search_data['min_dist'] is: {search_data['min_dist']}")
                             search_data['min_dist_location'] = 'vertical'
                             search_data['min_vertical_index'] = row
 
+        print(f"from find_shortest_distance, search_data['min_dist'] is: {search_data['min_dist']}")
         self.distance_traveled.append(float(search_data["min_dist"]))
+        print(f'self.first_truck is: {self.first_truck}')
+        print(f'self.second_truck is: {self.second_truck}')
+        print(f'self.third_truck is: {self.third_truck}')
+        print(f'self.distance_traveled is: {self.distance_traveled}\n')
 
         # print(f'distance_traveled is: {self.distance_traveled}')
 
-        if search_row_index not in self.addresses:
+        if search_row_index not in self.addresses:  # O(n)
             self.addresses.append(search_row_index)
 
         if search_data["min_horizontal_index"] == 0 and search_data["min_vertical_index"] == 0:
-            for index in range(1, len(distances[search_row_index])):
-                if index not in self.addresses:
+            for index in range(1, len(distances[search_row_index])):  # O(n)
+                if index not in self.addresses:  # O(n) (in a for loop makes this O(n^2))
                     search_data['min_horizontal_index'] = index
                     search_data['min_vertical_index'] = index
 
@@ -348,20 +366,24 @@ class DeliverPackages:
             for package_num in range(1, len(distance_list.get('Package ID')) + 1):  # [O(n)]
                 if distance_list.get('Package ID').get(package_num) not in self.first_truck:
                     if distance_list.get('Package ID').get(package_num) not in self.been_loaded:
-                        if int(package_id) in self.high_priority_packages.keys():
-                            if 'Deliver By' in self.high_priority_packages[package_id]:
-                                print(f"Deliver by {self.high_priority_packages[package_id]['Deliver By']}!!!!!")
-                            if 'Truck' in self.high_priority_packages[package_id] and self.high_priority_packages[package_id]['Truck'] == 1:
-                                print('Can only be on truck 1!!!!!')
-
-                            print(f'\nself.high_priority_packages[{package_id}] is: {self.high_priority_packages[int(package_id)]}')
+                        if int(package_id) not in self.high_priority_packages.keys():
+                            print(f'Package ID {package_id} has no high priorities')
                             self.first_truck.append(distance_list.get('Package ID').get(package_num))
                             self.been_loaded.append(distance_list.get('Package ID').get(package_num))
                             self.total_packages_loaded += 1
                         else:
-                            self.first_truck.append(distance_list.get('Package ID').get(package_num))
-                            self.been_loaded.append(distance_list.get('Package ID').get(package_num))
-                            self.total_packages_loaded += 1
+                            print(f'self.high_priority_packages[package_id].keys() is: {self.high_priority_packages[package_id].keys()}')
+                            print(f"self.high_priority_packages[package_id].get('Truck') is: {self.high_priority_packages[package_id].get('Truck')}")
+                            # if 'Deliver By' in self.high_priority_packages[package_id]:
+                            #     print(f"Deliver by {self.high_priority_packages[package_id]['Deliver By']}!!!!!")
+                            if 'Truck' in self.high_priority_packages[package_id].keys() and self.high_priority_packages[package_id].get('Truck') != 2 and self.high_priority_packages[package_id].get('Truck') != 3:
+                                print('Can only be on truck 1!!!!!')
+                                print(f"self.high_priority_packages[package_id]['Truck'] is: {self.high_priority_packages[package_id].get('Truck')}")
+
+                                print(f'\nself.high_priority_packages[{package_id}] is: {self.high_priority_packages[int(package_id)]}')
+                                self.first_truck.append(distance_list.get('Package ID').get(package_num))
+                                self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+                                self.total_packages_loaded += 1
 
         # Load Second Truck
         elif len(self.second_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
@@ -378,14 +400,20 @@ class DeliverPackages:
             for package_num in range(1, len(distance_list.get('Package ID')) + 1):  # [O(n)]
                 if distance_list.get('Package ID').get(package_num) not in self.second_truck:
                     if distance_list.get('Package ID').get(package_num) not in self.been_loaded:
-                        if 'Deliver By' in self.high_priority_packages[package_id]:
-                            print(f"Deliver by {self.high_priority_packages[package_id]['Deliver By']}!!!!!")
-                        if 'Truck' in self.high_priority_packages[package_id] and self.high_priority_packages[package_id]['Truck'] == 2:
-                            print('Can only be on truck 2!!!!!')
+                        if int(package_id) in self.high_priority_packages.keys():
+                            if 'Deliver By' in self.high_priority_packages[package_id]:
+                                print(f"Deliver by {self.high_priority_packages[package_id]['Deliver By']}!!!!!")
+                            if 'Truck' in self.high_priority_packages[package_id] and self.high_priority_packages[package_id]['Truck'] == 2:
+                                print('Can only be on truck 2!!!!!')
 
-                        self.second_truck.append(distance_list.get('Package ID').get(package_num))
-                        self.been_loaded.append(distance_list.get('Package ID').get(package_num))
-                        self.total_packages_loaded += 1
+                            self.second_truck.append(distance_list.get('Package ID').get(package_num))
+                            self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+                            self.total_packages_loaded += 1
+                        else:
+                            self.second_truck.append(distance_list.get('Package ID').get(package_num))
+                            self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+                            self.total_packages_loaded += 1
+
 
         # Load Third Truck
         elif len(self.third_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
@@ -402,9 +430,19 @@ class DeliverPackages:
             for package_num in range(1, len(distance_list.get('Package ID')) + 1):  # [O(n)]
                 if distance_list.get('Package ID').get(package_num) not in self.third_truck:
                     if distance_list.get('Package ID').get(package_num) not in self.been_loaded:
-                        self.third_truck.append(distance_list.get('Package ID').get(package_num))
-                        self.been_loaded.append(distance_list.get('Package ID').get(package_num))
-                        self.total_packages_loaded += 1
+                        if int(package_id) in self.high_priority_packages.keys():
+                            if 'Deliver By' in self.high_priority_packages[package_id]:
+                                print(f"Deliver by {self.high_priority_packages[package_id]['Deliver By']}!!!!!")
+                            if 'Truck' in self.high_priority_packages[package_id] and self.high_priority_packages[package_id]['Truck'] == 3:
+                                print('Can only be on truck 3!!!!!')
+
+                            self.third_truck.append(distance_list.get('Package ID').get(package_num))
+                            self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+                            self.total_packages_loaded += 1
+                        else:
+                            self.third_truck.append(distance_list.get('Package ID').get(package_num))
+                            self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+                            self.total_packages_loaded += 1
 
         else:
             return
@@ -434,9 +472,16 @@ class DeliverPackages:
 
         else:
             dist_list_index = distance_list.get("Index")  # [O(n)]
+            print(f'dist_list_index is: {dist_list_index}')
             shortest_dist = self.find_shortest_distance(ppd.get_distance_data(), int(dist_list_index))  # [O(n)]
+            print(f'shortest_dist is: {shortest_dist}')
             dist_name = ppd.get_distance_name_data()[shortest_dist][2]  # [O(1)]
-            self.load_trucks(delivery_info_dict.get(dist_name)["Package ID"][1], delivery_info_dict)  # [O(n^2)]
+            print(f'dist_name is: {dist_name}')
+            print(f'package_id is: {package_id}')
+            print(f"delivery_info_dict.get(dist_name) is: {delivery_info_dict.get(dist_name)}")
+            print(f"delivery_info_dict.get(dist_name)['Package ID'][1] is: {delivery_info_dict.get(dist_name)['Package ID'][1]}")
+            print(f'delivery_info_dict is: {delivery_info_dict}')
+            self.load_trucks(delivery_info_dict.get(dist_name)['Package ID'][1], delivery_info_dict)  # [O(n^2)]
 
     @staticmethod
     def convert_time(input_time):
