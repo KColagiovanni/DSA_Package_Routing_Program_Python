@@ -337,6 +337,9 @@ class DeliverPackages:
 
         if int(package_id) in self.high_priority_packages.keys():
             print(f'\nself.high_priority_packages[{package_id}] is: {self.high_priority_packages[int(package_id)]}')
+        else:
+            print(f'No high priority data for package {package_id}')
+
 
         # print(f'distance_list is: {distance_list}')
         # print(f"\nself.high_priority_packages is: {self.high_priority_packages}")
@@ -392,7 +395,7 @@ class DeliverPackages:
                         truck_num = self.high_priority_packages[distance_list.get('Package ID').get(package_num)].get('Truck')
 
                     except KeyError:
-                        print('No high priority data')
+                        print('No truck high priority data')
 
                     else:
                         # print(f"self.high_priority_packages.get('Package ID').get(package_num).get('Truck') is: {self.high_priority_packages.get('Package ID').get(package_num).get('Truck')}")
@@ -420,14 +423,32 @@ class DeliverPackages:
                     #             self.total_packages_loaded += 1
 
                     # Deliver by...
+                    try:
+                        deliver_by_time = self.high_priority_packages[distance_list.get('Package ID').get(package_num)].get('Deliver By')
+                        # print(f'Deliver by time is: {deliver_by_time}')
+                    except KeyError:
+                        print('No Deliver by high priority data')
+                    except AttributeError:
+                        print('Cannot be "None"')
 
+                    else:
+
+                        if len(self.first_truck_delivery_times) == 0:
+                            print(f"\nPackage id[{distance_list.get('Package ID').get(package_num)}] deliver by time is: {deliver_by_time}")
+                            print(f'first truck departure time is: {FIRST_TRUCK_DEPARTURE_TIME}')
+
+                        else:
+                            print(f"\nPackage id[{distance_list.get('Package ID').get(package_num)}] deliver by time is: {deliver_by_time}")
+                            print(f'self.first_truck_delivery_times[1][-1] is: {self.first_truck_delivery_times[1][-1]}')
+                            print(f'self.first_truck_delivery_times[1] is: {self.first_truck_delivery_times[1]}')
+                            print(f'self.first_truck is: {self.first_truck}')
                     # Delayed eta...
 
                     try:
                         delayed_time = self.high_priority_packages[distance_list.get('Package ID').get(package_num)].get('Delayed ETA')
                         print(f'Delayed time is: {delayed_time}')
                     except KeyError:
-                        print('No high priority data')
+                        print('No Delayed ETA high priority data')
                     except AttributeError:
                         print('Cannot be "None"')
 
@@ -470,6 +491,10 @@ class DeliverPackages:
                     self.first_truck.append(distance_list.get('Package ID').get(package_num))
                     self.been_loaded.append(distance_list.get('Package ID').get(package_num))
                     self.total_packages_loaded += 1
+
+                    self.total_dist_first_truck = self.calculate_truck_distance(self.first_truck, delivery_info_dict)  # [O(n)]
+                    self.first_truck_delivery_times = self.calculate_delivery_time(self.total_dist_first_truck[1], FIRST_TRUCK_DEPARTURE_TIME)  # [O(n)]
+
 
         # Load Second Truck
         elif len(self.second_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
@@ -536,13 +561,13 @@ class DeliverPackages:
         if self.total_packages_loaded == len(ppd.get_input_data()):
 
             # Calculate the distance that each truck traveled
-            self.total_dist_first_truck = self.calculate_truck_distance(self.first_truck, delivery_info_dict)  # [O(n)]
+            # self.total_dist_first_truck = self.calculate_truck_distance(self.first_truck, delivery_info_dict)  # [O(n)]
             self.total_dist_second_truck = self.calculate_truck_distance(self.second_truck, delivery_info_dict)  # [O(n)]
             self.total_dist_third_truck = self.calculate_truck_distance(self.third_truck, delivery_info_dict)  # [O(n)]
 
             # Calculate the time that each truck spent traveling to each destination.
-            self.first_truck_delivery_times = self.calculate_delivery_time(
-                self.total_dist_first_truck[1], FIRST_TRUCK_DEPARTURE_TIME)  # [O(n)]
+            # self.first_truck_delivery_times = self.calculate_delivery_time(
+            #     self.total_dist_first_truck[1], FIRST_TRUCK_DEPARTURE_TIME)  # [O(n)]
             self.second_truck_delivery_times = self.calculate_delivery_time(
                 self.total_dist_second_truck[1], self.second_truck_departure_time)  # [O(n)]
             self.third_truck_delivery_times = self.calculate_delivery_time(
