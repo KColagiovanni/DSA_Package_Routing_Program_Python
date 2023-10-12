@@ -1,0 +1,5 @@
+- Ensure Packages get loaded and delivered correctly.
+- Get the option 2 working in main.py.
+- Implement my time class for all time related things.
+- Add comments everywhere they are needed.
+- Remove unnecessary comments and commented out stale code.

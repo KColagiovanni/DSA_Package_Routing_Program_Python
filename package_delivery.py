@@ -1,10 +1,12 @@
 from parse_package_data import Packages
 from hash_table import HashTable
+from wgups_time import WgupsTime
 import datetime
 from datetime import time
 
 ppd = Packages()
 ht = HashTable()
+wtime = WgupsTime()
 
 DELIVERY_TRUCK_SPEED_MPH = 18
 MAX_PACKAGES_PER_TRUCK = 16
@@ -139,13 +141,13 @@ class DeliverPackages:
         # print(f'\nHigh Priority Packages: {self.high_priority_packages}')
 
 
-    # Find shortest distance from and to the hub
+    # Find shortest distance from and to the hub O(n)
     def find_shortest_distance_from_and_to_hub(self, distances, record_dict):
 
         shortest_index = 0
         min_dist = distances[1][0]
 
-        for row in range(1, len(distances)):
+        for row in range(1, len(distances)):  # O(n)
             if float(distances[row][0]) < float(min_dist):
                 min_dist = float(distances[row][0])
                 shortest_index = row
@@ -153,20 +155,29 @@ class DeliverPackages:
 
         return record_dict[ppd.get_distance_name_data()[shortest_index][2]]['Package ID'][1]
 
-
     # Returns the index of the shortest distance - [O(n^2)]
     def find_shortest_distance(self, distances, search_row_index):
+
+        if float(distances[search_row_index][1]) > 0:
+            print(f'from find_shortest_distance float(distances[{search_row_index}][1]) (start search index) is: {float(distances[search_row_index][1])}')
+            min_dist = float(distances[search_row_index][1])
+            t_direction = 'horizontal'
+        else:
+            print(f'from find_shortest_distance float(distances[{search_row_index + 1}][1]) (start search index) is: {float(distances[search_row_index + 1][1])}')
+            min_dist = float(distances[search_row_index + 1][1])
+            t_direction = 'vertical'
 
         search_data = {
             'min_horizontal_index': 0,
             'min_vertical_index': 0,
-            'traversal_direction': 'horizontal',
-            'min_dist': float(MAX_TRUCKS_TRAVEL_DISTANCE),
+            'traversal_direction': t_direction,
+            'min_dist': min_dist,
+            # 'min_dist': float(MAX_TRUCKS_TRAVEL_DISTANCE),
             'min_dist_location': 'horizontal'
         }
 
-        row_data = ppd.get_hash().lookup_item(search_row_index)
-
+        # row_data = ppd.get_hash().lookup_item(<package id>)
+        #
         # print(f'row_data is: {row_data}')
 
         ##### IF TRUCK IS EMPTY AND ABOUT TO START BEING PACKED, LOAD FIRST PACKAGE #####
@@ -179,36 +190,43 @@ class DeliverPackages:
             if distances[search_row_index][row] == '0.0':
                 search_data['traversal_direction'] = 'vertical'
 
-            if row in self.addresses:  # O(n) (in a for loop makes this O(n^2))
-                # print(f'{row} is in {self.addresses}')
-                continue
+            # if row in self.addresses:  # O(n) (in a for loop makes this O(n^2))
+            #     # print(f'{row} is in {self.addresses}')
+            #     continue
 
             if search_data['traversal_direction'] == 'horizontal':
                 # print(f"\nsearch_data['traversal_direction'] is: {search_data['traversal_direction']}")
                 if distances[search_row_index][row] != '':
-                    # print(f'distances[search_row_index][row] is: {distances[search_row_index][row]}')
                     # print(f"{float(distances[search_row_index][row])} < {search_data['min_dist']}({float(distances[search_row_index][row]) < search_data['min_dist']})")
                     if float(distances[search_row_index][row]) < search_data['min_dist']:
                         if float(distances[search_row_index][row]) != 0.0:
-                            search_data['min_dist'] = float(distances[search_row_index][row])
-                            # print(f"search_data['min_dist'] is: {search_data['min_dist']}")
-                            search_data['min_dist_location'] = 'horizontal'
-                            search_data['min_horizontal_index'] = row
+                            if search_row_index not in self.addresses:  # O(n) (in a for loop makes this O(n^2))
+                                # print(f'distances[{search_row_index}][{row}] is: {float(distances[search_row_index][row])}')
+                                search_data['min_dist'] = float(distances[search_row_index][row])
+                                # print(f"search_data['min_dist'] is: {search_data['min_dist']}")
+                                search_data['min_dist_location'] = 'horizontal'
+                                search_data['min_horizontal_index'] = row
 
             if search_data['traversal_direction'] == 'vertical':
                 # print(f"\nsearch_data['traversal_direction'] is: {search_data['traversal_direction']}")
                 if distances[row][search_row_index] != '':
-                    # print(f'float(distances[row][search_row_index]) is: {float(distances[row][search_row_index])}')
                     # print(f"{float(distances[row][search_row_index])} < {search_data['min_dist']}({float(distances[row][search_row_index]) < search_data['min_dist']})")
                     if float(distances[row][search_row_index]) < search_data['min_dist']:
                         # print(f"{float(distances[row][search_row_index])} != 0.0 ({float(distances[row][search_row_index]) != 0.0})")
                         if float(distances[row][search_row_index]) != 0.0:
-                            search_data['min_dist'] = float(distances[row][search_row_index])
-                            # print(f"search_data['min_dist'] is: {search_data['min_dist']}")
-                            search_data['min_dist_location'] = 'vertical'
-                            search_data['min_vertical_index'] = row
+                            if row not in self.addresses:  # O(n) (in a for loop makes this O(n^2))
+                                # print(f'distances[{row}][{search_row_index}] is: {float(distances[row][search_row_index])}')
+                                search_data['min_dist'] = float(distances[row][search_row_index])
+                                # print(f"search_data['min_dist'] is: {search_data['min_dist']}")
+                                search_data['min_dist_location'] = 'vertical'
+                                search_data['min_vertical_index'] = row
 
-        # print(f"from find_shortest_distance, search_data['min_dist'] is: {search_data['min_dist']}")
+            # print(f'distances[{search_row_index}][{row}] is: {distances[search_row_index][row]}')
+            # print(f'distances[{row}][{search_row_index}] is: {distances[row][search_row_index]}')
+
+        print(f"from find_shortest_distance, search_data is: {search_data}")
+        print(f'Address indexes that have been added: {self.addresses}')
+
         self.distance_traveled.append(float(search_data["min_dist"]))
         # print(f'self.first_truck is: {self.first_truck}')
         # print(f'self.second_truck is: {self.second_truck}')
@@ -338,7 +356,7 @@ class DeliverPackages:
         distance_list = delivery_info_dict[ppd.get_hash().lookup_item(int(package_id_data[0]))[1][1]]  # [O(1)]
 
         if int(package_id) in self.high_priority_packages.keys():
-            print(f'\nself.high_priority_packages[{package_id}] is: {self.high_priority_packages[int(package_id)]}')
+            print(f'self.high_priority_packages[{package_id}] is: {self.high_priority_packages[int(package_id)]}')
         else:
             print(f'No high priority data for package {package_id}')
 
@@ -448,7 +466,8 @@ class DeliverPackages:
                                 # print(f'first truck departure time is: {FIRST_TRUCK_DEPARTURE_TIME}')
 
                                 #XXXXXXXXXX Use WGUPS_time class XXXXXXXXXX
-                                if deliver_by_time > FIRST_TRUCK_DEPARTURE_TIME:
+                                # if deliver_by_time > FIRST_TRUCK_DEPARTURE_TIME:
+                                if wtime.time_difference(deliver_by_time, FIRST_TRUCK_DEPARTURE_TIME) > 0:
                                     # print(f"package id {distance_list.get('Package ID').get(package_num)} can be loaded on truck 1.")
                                     deliver_by_bool = True
                                 else:
@@ -462,7 +481,7 @@ class DeliverPackages:
                                 # print(f'self.first_truck is: {self.first_truck}')
 
                                 #XXXXXXXXXX Use WGUPS_time class XXXXXXXXXX
-                                if deliver_by_time > self.first_truck_delivery_times[1][-1]:
+                                if wtime.time_difference(deliver_by_time, self.first_truck_delivery_times[1][-1]) > 0:
                                     # print(f"package id {distance_list.get('Package ID').get(package_num)} can be loaded on truck 1.")
                                     deliver_by_bool = True
                                 else:
@@ -516,15 +535,17 @@ class DeliverPackages:
                     #         print(f"self.high_priority_packages[package_id]['Truck'] is: {self.high_priority_packages[package_id].get('Truck')}")
                     #
                     #         # print(f'\nself.high_priority_packages[{package_id}] is: {self.high_priority_packages[int(package_id)]}')
-                    print(f'\n\ndelayed_bool is: {delayed_bool}')
+                    print(f"Package ID: {distance_list.get('Package ID').get(package_num)}")
+                    print(f'delayed_bool is: {delayed_bool}')
                     print(f'deliver_by_bool is {deliver_by_bool}')
                     print(f'load_on_this_truck_bool is: {load_on_this_truck_bool}')
 
                     if delayed_bool and deliver_by_bool and load_on_this_truck_bool:
-                        print('EVERYTHING IS TRUE FOR TRUCK 1!!!')
                         self.first_truck.append(distance_list.get('Package ID').get(package_num))
                         self.been_loaded.append(distance_list.get('Package ID').get(package_num))
                         self.total_packages_loaded += 1
+
+                        print(f"{distance_list.get('Package ID').get(package_num)} has been added to truck1!!!")
 
                         self.total_dist_first_truck = self.calculate_truck_distance(self.first_truck, delivery_info_dict)  # [O(n)]
                         self.first_truck_delivery_times = self.calculate_delivery_time(self.total_dist_first_truck[1], FIRST_TRUCK_DEPARTURE_TIME)  # [O(n)]
@@ -590,8 +611,10 @@ class DeliverPackages:
         else:
             return
 
-
-        print(f'\nself.total_packages_loaded is: {self.total_packages_loaded}')
+        print(f'Truck 1: {self.first_truck}')
+        print(f'Truck 2: {self.second_truck}')
+        print(f'Truck 3: {self.third_truck}')
+        print(f'self.total_packages_loaded is: {self.total_packages_loaded}')
         print(f'len(ppd.get_input_data()) is {len(ppd.get_input_data())}')
         # Check if all the packages have been loaded
         ##### Consider changing this to not be recursive #####
@@ -618,17 +641,19 @@ class DeliverPackages:
 
         else:
             dist_list_index = distance_list.get("Index")  # [O(n)]
-            # print(f'dist_list_index is: {dist_list_index}')
+            print(f'\n\ndist_list_index(address index) is: {dist_list_index}')
             shortest_dist = self.find_shortest_distance(ppd.get_distance_data(), int(dist_list_index))  # [O(n)]
-            # print(f'shortest_dist is: {shortest_dist}')
+            print(f'shortest_dist (index of nearest address) is: {shortest_dist}')
             dist_name = ppd.get_distance_name_data()[shortest_dist][2]  # [O(1)]
-            # print(f'dist_name is: {dist_name}')
+            print(f'dist_name (nearest address) is: {dist_name}')
             # print(f'package_id is: {package_id}')
             print(f"delivery_info_dict.get(dist_name) is: {delivery_info_dict.get(dist_name)}")
             # print(f"delivery_info_dict.get(dist_name)['Package ID'][1] is: {delivery_info_dict.get(dist_name)['Package ID'][1]}")
             # print(f'delivery_info_dict is: {delivery_info_dict}')
-            if delivery_info_dict.get(dist_name) is not None:
-                self.load_trucks(delivery_info_dict.get(dist_name)['Package ID'][1], delivery_info_dict)  # [O(n^2)]
+            # if delivery_info_dict.get(dist_name) is None:
+
+
+            self.load_trucks(delivery_info_dict.get(dist_name)['Package ID'][1], delivery_info_dict)  # [O(n^2)]
 
     @staticmethod
     def convert_time(input_time):
