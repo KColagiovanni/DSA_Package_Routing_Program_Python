@@ -1,0 +1,493 @@
+Selection: 1
+Enter a time (HH:MM:SS): 12:30
+
+Showing package info for all packages and trucks at 12:30:00:
+
+from main(), dp.find_shortest_distance_from_and_to_hub is: 14
+
+package_id_data is: ['14', '4300 S 1300 E', 'Millcreek', 'UT', '84117', '10:30:00', '88', 'Must be delivered with 15 & 19']
+distance_list is: {'Index': '20', 'Package ID': {1: 14}, 'Deliver By': '10:30:00', 'Deliver Together': {13, 14, 15, 16, 19, 20}}
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['8', '00', '00']
+Truck 1: [14]
+Truck 2: []
+Truck 3: []
+from find_shortest_distance float(distances[20][1]) (start search index) is: 9.5
+from find_shortest_distance, search_data is: {'min_horizontal_index': 17, 'min_vertical_index': 21, 'traversal_direction': 'vertical', 'min_dist': 2.0, 'min_dist_location': 'vertical'}
+Address indexes that have been added: [0]
+
+package_id_data is: ['15', '4580 S 2300 E', 'Holladay', 'UT', '84117', '9:00:00', '4', 'None']
+distance_list is: {'Index': '21', 'Package ID': {1: 15, 2: 16, 3: 34}, 'Deliver By': '10:30:00', 'Deliver Together': {13, 14, 15, 16, 19, 20}}
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['8', '00', '00']
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['8', '00', '00']
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['8', '00', '00']
+Truck 1: [14, 15, 16, 34]
+Truck 2: []
+Truck 3: []
+from find_shortest_distance float(distances[21][1]) (start search index) is: 10.9
+from find_shortest_distance, search_data is: {'min_horizontal_index': 20, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 2.0, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20]
+
+package_id_data is: ['14', '4300 S 1300 E', 'Millcreek', 'UT', '84117', '10:30:00', '88', 'Must be delivered with 15 & 19']
+distance_list is: {'Index': '20', 'Package ID': {1: 14}, 'Deliver By': '10:30:00', 'Deliver Together': {13, 14, 15, 16, 19, 20}}
+Truck 1: [14, 15, 16, 34]
+Truck 2: []
+Truck 3: []
+from find_shortest_distance float(distances[20][1]) (start search index) is: 9.5
+from find_shortest_distance, search_data is: {'min_horizontal_index': 0, 'min_vertical_index': 24, 'traversal_direction': 'vertical', 'min_dist': 2.8, 'min_dist_location': 'vertical'}
+Address indexes that have been added: [0, 20, 21]
+
+package_id_data is: ['25', '5383 South 900 East #104', 'Salt Lake City', 'UT', '84117', '10:30:00', '7', 'Delayed on flight---will not arrive to depot until 9:05 am']
+distance_list is: {'Index': '24', 'Package ID': {1: 25, 2: 26}, 'Deliver By': '10:30:00', 'Delayed ETA': '9:05:00'}
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['8', '00', '00']
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['8', '00', '00']
+Truck 1: [14, 15, 16, 34, 25, 26]
+Truck 2: []
+Truck 3: []
+from find_shortest_distance float(distances[24][1]) (start search index) is: 10.0
+from find_shortest_distance, search_data is: {'min_horizontal_index': 22, 'min_vertical_index': 26, 'traversal_direction': 'vertical', 'min_dist': 1.3, 'min_dist_location': 'vertical'}
+Address indexes that have been added: [0, 20, 21]
+
+package_id_data is: ['22', '6351 South 900 East', 'Murray', 'UT', '84121', 'EOD', '2', 'None']
+distance_list is: {'Index': '26', 'Package ID': {1: 22}, 'Deliver By': 'EOD'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22]
+Truck 2: []
+Truck 3: []
+from find_shortest_distance float(distances[26][1]) (start search index) is: 13.0
+from find_shortest_distance, search_data is: {'min_horizontal_index': 24, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 1.3, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24]
+
+package_id_data is: ['25', '5383 South 900 East #104', 'Salt Lake City', 'UT', '84117', '10:30:00', '7', 'Delayed on flight---will not arrive to depot until 9:05 am']
+distance_list is: {'Index': '24', 'Package ID': {1: 25, 2: 26}, 'Deliver By': '10:30:00', 'Delayed ETA': '9:05:00'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22]
+Truck 2: []
+Truck 3: []
+from find_shortest_distance float(distances[24][1]) (start search index) is: 10.0
+from find_shortest_distance, search_data is: {'min_horizontal_index': 0, 'min_vertical_index': 25, 'traversal_direction': 'vertical', 'min_dist': 7.0, 'min_dist_location': 'vertical'}
+Address indexes that have been added: [0, 20, 21, 24, 26]
+
+package_id_data is: ['10', '600 E 900 South', 'Salt Lake City', 'UT', '84105', 'EOD', '1', 'None']
+distance_list is: {'Index': '25', 'Package ID': {1: 10}, 'Deliver By': 'EOD'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10]
+Truck 2: []
+Truck 3: []
+from find_shortest_distance float(distances[25][1]) (start search index) is: 4.4
+from find_shortest_distance, search_data is: {'min_horizontal_index': 19, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 1.8, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26]
+
+package_id_data is: ['5', '410 S State St', 'Salt Lake City', 'UT', '84111', 'EOD', '5', 'None']
+distance_list is: {'Index': '19', 'Package ID': {1: 5, 2: 37, 3: 38}, 'Deliver By': '10:30:00', 'Truck': 2}
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['8', '00', '00']
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['8', '00', '00']
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['8', '00', '00']
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38]
+Truck 2: []
+Truck 3: []
+from find_shortest_distance float(distances[19][1]) (start search index) is: 4.8
+from find_shortest_distance, search_data is: {'min_horizontal_index': 8, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 1.0, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25]
+
+package_id_data is: ['3', '233 Canyon Rd', 'Salt Lake City', 'UT', '84103', 'EOD', '2', 'Can only be on truck 2']
+distance_list is: {'Index': '8', 'Package ID': {1: 3}, 'Deliver By': 'EOD', 'Truck': 2}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3]
+Truck 2: []
+Truck 3: []
+from find_shortest_distance float(distances[8][1]) (start search index) is: 4.8
+from find_shortest_distance, search_data is: {'min_horizontal_index': 6, 'min_vertical_index': 12, 'traversal_direction': 'vertical', 'min_dist': 0.6, 'min_dist_location': 'vertical'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19]
+
+package_id_data is: ['8', '300 State St', 'Salt Lake City', 'UT', '84103', 'EOD', '9', 'None']
+distance_list is: {'Index': '12', 'Package ID': {1: 8, 2: 9, 3: 30}, 'Deliver By': '10:30:00'}
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['8', '00', '00']
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['8', '00', '00']
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['9', '05', '00']
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9]
+Truck 2: [30]
+Truck 3: []
+from find_shortest_distance float(distances[12][1]) (start search index) is: 4.8
+from find_shortest_distance, search_data is: {'min_horizontal_index': 8, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 0.6, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8]
+
+package_id_data is: ['3', '233 Canyon Rd', 'Salt Lake City', 'UT', '84103', 'EOD', '2', 'Can only be on truck 2']
+distance_list is: {'Index': '8', 'Package ID': {1: 3}, 'Deliver By': 'EOD', 'Truck': 2}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9]
+Truck 2: [30]
+Truck 3: []
+from find_shortest_distance float(distances[8][1]) (start search index) is: 4.8
+from find_shortest_distance, search_data is: {'min_horizontal_index': 0, 'min_vertical_index': 11, 'traversal_direction': 'vertical', 'min_dist': 4.7, 'min_dist_location': 'vertical'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12]
+
+package_id_data is: ['28', '2835 Main St', 'Salt Lake City', 'UT', '84115', 'EOD', '7', 'Delayed on flight---will not arrive to depot until 9:05 am']
+distance_list is: {'Index': '11', 'Package ID': {1: 28}, 'Deliver By': 'EOD', 'Delayed ETA': '9:05:00'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28]
+Truck 2: [30]
+Truck 3: []
+from find_shortest_distance float(distances[11][1]) (start search index) is: 5.3
+from find_shortest_distance, search_data is: {'min_horizontal_index': 5, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 0.8, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12]
+
+package_id_data is: ['1', '195 W Oakland Ave', 'Salt Lake City', 'UT', '84115', '10:30:00', '21', 'None']
+distance_list is: {'Index': '5', 'Package ID': {1: 1}, 'Deliver By': '10:30:00'}
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['8', '00', '00']
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30]
+Truck 3: []
+from find_shortest_distance float(distances[5][1]) (start search index) is: 4.8
+from find_shortest_distance, search_data is: {'min_horizontal_index': 4, 'min_vertical_index': 18, 'traversal_direction': 'vertical', 'min_dist': 1.1, 'min_dist_location': 'vertical'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11]
+
+package_id_data is: ['4', '380 W 2880 S', 'Salt Lake City', 'UT', '84115', 'EOD', '4', 'None']
+distance_list is: {'Index': '18', 'Package ID': {1: 4, 2: 40}, 'Deliver By': '10:30:00'}
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['9', '55', '24']
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '00', '12']
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40]
+Truck 3: []
+from find_shortest_distance float(distances[18][1]) (start search index) is: 5.0
+from find_shortest_distance, search_data is: {'min_horizontal_index': 11, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 1.0, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5]
+
+package_id_data is: ['28', '2835 Main St', 'Salt Lake City', 'UT', '84115', 'EOD', '7', 'Delayed on flight---will not arrive to depot until 9:05 am']
+distance_list is: {'Index': '11', 'Package ID': {1: 28}, 'Deliver By': 'EOD', 'Delayed ETA': '9:05:00'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40]
+Truck 3: []
+from find_shortest_distance float(distances[11][1]) (start search index) is: 5.3
+from find_shortest_distance, search_data is: {'min_horizontal_index': 0, 'min_vertical_index': 17, 'traversal_direction': 'vertical', 'min_dist': 1.2, 'min_dist_location': 'vertical'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18]
+
+package_id_data is: ['20', '3595 Main St', 'Salt Lake City', 'UT', '84115', '10:30:00', '37', 'Must be delivered with 13 & 15']
+distance_list is: {'Index': '17', 'Package ID': {1: 20, 2: 21}, 'Deliver By': '10:30:00', 'Deliver Together': {13, 14, 15, 16, 19, 20}}
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '00', '12']
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '00', '12']
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21]
+Truck 3: []
+from find_shortest_distance float(distances[17][1]) (start search index) is: 6.0
+from find_shortest_distance, search_data is: {'min_horizontal_index': 4, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 0.5, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18]
+
+package_id_data is: ['19', '177 W Price Ave', 'Salt Lake City', 'UT', '84115', 'EOD', '37', 'None']
+distance_list is: {'Index': '4', 'Package ID': {1: 19}, 'Deliver By': 'EOD'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19]
+Truck 3: []
+from find_shortest_distance float(distances[4][1]) (start search index) is: 6.0
+from find_shortest_distance, search_data is: {'min_horizontal_index': 2, 'min_vertical_index': 16, 'traversal_direction': 'vertical', 'min_dist': 1.4, 'min_dist_location': 'vertical'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17]
+
+package_id_data is: ['12', '3575 W Valley Central Station bus Loop', 'West Valley City', 'UT', '84119', 'EOD', '1', 'None']
+distance_list is: {'Index': '16', 'Package ID': {1: 12}, 'Deliver By': 'EOD'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12]
+Truck 3: []
+from find_shortest_distance float(distances[16][1]) (start search index) is: 7.4
+from find_shortest_distance, search_data is: {'min_horizontal_index': 4, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 1.4, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4]
+
+package_id_data is: ['19', '177 W Price Ave', 'Salt Lake City', 'UT', '84115', 'EOD', '37', 'None']
+distance_list is: {'Index': '4', 'Package ID': {1: 19}, 'Deliver By': 'EOD'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12]
+Truck 3: []
+from find_shortest_distance float(distances[4][1]) (start search index) is: 6.0
+from find_shortest_distance, search_data is: {'min_horizontal_index': 0, 'min_vertical_index': 14, 'traversal_direction': 'vertical', 'min_dist': 2.4, 'min_dist_location': 'vertical'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4, 16]
+
+package_id_data is: ['17', '3148 S 1100 W', 'Salt Lake City', 'UT', '84119', 'EOD', '2', 'None']
+distance_list is: {'Index': '14', 'Package ID': {1: 17}, 'Deliver By': 'EOD'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12, 17]
+Truck 3: []
+from find_shortest_distance float(distances[14][1]) (start search index) is: 4.6
+from find_shortest_distance, search_data is: {'min_horizontal_index': 13, 'min_vertical_index': 15, 'traversal_direction': 'vertical', 'min_dist': 0.6, 'min_dist_location': 'vertical'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4, 16]
+
+package_id_data is: ['31', '3365 S 900 W', 'Salt Lake City', 'UT', '84119', '10:30:00', '1', 'None']
+distance_list is: {'Index': '15', 'Package ID': {1: 31, 2: 32}, 'Deliver By': '10:30:00', 'Delayed ETA': '9:05:00'}
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '36', '12']
+deliver_by_time is None
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['9', '37', '12']
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '36', '12']
+deliver_by_time is None
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '02', '24']
+~~~~~ I MADE IT HERE (if)!!!!!! ~~~~~
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12, 17]
+Truck 3: [31, 32]
+from find_shortest_distance float(distances[15][1]) (start search index) is: 4.5
+from find_shortest_distance, search_data is: {'min_horizontal_index': 14, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 0.6, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4, 16, 14]
+
+package_id_data is: ['17', '3148 S 1100 W', 'Salt Lake City', 'UT', '84119', 'EOD', '2', 'None']
+distance_list is: {'Index': '14', 'Package ID': {1: 17}, 'Deliver By': 'EOD'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12, 17]
+Truck 3: [31, 32]
+from find_shortest_distance float(distances[14][1]) (start search index) is: 4.6
+from find_shortest_distance, search_data is: {'min_horizontal_index': 0, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 4.6, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4, 16, 14, 15]
+
+package_id_data is: ['23', '5100 South 2700 West', 'Salt Lake City', 'UT', '84118', 'EOD', '5', 'None']
+distance_list is: {'Index': '23', 'Package ID': {1: 23}, 'Deliver By': 'EOD'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12, 17, 23]
+Truck 3: [31, 32]
+from find_shortest_distance float(distances[23][1]) (start search index) is: 6.9
+from find_shortest_distance, search_data is: {'min_horizontal_index': 10, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 0.4, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4, 16, 14, 15]
+
+package_id_data is: ['11', '2600 Taylorsville Blvd', 'Salt Lake City', 'UT', '84118', 'EOD', '1', 'None']
+distance_list is: {'Index': '10', 'Package ID': {1: 11}, 'Deliver By': 'EOD'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12, 17, 23, 11]
+Truck 3: [31, 32]
+from find_shortest_distance float(distances[10][1]) (start search index) is: 7.3
+from find_shortest_distance, search_data is: {'min_horizontal_index': 3, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 1.0, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4, 16, 14, 15, 23]
+
+package_id_data is: ['18', '1488 4800 S', 'Salt Lake City', 'UT', '84123', 'EOD', '6', 'Can only be on truck 2']
+distance_list is: {'Index': '3', 'Package ID': {1: 18}, 'Deliver By': 'EOD', 'Truck': 2}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12, 17, 23, 11, 18]
+Truck 3: [31, 32]
+from find_shortest_distance float(distances[3][1]) (start search index) is: 6.4
+from find_shortest_distance, search_data is: {'min_horizontal_index': 0, 'min_vertical_index': 13, 'traversal_direction': 'vertical', 'min_dist': 3.9, 'min_dist_location': 'vertical'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4, 16, 14, 15, 23, 10]
+
+package_id_data is: ['6', '3060 Lester St', 'West Valley City', 'UT', '84119', '10:30:00', '88', 'Delayed on flight---will not arrive to depot until 9:05 am']
+distance_list is: {'Index': '13', 'Package ID': {1: 6}, 'Deliver By': '10:30:00', 'Delayed ETA': '9:05:00'}
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['11', '19', '24']
+deliver_by_time is None
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '02', '24']
+~~~~~ I MADE IT HERE (if)!!!!!! ~~~~~
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12, 17, 23, 11, 18]
+Truck 3: [31, 32, 6]
+from find_shortest_distance float(distances[13][1]) (start search index) is: 3.0
+from find_shortest_distance, search_data is: {'min_horizontal_index': 7, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 1.6, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4, 16, 14, 15, 23, 10, 3]
+
+package_id_data is: ['36', '2300 Parkway Blvd', 'West Valley City', 'UT', '84119', 'EOD', '88', 'Can only be on truck 2']
+distance_list is: {'Index': '7', 'Package ID': {1: 36}, 'Deliver By': 'EOD', 'Truck': 2}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12, 17, 23, 11, 18, 36]
+Truck 3: [31, 32, 6]
+from find_shortest_distance float(distances[7][1]) (start search index) is: 2.8
+from find_shortest_distance, search_data is: {'min_horizontal_index': 0, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 2.8, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4, 16, 14, 15, 23, 10, 3, 13]
+
+package_id_data is: ['24', '5025 State St', 'Murray', 'UT', '84107', 'EOD', '7', 'None']
+distance_list is: {'Index': '22', 'Package ID': {1: 24}, 'Deliver By': 'EOD'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12, 17, 23, 11, 18, 36, 24]
+Truck 3: [31, 32, 6]
+from find_shortest_distance float(distances[22][1]) (start search index) is: 8.3
+from find_shortest_distance, search_data is: {'min_horizontal_index': 17, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 2.3, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4, 16, 14, 15, 23, 10, 3, 13, 7]
+
+package_id_data is: ['20', '3595 Main St', 'Salt Lake City', 'UT', '84115', '10:30:00', '37', 'Must be delivered with 13 & 15']
+distance_list is: {'Index': '17', 'Package ID': {1: 20, 2: 21}, 'Deliver By': '10:30:00', 'Deliver Together': {13, 14, 15, 16, 19, 20}}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12, 17, 23, 11, 18, 36, 24]
+Truck 3: [31, 32, 6]
+from find_shortest_distance float(distances[17][1]) (start search index) is: 6.0
+from find_shortest_distance, search_data is: {'min_horizontal_index': 0, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 6.0, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4, 16, 14, 15, 23, 10, 3, 13, 7, 22]
+
+package_id_data is: ['2', '2530 S 500 E', 'Salt Lake City', 'UT', '84106', 'EOD', '44', 'None']
+distance_list is: {'Index': '9', 'Package ID': {1: 2, 2: 33}, 'Deliver By': 'EOD'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12, 17, 23, 11, 18, 36, 24, 2, 33]
+Truck 3: [31, 32, 6]
+from find_shortest_distance float(distances[9][1]) (start search index) is: 6.3
+from find_shortest_distance, search_data is: {'min_horizontal_index': 5, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 1.5, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4, 16, 14, 15, 23, 10, 3, 13, 7, 22]
+
+package_id_data is: ['1', '195 W Oakland Ave', 'Salt Lake City', 'UT', '84115', '10:30:00', '21', 'None']
+distance_list is: {'Index': '5', 'Package ID': {1: 1}, 'Deliver By': '10:30:00'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12, 17, 23, 11, 18, 36, 24, 2, 33]
+Truck 3: [31, 32, 6]
+from find_shortest_distance float(distances[5][1]) (start search index) is: 4.8
+from find_shortest_distance, search_data is: {'min_horizontal_index': 0, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 4.8, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4, 16, 14, 15, 23, 10, 3, 13, 7, 22, 9]
+
+package_id_data is: ['13', '2010 W 500 S', 'Salt Lake City', 'UT', '84104', '10:30:00', '2', 'None']
+distance_list is: {'Index': '6', 'Package ID': {1: 13, 2: 39}, 'Deliver By': '10:30:00'}
+deliver_by_time is None
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '12', '00']
+~~~~~ I MADE IT HERE (if)!!!!!! ~~~~~
+deliver_by_time is None
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '45', '00']
+~~~~~ I MADE IT HERE (else)!!!!!! ~~~~~
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '45', '00']
+backtracking is: -2
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '08', '24']
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12, 17, 23, 11, 18, 36, 24, 2, 33]
+Truck 3: [39, 31, 32, 6, 13]
+from find_shortest_distance float(distances[6][1]) (start search index) is: 1.6
+from find_shortest_distance, search_data is: {'min_horizontal_index': 0, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 1.6, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4, 16, 14, 15, 23, 10, 3, 13, 7, 22, 9]
+
+package_id_data is: ['7', '1330 2100 S', 'Salt Lake City', 'UT', '84106', 'EOD', '8', 'None']
+distance_list is: {'Index': '2', 'Package ID': {1: 7, 2: 29}, 'Deliver By': '10:30:00'}
+deliver_by_time is None
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '45', '00']
+~~~~~ I MADE IT HERE (else)!!!!!! ~~~~~
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '45', '00']
+backtracking is: -2
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '08', '24']
+deliver_by_time is None
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '45', '00']
+~~~~~ I MADE IT HERE (else)!!!!!! ~~~~~
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '45', '00']
+backtracking is: -2
+time1.split(':') is: ['10', '30', '00']
+time2.split(':') is: ['10', '08', '24']
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12, 17, 23, 11, 18, 36, 24, 2, 33]
+Truck 3: [29, 7, 39, 31, 32, 6, 13]
+from find_shortest_distance float(distances[2][1]) (start search index) is: 7.1
+from find_shortest_distance, search_data is: {'min_horizontal_index': 0, 'min_vertical_index': 0, 'traversal_direction': 'vertical', 'min_dist': 7.1, 'min_dist_location': 'horizontal'}
+Address indexes that have been added: [0, 20, 21, 24, 26, 25, 19, 8, 12, 11, 5, 18, 17, 4, 16, 14, 15, 23, 10, 3, 13, 7, 22, 9, 6]
+
+package_id_data is: ['27', '1060 Dalton Ave S', 'Salt Lake City', 'UT', '84104', 'EOD', '5', 'None']
+distance_list is: {'Index': '1', 'Package ID': {1: 27, 2: 35}, 'Deliver By': 'EOD'}
+Truck 1: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1]
+Truck 2: [30, 4, 40, 20, 21, 19, 12, 17, 23, 11, 18, 36, 24, 2, 33]
+Truck 3: [29, 7, 39, 31, 32, 6, 13, 27, 35]
+
+########################################################################################################################
+                                             All packages have been loaded
+########################################################################################################################
+
+Truck 1 Package IDs: [14, 15, 16, 34, 25, 26, 22, 10, 5, 37, 38, 3, 8, 9, 28, 1](# of packages: 16, Distance: 29.3 miles)
+Truck 1 Distance List: [1.9, 2.0, 0.0, 0.0, 3.4, 0.0, 1.3, 8.3, 1.8, 0.0, 0.0, 1.0, 0.6, 0.0, 4.7, 0.8, 3.5](miles)
+Truck 1 Delivery Times: ['8:06:36', '8:13:12', '8:13:12', '8:13:12', '8:24:36', '8:24:36', '8:28:48', '8:56:24', '9:02:24', '9:02:24', '9:02:24', '9:06:00', '9:07:48', '9:07:48', '9:23:24', '9:25:48', '9:37:12']
+Truck 1 Duration Times: ['0:06:36', '0:06:36', '0:00:00', '0:00:00', '0:11:24', '0:00:00', '0:04:12', '0:27:36', '0:06:00', '0:00:00', '0:00:00', '0:03:36', '0:01:48', '0:00:00', '0:15:36', '0:02:24', '0:11:24']
+
+Truck 2 Package IDs: [30, 4, 40, 20, 21, 19, 12, 17, 23, 11, 18, 36, 24, 2, 33](# of packages: 15, Distance: 48.0 miles)
+Truck 2 Distance List: [7.6, 5.4, 0.0, 1.6, 0.0, 0.5, 1.4, 6.4, 4.8, 0.4, 1.0, 4.0, 7.8, 4.3, 0.0, 2.8](miles)
+Truck 2 Delivery Times: ['9:30:12', '9:48:12', '9:48:12', '9:53:36', '9:53:36', '9:55:24', '10:00:12', '10:21:48', '10:38:00', '10:39:12', '10:42:48', '10:56:00', '11:21:48', '11:36:12', '11:36:12', '11:45:48']
+Truck 2 Duration Times: ['0:25:12', '0:18:00', '0:00:00', '0:05:24', '0:00:00', '0:01:48', '0:04:48', '0:21:36', '0:16:12', '0:01:12', '0:03:36', '0:13:12', '0:25:48', '0:14:24', '0:00:00', '0:09:36']
+
+Truck 3 Package IDs: [29, 7, 39, 31, 32, 6, 13, 27, 35](# of packages: 9, Distance: 32.7 miles)
+Truck 3 Distance List: [3.8, 0.0, 8.6, 5.8, 0.0, 1.5, 4.2, 1.6, 0.0, 7.2](miles)
+Truck 3 Delivery Times: ['9:49:48', '9:49:48', '10:18:36', '10:37:48', '10:37:48', '10:42:36', '10:56:24', '11:01:48', '11:01:48', '11:25:48']
+Truck 3 Duration Times: ['0:12:36', '0:00:00', '0:28:48', '0:19:12', '0:00:00', '0:04:48', '0:13:48', '0:05:24', '0:00:00', '0:24:00']
+
+Total Distance traveled: 110.0 miles
+########################################################################################################################
+
+
+
+------------------------------------------------------------------------------------------------------------------------------
+|                                            Truck 1 left the the hub at 8:00:00                                             |
+|                                      Truck 1 status: Returned to the hub at 09:37:12                                       |
+------------------------------------------------------------------------------------------------------------------------------
+| ID |                Address                 |  Deliver By |        City        | Zip Code | Weight |         Status        |
+------------------------------------------------------------------------------------------------------------------------------
+| 14 | 4300 S 1300 E                          | 10:30:00    | Millcreek          | 84117    | 88     | Delivered at 08:06:36 |  {'Index': '20', 'Package ID': {1: 14}, 'Deliver By': '10:30:00', 'Deliver Together': {19, 14, 15}}
+| 15 | 4580 S 2300 E                          | 9:00:00     | Holladay           | 84117    | 4      | Delivered at 08:13:12 |  {'Index': '21', 'Package ID': {1: 15}, 'Deliver By': '9:00:00'}
+| 16 | 4580 S 2300 E                          | 10:30:00    | Holladay           | 84117    | 88     | Delivered at 08:13:12 |  {'Index': '21', 'Package ID': {1: 15, 2: 16}, 'Deliver By': '10:30:00', 'Deliver Together': {13, 14, 15, 16, 19}}
+| 34 | 4580 S 2300 E                          | 10:30:00    | Holladay           | 84117    | 2      | Delivered at 08:13:12 |  {'Index': '21', 'Package ID': {1: 15, 2: 16, 3: 34}, 'Deliver By': '10:30:00', 'Deliver Together': {13, 14, 15, 16, 19}}
+| 25 | 5383 South 900 East #104               | 10:30:00    | Salt Lake City     | 84117    | 7      | Delivered at 08:24:36 |  {'Index': '24', 'Package ID': {1: 25}, 'Deliver By': '10:30:00', 'Delayed ETA': '9:05:00'}
+| 26 | 5383 South 900 East #104               | EOD         | Salt Lake City     | 84117    | 25     | Delivered at 08:24:36 |  {'Index': '24', 'Package ID': {1: 25, 2: 26}, 'Deliver By': '10:30:00', 'Delayed ETA': '9:05:00'}
+| 22 | 6351 South 900 East                    | EOD         | Murray             | 84121    | 2      | Delivered at 08:28:48 |  {'Index': '26', 'Package ID': {1: 22}, 'Deliver By': 'EOD'}
+| 10 | 600 E 900 South                        | EOD         | Salt Lake City     | 84105    | 1      | Delivered at 08:56:24 |  {'Index': '25', 'Package ID': {1: 10}, 'Deliver By': 'EOD'}
+|  5 | 410 S State St                         | EOD         | Salt Lake City     | 84111    | 5      | Delivered at 09:02:24 |  {'Index': '19', 'Package ID': {1: 5}, 'Deliver By': 'EOD'}
+| 37 | 410 S State St                         | 10:30:00    | Salt Lake City     | 84111    | 2      | Delivered at 09:02:24 |  {'Index': '19', 'Package ID': {1: 5, 2: 37}, 'Deliver By': '10:30:00'}
+| 38 | 410 S State St                         | EOD         | Salt Lake City     | 84111    | 9      | Delivered at 09:02:24 |  {'Index': '19', 'Package ID': {1: 5, 2: 37, 3: 38}, 'Deliver By': '10:30:00', 'Truck': 2}
+|  3 | 233 Canyon Rd                          | EOD         | Salt Lake City     | 84103    | 2      | Delivered at 09:06:00 |  {'Index': '8', 'Package ID': {1: 3}, 'Deliver By': 'EOD', 'Truck': 2}
+|  8 | 300 State St                           | EOD         | Salt Lake City     | 84103    | 9      | Delivered at 09:07:48 |  {'Index': '12', 'Package ID': {1: 8}, 'Deliver By': 'EOD'}
+|  9 | 300 State St                           | EOD         | Salt Lake City     | 84103    | 2      | Delivered at 09:07:48 |  {'Index': '12', 'Package ID': {1: 8, 2: 9}, 'Deliver By': 'EOD'}
+| 28 | 2835 Main St                           | EOD         | Salt Lake City     | 84115    | 7      | Delivered at 09:23:24 |  {'Index': '11', 'Package ID': {1: 28}, 'Deliver By': 'EOD', 'Delayed ETA': '9:05:00'}
+|  1 | 195 W Oakland Ave                      | 10:30:00    | Salt Lake City     | 84115    | 21     | Delivered at 09:25:48 |  {'Index': '5', 'Package ID': {1: 1}, 'Deliver By': '10:30:00'}
+------------------------------------------------------------------------------------------------------------------------------
+|                      Truck 1 Summary: 16 packages were delivered in 1:37:12 and traveled 29.3 miles.                       |
+------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------
+|                                            Truck 2 left the the hub at 9:05:00                                             |
+|                                      Truck 2 status: Returned to the hub at 11:45:48                                       |
+------------------------------------------------------------------------------------------------------------------------------
+| ID |                Address                 |  Deliver By |        City        | Zip Code | Weight |         Status        |
+------------------------------------------------------------------------------------------------------------------------------
+| 30 | 300 State St                           | 10:30:00    | Salt Lake City     | 84103    | 1      | Delivered at 09:30:12 |  {'Index': '12', 'Package ID': {1: 8, 2: 9, 3: 30}, 'Deliver By': '10:30:00'}
+|  4 | 380 W 2880 S                           | EOD         | Salt Lake City     | 84115    | 4      | Delivered at 09:48:12 |  {'Index': '18', 'Package ID': {1: 4}, 'Deliver By': 'EOD'}
+| 40 | 380 W 2880 S                           | 10:30:00    | Salt Lake City     | 84115    | 45     | Delivered at 09:48:12 |  {'Index': '18', 'Package ID': {1: 4, 2: 40}, 'Deliver By': '10:30:00'}
+| 20 | 3595 Main St                           | 10:30:00    | Salt Lake City     | 84115    | 37     | Delivered at 09:53:36 |  {'Index': '17', 'Package ID': {1: 20}, 'Deliver By': '10:30:00', 'Deliver Together': {13, 14, 15, 16, 19, 20}}
+| 21 | 3595 Main St                           | EOD         | Salt Lake City     | 84115    | 3      | Delivered at 09:53:36 |  {'Index': '17', 'Package ID': {1: 20, 2: 21}, 'Deliver By': '10:30:00', 'Deliver Together': {13, 14, 15, 16, 19, 20}}
+| 19 | 177 W Price Ave                        | EOD         | Salt Lake City     | 84115    | 37     | Delivered at 09:55:24 |  {'Index': '4', 'Package ID': {1: 19}, 'Deliver By': 'EOD'}
+| 12 | 3575 W Valley Central Station bus Loop | EOD         | West Valley City   | 84119    | 1      | Delivered at 10:00:12 |  {'Index': '16', 'Package ID': {1: 12}, 'Deliver By': 'EOD'}
+| 17 | 3148 S 1100 W                          | EOD         | Salt Lake City     | 84119    | 2      | Delivered at 10:21:48 |  {'Index': '14', 'Package ID': {1: 17}, 'Deliver By': 'EOD'}
+| 23 | 5100 South 2700 West                   | EOD         | Salt Lake City     | 84118    | 5      | Delivered at 10:38:00 |  {'Index': '23', 'Package ID': {1: 23}, 'Deliver By': 'EOD'}
+| 11 | 2600 Taylorsville Blvd                 | EOD         | Salt Lake City     | 84118    | 1      | Delivered at 10:39:12 |  {'Index': '10', 'Package ID': {1: 11}, 'Deliver By': 'EOD'}
+| 18 | 1488 4800 S                            | EOD         | Salt Lake City     | 84123    | 6      | Delivered at 10:42:48 |  {'Index': '3', 'Package ID': {1: 18}, 'Deliver By': 'EOD', 'Truck': 2}
+| 36 | 2300 Parkway Blvd                      | EOD         | West Valley City   | 84119    | 88     | Delivered at 10:56:00 |  {'Index': '7', 'Package ID': {1: 36}, 'Deliver By': 'EOD', 'Truck': 2}
+| 24 | 5025 State St                          | EOD         | Murray             | 84107    | 7      | Delivered at 11:21:48 |  {'Index': '22', 'Package ID': {1: 24}, 'Deliver By': 'EOD'}
+|  2 | 2530 S 500 E                           | EOD         | Salt Lake City     | 84106    | 44     | Delivered at 11:36:12 |  {'Index': '9', 'Package ID': {1: 2}, 'Deliver By': 'EOD'}
+| 33 | 2530 S 500 E                           | EOD         | Salt Lake City     | 84106    | 1      | Delivered at 11:36:12 |  {'Index': '9', 'Package ID': {1: 2, 2: 33}, 'Deliver By': 'EOD'}
+------------------------------------------------------------------------------------------------------------------------------
+|                      Truck 2 Summary: 15 packages were delivered in 2:40:48 and traveled 48.0 miles.                       |
+------------------------------------------------------------------------------------------------------------------------------
+
+Total combined distance traveled: 110.0 miles
+Total time trucks were delivering packages: 6:06:36 (HH:MM:SS)
+
+
+
+------------------------------------------------------------------------------------------------------------------------------
+|                                            Truck 3 left the the hub at 9:37:12                                             |
+|                                      Truck 3 status: Returned to the hub at 11:25:48                                       |
+------------------------------------------------------------------------------------------------------------------------------
+| ID |                Address                 |  Deliver By |        City        | Zip Code | Weight |         Status        |
+------------------------------------------------------------------------------------------------------------------------------
+| 29 | 1330 2100 S                            | 10:30:00    | Salt Lake City     | 84106    | 2      | Delivered at 09:49:48 |  {'Index': '2', 'Package ID': {1: 29}, 'Deliver By': '10:30:00'}
+|  7 | 1330 2100 S                            | EOD         | Salt Lake City     | 84106    | 8      | Delivered at 09:49:48 |  {'Index': '2', 'Package ID': {1: 29, 2: 7}, 'Deliver By': '10:30:00'}
+| 39 | 2010 W 500 S                           | EOD         | Salt Lake City     | 84104    | 9      | Delivered at 10:18:36 |  {'Index': '6', 'Package ID': {1: 39}, 'Deliver By': 'EOD'}
+| 31 | 3365 S 900 W                           | 10:30:00    | Salt Lake City     | 84119    | 1      | Delivered at 10:37:48 |  {'Index': '15', 'Package ID': {1: 31}, 'Deliver By': '10:30:00'}
+| 32 | 3365 S 900 W                           | EOD         | Salt Lake City     | 84119    | 1      | Delivered at 10:37:48 |  {'Index': '15', 'Package ID': {1: 31, 2: 32}, 'Deliver By': '10:30:00', 'Delayed ETA': '9:05:00'}
+|  6 | 3060 Lester St                         | 10:30:00    | West Valley City   | 84119    | 88     | Delivered at 10:42:36 |  {'Index': '13', 'Package ID': {1: 6}, 'Deliver By': '10:30:00', 'Delayed ETA': '9:05:00'}
+| 13 | 2010 W 500 S                           | 10:30:00    | Salt Lake City     | 84104    | 2      | Delivered at 10:56:24 |  {'Index': '6', 'Package ID': {1: 39, 2: 13}, 'Deliver By': '10:30:00'}
+| 27 | 1060 Dalton Ave S                      | EOD         | Salt Lake City     | 84104    | 5      | Delivered at 11:01:48 |  {'Index': '1', 'Package ID': {1: 27}, 'Deliver By': 'EOD'}
+| 35 | 1060 Dalton Ave S                      | EOD         | Salt Lake City     | 84104    | 88     | Delivered at 11:01:48 |  {'Index': '1', 'Package ID': {1: 27, 2: 35}, 'Deliver By': 'EOD'}
+------------------------------------------------------------------------------------------------------------------------------
+|                       Truck 3 Summary: 9 packages were delivered in 1:48:36 and traveled 32.7 miles.                       |
+------------------------------------------------------------------------------------------------------------------------------
+

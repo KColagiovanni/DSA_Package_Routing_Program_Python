@@ -351,7 +351,12 @@ class DeliverPackages:
     def load_trucks(self, package_id, delivery_info_dict):
 
         package_id_data = ppd.get_input_data()[int(package_id) - 1]
+
+        # Info from record dict/sync_csv_data(). Initially passed in from main.py.
         distance_list = delivery_info_dict[ppd.get_hash().lookup_item(int(package_id_data[0]))[1][1]]  # [O(1)]
+
+        print(f'\npackage_id_data is: {package_id_data}')
+        print(f'distance_list is: {distance_list}')
 
         # if int(package_id) in self.high_priority_packages.keys():
         #     print(f'self.high_priority_packages[{package_id}] is: {self.high_priority_packages[int(package_id)]}')
@@ -364,189 +369,181 @@ class DeliverPackages:
 
             # Load first Truck
             if len(self.first_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
-
-                load_on_truck1_bool = True
-                delayed_bool1 = False
-                deliver_by_bool1 = True
-
-            # if len(self.first_truck) == 0:
-            #     self.first_truck.append(package_id)
-            #     self.been_loaded.append(package_id)
-            #     self.total_packages_loaded += 1
-            #
-            # else:
-
-            # For loop to get all the packages that are all going to the same address. For this program, worse case
-            # is 3 iterations, best case is 1 iteration.
-            # for package_num in range(1, len(distance_list.get('Package ID')) + 1):  # [O(n)]
                 if distance_list.get('Package ID').get(package_num) not in self.first_truck:
-                    # print(f'\n{int(package_id)} not in {self.high_priority_packages.keys()} is: {int(package_id) not in self.high_priority_packages.keys()}')
+                    if distance_list.get('Package ID').get(package_num) not in self.been_loaded:
 
+                        delayed_bool1 = False
 
-                    #~~~~~~~~~~ Not in truck 2 or 3 ~~~~~~~~~
+                        #~~~~~~~~~~ Not in truck 2 or 3 ~~~~~~~~~
+                        truck_num = distance_list.get('Truck')
+                        load_on_truck1_bool = True
+                        if truck_num is not None:
+                            if truck_num == 2 and truck_num == 3:
+                                load_on_truck1_bool = False
 
-                    # print(f"'Truck' in self.high_priority_packages[package_id].keys() is: ({'Truck' in self.high_priority_packages[package_id].keys()})")
-                    # print(f"self.high_priority_packages[package_id].get('Truck') != 1 is: ({self.high_priority_packages[package_id].get('Truck') != 1})")
-                    # print(f"self.high_priority_packages[package_id].get('Truck') != 2 is: ({self.high_priority_packages[package_id].get('Truck') != 2})")
-                    # print(f"self.high_priority_packages[package_id].get('Truck') != 3 is: ({self.high_priority_packages[package_id].get('Truck') != 3})")
-                    # print(f"\ndistance_list.get('Package ID').get(package_num) is: {distance_list.get('Package ID').get(package_num)}")
-                    # print(f"self.high_priority_packages.keys() is: {self.high_priority_packages.keys()}")
-                    # if distance_list.get('Package ID').get(package_num) in self.high_priority_packages.keys():
-                    #
-                    #     print(self.high_priority_packages[distance_list.get('Package ID').get(package_num)].get('Truck'))
-
-                    # try:
-                    #     truck_num = self.high_priority_packages[distance_list.get('Package ID').get(package_num)].get('Truck')
-                    #
-                    # except KeyError:
-                    #     # print('No truck high priority data')
-                    #     load_on_truck1_bool = True
-                    #
-                    # else:
-                    #
-                    #     print(f'truck_num is: {truck_num}')
-                    #
-                    #     if truck_num is not None:
-                    #         # print(f"self.high_priority_packages.get('Package ID').get(package_num).get('Truck') is: {self.high_priority_packages.get('Package ID').get(package_num).get('Truck')}")
-                    #         if truck_num != 2 and truck_num != 3:
-                    #             # print(f"self.high_priority_packages[package_id].get('Truck') is: {self.high_priority_packages[package_id].get('Truck')}")
-                    #             load_on_truck1_bool = True
-                    #             # print('Okay to be on truck 1(Truck Num)')
-                    #
-                    #         else:
-                    #             # print(f'Must be on truck {truck_num}')
-                    #             load_on_truck1_bool = False
-                    #
-                    #     else:
-                    #         # print(f'Must be on truck {truck_num}')
-                    #         load_on_truck1_bool = True
-
-                    #~~~~~~~~~~ Delivered with other packages ~~~~~~~~~~
-
-                    # need_to_pack = self.packages_to_be_delivered_together.difference(self.first_truck)
-                    #
-                    # print(f'need_to_pack is: {need_to_pack}')
-                    #
-                    # if len(need_to_pack) == 1:
-                    #     if MAX_PACKAGES_PER_TRUCK - len(self.first_truck) - len(distance_list.get(need_to_pack)) == 0:
-                    #         for last_package in need_to_pack:
-                    #             delivery_info_dict[ppd.get_hash().lookup_item(int(last_package))[1][1]]
-                    #             print(f'last_package is: {last_package}')
-                    #             self.first_truck.append(distance_list.get('Package ID').get(last_package))
-                    #             self.been_loaded.append(distance_list.get('Package ID').get(last_package))
-                    #             self.total_packages_loaded += 1
-
-                    #~~~~~~~~~~ Deliver by ~~~~~~~~~~
-                    try:
-                        deliver_by_time = self.high_priority_packages[distance_list.get('Package ID').get(package_num)].get('Deliver By')
-                        # print(f'Deliver by time is: {deliver_by_time}')
-                    except KeyError:
-                        # print('No Deliver by high priority data')
-                        deliver_by_bool1 = True
-                    except AttributeError:
-                        print('Cannot be "None"')
-
-                    else:
-
+                        #~~~~~~~~~~ Deliver by ~~~~~~~~~~
+                        deliver_by_time = distance_list.get('Deliver By')
+                        deliver_by_bool1 = False
                         if deliver_by_time is not None:
-                            if len(self.first_truck_delivery_times) == 0:
-                                # print(f"\nPackage id[{distance_list.get('Package ID').get(package_num)}] deliver by time is: {deliver_by_time}")
-                                # print(f'first truck departure time is: {FIRST_TRUCK_DEPARTURE_TIME}')
-
-                                # if deliver_by_time > FIRST_TRUCK_DEPARTURE_TIME:
-                                if wtime.time_difference(deliver_by_time, FIRST_TRUCK_DEPARTURE_TIME) > 0:
-                                    # print(f"package id {distance_list.get('Package ID').get(package_num)} can be loaded on truck 1.")
-                                    deliver_by_bool1 = True
-                                else:
-                                    # print(f"package id {distance_list.get('Package ID').get(package_num)} cannot be loaded on truck 1.")
-                                    deliver_by_bool1 = False
-
+                            if deliver_by_time == 'EOD':
+                                deliver_by_bool1 = True
                             else:
-                                # print(f"\nPackage id[{distance_list.get('Package ID').get(package_num)}] deliver by time is: {deliver_by_time}")
-                                # print(f'self.first_truck_delivery_times[1][-1] is: {self.first_truck_delivery_times[1][-1]}')
-                                # print(f'self.first_truck_delivery_times[1] is: {self.first_truck_delivery_times[1]}')
-                                # print(f'self.first_truck is: {self.first_truck}')
-
-                                if wtime.time_difference(deliver_by_time, self.first_truck_delivery_times[1][-1]) > 0:
-                                    # print(f"package id {distance_list.get('Package ID').get(package_num)} can be loaded on truck 1.")
+                                if wtime.time_difference(deliver_by_time, FIRST_TRUCK_DEPARTURE_TIME) > 0:
                                     deliver_by_bool1 = True
-                                else:
-                                    # print(f"package id {distance_list.get('Package ID').get(package_num)} cannot be loaded on truck 1.")
-                                    deliver_by_bool1 = False
+                        # else:
+                        #     deliver_by_bool1 = True
 
-                        else:
-                            deliver_by_bool1 = True
+                        #~~~~~~~~~~ Delivered with other packages ~~~~~~~~~~
 
+                        # need_to_pack = self.packages_to_be_delivered_together.difference(self.first_truck)
+                        #
+                        # print(f'need_to_pack is: {need_to_pack}')
+                        #
+                        # if len(need_to_pack) == 1:
+                        #     if MAX_PACKAGES_PER_TRUCK - len(self.first_truck) - len(distance_list.get(need_to_pack)) == 0:
+                        #         for last_package in need_to_pack:
+                        #             delivery_info_dict[ppd.get_hash().lookup_item(int(last_package))[1][1]]
+                        #             print(f'last_package is: {last_package}')
+                        #             self.first_truck.append(distance_list.get('Package ID').get(last_package))
+                        #             self.been_loaded.append(distance_list.get('Package ID').get(last_package))
+                        #             self.total_packages_loaded += 1
 
-                    #~~~~~~~~~~ Delayed eta ~~~~~~~~~~
+                        #~~~~~~~~~~ Delayed eta ~~~~~~~~~~
 
-                    try:
-                        delayed_time = self.high_priority_packages[distance_list.get('Package ID').get(package_num)].get('Delayed ETA')
-                    except KeyError:
-                        # print('No Delayed ETA high priority data')
-                        delayed_bool1 = True
-                    except AttributeError:
-                        print('Cannot be "None"')
+                        # try:
+                        #     delayed_time = self.high_priority_packages[distance_list.get('Package ID').get(package_num)].get('Delayed ETA')
+                        # except KeyError:
+                        #     # print('No Delayed ETA high priority data')
+                        #     delayed_bool1 = True
+                        # except AttributeError:
+                        #     print('Cannot be "None"')
+                        #
+                        # else:
+                        #     if delayed_time is not None:
+                        #
+                        #         # XXXXXXXXXX Use WGUPS_time class XXXXXXXXXX
+                        #         (delayed_hours, delayed_minutes, delayed_seconds) = delayed_time.split(':')
+                        #         (first_hours, first_minutes, first_seconds) = FIRST_TRUCK_DEPARTURE_TIME.split(':')
+                        #         if int(delayed_hours) > int(first_hours):
+                        #             # print('Delayed package cant make it on truck 1 (hours)')
+                        #             delayed_bool1 = False
+                        #         elif int(delayed_hours) == int(first_hours):
+                        #             if int(delayed_minutes) > int(first_minutes):
+                        #                 # print('Delayed package cant make it on truck 1 (minutes)')
+                        #                 delayed_bool1 = False
+                        #             elif int(delayed_minutes) == int(first_minutes):
+                        #                 if int(delayed_seconds) > int(first_seconds):
+                        #                     # print('Delayed package cant make it on truck 1 (seconds)')
+                        #                     delayed_bool1 = False
+                        #
+                        #     else:
+                        #         # print('Okay to be on truck 1 (Delayed)')
+                        #         delayed_bool1 = True
 
-                    else:
-                        if delayed_time is not None:
+                        # print(f"Package ID: {distance_list.get('Package ID').get(package_num)}")
+                        # print(f'delayed_bool1 is: {delayed_bool1}')
+                        # print(f'deliver_by_bool1 is {deliver_by_bool1}')
+                        # print(f'load_on_truck1_bool is: {load_on_truck1_bool}')
 
-                            # XXXXXXXXXX Use WGUPS_time class XXXXXXXXXX
-                            (delayed_hours, delayed_minutes, delayed_seconds) = delayed_time.split(':')
-                            (first_hours, first_minutes, first_seconds) = FIRST_TRUCK_DEPARTURE_TIME.split(':')
-                            if int(delayed_hours) > int(first_hours):
-                                # print('Delayed package cant make it on truck 1 (hours)')
-                                delayed_bool1 = False
-                            elif int(delayed_hours) == int(first_hours):
-                                if int(delayed_minutes) > int(first_minutes):
-                                    # print('Delayed package cant make it on truck 1 (minutes)')
-                                    delayed_bool1 = False
-                                elif int(delayed_minutes) == int(first_minutes):
-                                    if int(delayed_seconds) > int(first_seconds):
-                                        # print('Delayed package cant make it on truck 1 (seconds)')
-                                        delayed_bool1 = False
-
-                        else:
-                            # print('Okay to be on truck 1 (Delayed)')
-                            delayed_bool1 = True
-
-                    # print(f"Package ID: {distance_list.get('Package ID').get(package_num)}")
-                    # print(f'delayed_bool1 is: {delayed_bool1}')
-                    # print(f'deliver_by_bool1 is {deliver_by_bool1}')
-                    # print(f'load_on_truck1_bool is: {load_on_truck1_bool}')
-
-                    if delayed_bool1 and deliver_by_bool1 and load_on_truck1_bool:
-                        self.first_truck.append(distance_list.get('Package ID').get(package_num))
-                        self.been_loaded.append(distance_list.get('Package ID').get(package_num))
-                        self.total_packages_loaded += 1
-
-                        print(f"{distance_list.get('Package ID').get(package_num)} has been added to truck1!!!")
-
-                        self.total_dist_first_truck = self.calculate_truck_distance(self.first_truck, delivery_info_dict)  # [O(n)]
-                        self.first_truck_delivery_times = self.calculate_delivery_time(self.total_dist_first_truck[1], FIRST_TRUCK_DEPARTURE_TIME)  # [O(n)]
-
+                        if load_on_truck1_bool and deliver_by_bool1:  #and delayed_bool1:
+                            self.first_truck.append(distance_list.get('Package ID').get(package_num))
+                            self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+                            self.total_packages_loaded += 1
+                            self.total_dist_first_truck = self.calculate_truck_distance(self.first_truck, delivery_info_dict)  # [O(n)]
+                            self.first_truck_delivery_times = self.calculate_delivery_time(self.total_dist_first_truck[1], FIRST_TRUCK_DEPARTURE_TIME)  # [O(n)]
 
             # Load Second Truck
-            elif len(self.second_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
+            if len(self.second_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
                 if distance_list.get('Package ID').get(package_num) not in self.second_truck:
-                    self.second_truck.append(distance_list.get('Package ID').get(package_num))
-                    self.been_loaded.append(distance_list.get('Package ID').get(package_num))
-                    self.total_packages_loaded += 1
+                    if distance_list.get('Package ID').get(package_num) not in self.been_loaded:
+
+                        # delayed_bool1 = False
+                        # deliver_by_bool1 = True
+
+                        #~~~~~~~~~~ Not in truck 1 or 3 ~~~~~~~~~
+                        truck_num = distance_list.get('Truck')
+                        load_on_truck2_bool = True
+                        if truck_num is not None:
+                            if truck_num == 1 and truck_num == 3:
+                                load_on_truck2_bool = False
+
+                        #~~~~~~~~~~ Deliver by ~~~~~~~~~~
+                        deliver_by_time = distance_list.get('Deliver By')
+                        deliver_by_bool2 = False
+                        if deliver_by_time is not None:
+                            if deliver_by_time == 'EOD':
+                                deliver_by_bool2 = True
+                            else:
+                                if len(self.second_truck) == 0:
+                                    if wtime.time_difference(deliver_by_time, self.second_truck_departure_time) > 0:
+                                        deliver_by_bool2 = True
+                                else:
+                                    if wtime.time_difference(deliver_by_time, self.second_truck_delivery_times[1][-1]) > 0:
+                                        deliver_by_bool2 = True
+
+                        if load_on_truck2_bool and deliver_by_bool2: #and delayed_bool2:
+
+                            self.second_truck.append(distance_list.get('Package ID').get(package_num))
+                            self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+                            self.total_packages_loaded += 1
+                            self.total_dist_second_truck = self.calculate_truck_distance(self.second_truck, delivery_info_dict)  # [O(n)]
+                            self.second_truck_delivery_times = self.calculate_delivery_time(
+                                self.total_dist_second_truck[1], self.second_truck_departure_time)  # [O(n)]
 
 
             # Load Third Truck
-            elif len(self.third_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
+            if len(self.third_truck) + len(distance_list.get('Package ID')) <= MAX_PACKAGES_PER_TRUCK:
                 if distance_list.get('Package ID').get(package_num) not in self.third_truck:
-                    self.third_truck.append(distance_list.get('Package ID').get(package_num))
-                    self.been_loaded.append(distance_list.get('Package ID').get(package_num))
-                    self.total_packages_loaded += 1
+                    if distance_list.get('Package ID').get(package_num) not in self.been_loaded:
 
-            else:
-                return
+                        #~~~~~~~~~~ Not in truck 1 or 2 ~~~~~~~~~
+                        truck_num = distance_list.get('Truck')
+                        load_on_truck3_bool = True
+                        if truck_num is not None:
+                            if truck_num == 1 and truck_num == 2:
+                                load_on_truck3_bool = False
 
-        # print(f'Truck 1: {self.first_truck}')
-        # print(f'Truck 2: {self.second_truck}')
-        # print(f'Truck 3: {self.third_truck}')
+                        #~~~~~~~~~~ Deliver by ~~~~~~~~~~
+                        deliver_by_time = distance_list.get('Deliver By')
+                        deliver_by_bool3 = False
+                        if deliver_by_time is not None:
+                            if deliver_by_time == 'EOD':
+                                deliver_by_bool3 = True
+                            else:
+                                print('deliver_by_time is None')
+                                if len(self.third_truck) == 0:
+                                    if wtime.time_difference(deliver_by_time, self.first_truck_delivery_times[1][-1]) > 0:
+                                        deliver_by_bool3 = True
+                                    else:
+                                        print('This package needs to be on an earlier truck.')
+                                else:
+                                    if wtime.time_difference(deliver_by_time, self.third_truck_delivery_times[1][-1]) > 0:
+                                        print('~~~~~ I MADE IT HERE (if)!!!!!! ~~~~~')
+                                        deliver_by_bool3 = True
+                                    else:
+                                        print('~~~~~ I MADE IT HERE (else)!!!!!! ~~~~~')
+                                        backtracking = -1
+                                        while wtime.time_difference(deliver_by_time, self.third_truck_delivery_times[1][backtracking]) < 0:
+                                            backtracking -= 1
+                                            print(f'backtracking is: {backtracking}')
+                                        else:
+                                            self.third_truck.insert(0, distance_list.get('Package ID').get(package_num))
+                                            # self.third_truck.insert(len(self.third_truck) + backtracking, distance_list.get('Package ID').get(package_num))
+                                            self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+                                            self.total_packages_loaded += 1
+                                            deliver_by_bool3 = False
+
+                        if load_on_truck3_bool and deliver_by_bool3: #and delayed_bool3:
+                            self.third_truck.append(distance_list.get('Package ID').get(package_num))
+                            self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+                            self.total_packages_loaded += 1
+                            self.total_dist_third_truck = self.calculate_truck_distance(self.third_truck, delivery_info_dict)  # [O(n)]
+                            self.third_truck_delivery_times = self.calculate_delivery_time(
+                                self.total_dist_third_truck[1], self.first_truck_delivery_times[1][-1])  # [O(n)]
+
+        print(f'Truck 1: {self.first_truck}')
+        print(f'Truck 2: {self.second_truck}')
+        print(f'Truck 3: {self.third_truck}')
         # print(f'self.total_packages_loaded is: {self.total_packages_loaded}')
         # print(f'len(ppd.get_input_data()) is {len(ppd.get_input_data())}')
 
@@ -556,16 +553,16 @@ class DeliverPackages:
 
             # Calculate the distance that each truck traveled
             # self.total_dist_first_truck = self.calculate_truck_distance(self.first_truck, delivery_info_dict)  # [O(n)]
-            self.total_dist_second_truck = self.calculate_truck_distance(self.second_truck, delivery_info_dict)  # [O(n)]
-            self.total_dist_third_truck = self.calculate_truck_distance(self.third_truck, delivery_info_dict)  # [O(n)]
+            # self.total_dist_second_truck = self.calculate_truck_distance(self.second_truck, delivery_info_dict)  # [O(n)]
+            # self.total_dist_third_truck = self.calculate_truck_distance(self.third_truck, delivery_info_dict)  # [O(n)]
 
             # Calculate the time that each truck spent traveling to each destination.
             # self.first_truck_delivery_times = self.calculate_delivery_time(
             #     self.total_dist_first_truck[1], FIRST_TRUCK_DEPARTURE_TIME)  # [O(n)]
-            self.second_truck_delivery_times = self.calculate_delivery_time(
-                self.total_dist_second_truck[1], self.second_truck_departure_time)  # [O(n)]
-            self.third_truck_delivery_times = self.calculate_delivery_time(
-                self.total_dist_third_truck[1], self.first_truck_delivery_times[1][-1])  # [O(n)]
+            # self.second_truck_delivery_times = self.calculate_delivery_time(
+            #     self.total_dist_second_truck[1], self.second_truck_departure_time)  # [O(n)]
+            # self.third_truck_delivery_times = self.calculate_delivery_time(
+            #     self.total_dist_third_truck[1], self.first_truck_delivery_times[1][-1])  # [O(n)]
 
             self.delivery_data.append([self.first_truck, self.first_truck_delivery_times[1]])
             self.delivery_data.append([self.second_truck, self.second_truck_delivery_times[1]])
@@ -586,7 +583,7 @@ class DeliverPackages:
             # print(f'delivery_info_dict is: {delivery_info_dict}')
             # if delivery_info_dict.get(dist_name) is None:
 
-
+            # Call the load_trucks() method recursively until all packages are loaded.
             self.load_trucks(delivery_info_dict.get(dist_name)['Package ID'][1], delivery_info_dict)  # [O(n^2)]
 
     @staticmethod
@@ -616,8 +613,6 @@ class DeliverPackages:
         first_truck_diff = 0
         second_truck_diff = 0
         third_truck_diff = 0
-        truck_status = ''
-        package_status = ''
         truck_status_options = ['At the hub', 'Delivering packages', 'Returned to the hub']
         package_status_options = ['At the hub', 'En route', 'Delivered']
 
@@ -727,7 +722,8 @@ class DeliverPackages:
                 f'| {city}'.ljust(20),
                 f'| {zip_code}'.ljust(10),
                 f'| {weight}'.ljust(8),
-                f'| {status}'.ljust(23), '|'
+                f'| {status}'.ljust(23), '|',
+                f' {ppd.sync_csv_data(ppd.get_hash().lookup_item(package_id))[address]}'
             )
 
         print('-' * 126)

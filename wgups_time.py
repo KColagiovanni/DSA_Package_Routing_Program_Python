@@ -69,6 +69,10 @@ class WgupsTime:
         """
 
         if self.check_input(time1) and self.check_input(time2):
+
+            print(f"time1.split(':') is: {time1.split(':')}")
+            print(f"time2.split(':') is: {time2.split(':')}")
+
             (time1_hr, time1_min, time1_sec) = time1.split(':')
             (time2_hr, time2_min, time2_sec) = time2.split(':')
 
