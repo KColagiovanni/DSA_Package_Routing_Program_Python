@@ -10,3 +10,31 @@ Restrictions:
     - Some of the delayed packages have a "deliver by" time that is less than 90 minutes after they've arrived.
 - Some packages have a deliver by time that needs to be met.
 - Some packages are going to the same address and should be delivered together at the same time.
+
+load_trucks():
+
+[Issues: if a package that has a deliver by time earlier than when it gets loaded and there is no where to put it, how
+ should that be handled?]
+If truck 1 is not full, continue...
+Loop though the package id dict so that all packages going to the same address are analyzed at the same time
+If the package has not yet been loaded onto truck 1, continue...
+If the package id dict shows that this package has to be on truck 1, or there is no specific truck that the package has
+to be on and the calculated delivery time meets any "deliver by" criteria, continue...
+Load package(s) onto truck
+
+If truck 2 is not full, continue...
+Loop though the package id dict so that all packages going to the same address are analyzed at the same time
+If the package has not yet been loaded onto truck 2, continue...
+If the package id dict shows that this package has to be on truck 2, or there is no specific truck that the package has
+to be on and the calculated delivery time meets any "deliver by" criteria, continue...
+Load package(s) onto truck
+
+If truck 3 is not full, continue...
+Loop though the package id dict so that all packages going to the same address are analyzed at the same time
+If the package has not yet been loaded onto truck 3, continue...
+If the package id dict shows that this package has to be on truck 3, or there is no specific truck that the package has
+to be on and the calculated delivery time meets any "deliver by" criteria, continue...
+Load package(s) onto truck
+
+Call find_shortest_distance() to get the next package id and call load_trucks() recursively sending the package id of
+the next closest delivery.
