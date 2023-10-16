@@ -3,7 +3,7 @@ Delivery Algorithm:
 For each truck, the basics:
 1. Find the shortest distance from the hub to the first delivery.
 2. Find the shortest distance from one delivery to the next.
-3. Find the shortest distance from the last delivery back to the hub.
+3. Find the shortest distance from the last delivery back to the hub. (Note: Trucks 2 and 3 can be left in the "field")
 
 Restrictions:
 - Some packages are delayed and wont arrive until a specified time.
