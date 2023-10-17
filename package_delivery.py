@@ -276,8 +276,16 @@ class DeliverPackages:
 
     # Check if a truck can be loaded more efficiently if it was initially loaded with
     # required packages prior to being loaded by the shortest distance method
-    def maximize_efficiency(self, index):
-        pass
+    def maximize_efficiency(self, truck_list):
+
+        for package_id in truck_list:
+
+            package_id_data = ppd.get_input_data()[int(package_id) - 1]
+
+            # Info from record dict/sync_csv_data(). Initially passed in from main.py.
+            distance_list = ppd.record[ppd.get_hash().lookup_item(int(package_id_data[0]))[1][1]]  # [O(1)]
+
+            print(f'from maximize_efficiency, distance_list is: {distance_list}')
 
     # Calculate the delivery distance between each package in the loaded truck - [O(n)]
     @staticmethod
@@ -532,6 +540,10 @@ class DeliverPackages:
                     if wtime.time_difference(deliver_by_time, self.third_truck_delivery_times[1][-1]) > 0:
                         deliver_by_bool3 = True
                         print(f'[505] - deliver_by_bool3 is: {deliver_by_bool3}')
+                    # else:
+                    #     if len(self.third_truck) > 0:
+                    #         if wtime.time_difference(deliver_by_time, self.third_truck_delivery_times[1][0]) > 0:
+                    #
                     else:
                         deliver_by_bool3 = False
                         print(f'[508] - deliver_by_bool3 is: {deliver_by_bool3}')
@@ -767,6 +779,14 @@ class DeliverPackages:
                         self.total_dist_second_truck = self.calculate_truck_distance(self.second_truck, delivery_info_dict)  # [O(n)]
                         self.second_truck_delivery_times = self.calculate_delivery_time(
                             self.total_dist_second_truck[1], self.second_truck_departure_time)  # [O(n)]
+                    elif distance_list.get('Deliver By') != 'EOD' and has_room_bool2 and (not load_on_truck1_bool or not load_on_truck3_bool) and not deliver_by_bool2 and delayed_bool2:
+                        self.second_truck.insert(0, distance_list.get('Package ID').get(package_num))
+                        self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+                        self.total_packages_loaded += 1
+                        self.total_dist_second_truck = self.calculate_truck_distance(self.second_truck,
+                                                                                     delivery_info_dict)  # [O(n)]
+                        self.second_truck_delivery_times = self.calculate_delivery_time(
+                            self.total_dist_second_truck[1], self.second_truck_departure_time)  # [O(n)]
                     else:
                         not_loaded.add(distance_list.get('Package ID').get(package_num))
             #
@@ -845,6 +865,13 @@ class DeliverPackages:
                     #     while
                     if has_room_bool3 and (not load_on_truck1_bool or not load_on_truck2_bool) and deliver_by_bool3 and delayed_bool3:
                         self.third_truck.append(distance_list.get('Package ID').get(package_num))
+                        self.been_loaded.append(distance_list.get('Package ID').get(package_num))
+                        self.total_packages_loaded += 1
+                        self.total_dist_third_truck = self.calculate_truck_distance(self.third_truck, delivery_info_dict)  # [O(n)]
+                        self.third_truck_delivery_times = self.calculate_delivery_time(
+                            self.total_dist_third_truck[1], self.first_truck_delivery_times[1][-1])  # [O(n)]
+                    elif has_room_bool3 and (not load_on_truck1_bool or not load_on_truck2_bool) and not deliver_by_bool3 and delayed_bool3:
+                        self.third_truck.insert(0, distance_list.get('Package ID').get(package_num))
                         self.been_loaded.append(distance_list.get('Package ID').get(package_num))
                         self.total_packages_loaded += 1
                         self.total_dist_third_truck = self.calculate_truck_distance(self.third_truck, delivery_info_dict)  # [O(n)]
