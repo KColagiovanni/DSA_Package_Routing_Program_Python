@@ -86,7 +86,7 @@ Selection: """)
                 #         minimum_minute = minute
                 #         first_package_id, first_package_delivery_by_time = package[0], package[1][5]
 
-            first_package_id = dp.find_shortest_distance_from_and_to_hub(ppd.get_distance_data(), ppd.record)
+            # first_package_id = dp.find_shortest_distance_from_and_to_hub(ppd.get_distance_data(), ppd.record)
 
             # print(f'\nfrom main(), dp.find_shortest_distance_from_and_to_hub is: {first_package_id}')
 
@@ -99,14 +99,14 @@ Selection: """)
             #         first_package_id = ppd.record[ppd.get_distance_name_data()[distance_index][2]]['Package ID'][1]
             #         print(f'first_package_id is: {first_package_id}')
 
-            dp.load_trucks(first_package_id, ppd.record)  # O(n^2)
-
-            for truck in range(len(dp.delivery_data)):
-                dp.update_package_delivery_status_and_print_output(
-                    dp.delivery_data[truck][0], truck + 1, dp.delivery_data[truck][1], lookup_time
-                )
-
-            print(f'{dp.maximize_efficiency(dp.delivery_data[truck][0])}')
+            # dp.load_trucks(first_package_id, ppd.record)  # O(n^2)
+            #
+            # for truck in range(len(dp.delivery_data)):
+            #     dp.update_package_delivery_status_and_print_output(
+            #         dp.delivery_data[truck][0], truck + 1, dp.delivery_data[truck][1], lookup_time
+            #     )
+            #
+            # print(f'{dp.maximize_efficiency(dp.delivery_data[truck][0])}')
             # dp.update_package_delivery_status(dp.second_truck, 2, dp.second_truck_delivery_times[1], lookup_time)
             # dp.update_package_delivery_status(dp.third_truck, 3, dp.third_truck_delivery_times[1], lookup_time)
             # for package_id in range(len(number_of_packages) + 2):  # O(n)

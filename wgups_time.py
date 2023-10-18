@@ -9,13 +9,13 @@ class WgupsTime:
         else:
             return True
 
-    def convert_time_to_seconds(self, time):
+    def convert_string_time_to_int_seconds(self, time):
         if self.check_input(time):
             (time_hr, time_min, time_sec) = time.split(':')
             return int(time_hr * 3600) + int(time_min * 60) + int(time_sec)
 
     @staticmethod
-    def convert_seconds_to_time(seconds):
+    def convert_int_seconds_to_string_time(seconds):
 
         if seconds >= 3600:
             hour = seconds // 3600
@@ -52,7 +52,7 @@ class WgupsTime:
 
         if self.check_input(time1) and self.check_input(time2):
             total_seconds = self.convert_time_to_seconds(time1) + self.convert_time_to_seconds(time2)
-            return self.convert_seconds_to_time(total_seconds)
+            return self.convert_int_seconds_to_string_time(total_seconds)
 
     def time_difference(self, time1, time2):
         """
