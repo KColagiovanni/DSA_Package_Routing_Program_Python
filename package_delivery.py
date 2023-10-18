@@ -47,10 +47,11 @@ class DeliverPackages:
         self.high_priority_count = 0
 
     # Analyze the special notes and deliver by times and add packages to trucks as needed - [O(1)]
-    def analyze_package_data(self, key):
+    def analyze_package_data(self, key, record_data):
 
         package_data = ppd.get_hash().lookup_item(key)  # O(1)
 
+        # print(f'record_data is: {record_data}')
 
         # if 'Can only be on truck' in package_data[1][7] or 'Must be delivered with' in package_data[1][7] or 'Delayed' in package_data[1][7] or package_data[1][2] != 'EOD':
         #     self.high_priority_packages.update({package_data[0]: {}})
@@ -66,6 +67,33 @@ class DeliverPackages:
 
             # self.high_priority_packages[package_data[0]]['Deliver Together'] = self.packages_to_be_delivered_together
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+        # Loading packages into the specific trucks that special instructions request.
+        if 'Can only be on truck' in package_data[1][7]:
+
+            # For truck 1
+            if package_data[1][7][-1] == '1':
+                if int(package_data[0]) not in self.first_truck:
+                    self.first_truck.append(int(package_data[0]))
+                    self.been_loaded.append(int(package_data[0]))
+                    self.total_packages_loaded += 1
+                    # self.high_priority_packages[package_data[0]].update({'Truck': 1})
+
+            # For truck 2
+            elif package_data[1][7][-1] == '2':
+                if int(package_data[0]) not in self.second_truck:
+                    self.second_truck.append(int(package_data[0]))
+                    self.been_loaded.append(int(package_data[0]))
+                    self.total_packages_loaded += 1
+                    # self.high_priority_packages[package_data[0]].update({'Truck': 2})
+
+            # For truck 3
+            elif package_data[1][7][-1] == '3':
+                if int(package_data[0]) not in self.third_truck:
+                    self.third_truck.append(int(package_data[0]))
+                    self.been_loaded.append(int(package_data[0]))
+                    self.total_packages_loaded += 1
+                    # self.high_priority_packages[package_data[0]].update({'Truck': 3})
 
         # Determine priority and load delayed packages on later trucks
         if 'Delayed on flight' in package_data[1][7]:
@@ -112,37 +140,11 @@ class DeliverPackages:
             #     self.total_packages_loaded += 1
             #     self.second_truck.insert(self.high_priority_count, int(package_data[0]))
 
-        # Loading packages into the specific trucks that special instructions request.
-        if 'Can only be on truck' in package_data[1][7]:
-
-            # For truck 1
-            if package_data[1][7][-1] == '1':
-                if int(package_data[0]) not in self.first_truck:
-                    self.first_truck.append(int(package_data[0]))
-                    self.been_loaded.append(int(package_data[0]))
-                    self.total_packages_loaded += 1
-                    # self.high_priority_packages[package_data[0]].update({'Truck': 1})
-
-            # For truck 2
-            elif package_data[1][7][-1] == '2':
-                if int(package_data[0]) not in self.second_truck:
-                    self.second_truck.append(int(package_data[0]))
-                    self.been_loaded.append(int(package_data[0]))
-                    self.total_packages_loaded += 1
-                    # self.high_priority_packages[package_data[0]].update({'Truck': 2})
-
-            # For truck 3
-            elif package_data[1][7][-1] == '3':
-                if int(package_data[0]) not in self.third_truck:
-                    self.third_truck.append(int(package_data[0]))
-                    self.been_loaded.append(int(package_data[0]))
-                    self.total_packages_loaded += 1
-                    # self.high_priority_packages[package_data[0]].update({'Truck': 3})
 
         # print(f'\nHigh Priority Packages: {self.high_priority_packages}')
 
         # Loading packages into the specific trucks that special instructions request.
-        if 'Can only be on truck' in package_data[1][7]:
+        # if 'Can only be on truck' in package_data[1][7]:
 
 
         print(f'\nTruck 1: {self.first_truck}')

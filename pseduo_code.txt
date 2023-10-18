@@ -11,6 +11,8 @@ Restrictions:
 - Some packages have a deliver by time that needs to be met.
 - Some packages are going to the same address and should be delivered together at the same time.
 
+
+
 load_trucks():
 
 [Issues: if a package that has a deliver by time earlier than when it gets loaded and there is no where to put it, how
