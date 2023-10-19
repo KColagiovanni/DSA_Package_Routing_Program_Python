@@ -38,7 +38,6 @@ class DeliverPackages:
         self.total_delivery_time = []
 
         self.packages_to_be_delivered_together = set(())
-
         self.high_priority_packages = {}
         self.delivery_status = {}
 
@@ -47,109 +46,136 @@ class DeliverPackages:
         self.high_priority_count = 0
 
     # Analyze the special notes and deliver by times and add packages to trucks as needed - [O(1)]
-    def analyze_package_data(self, key, record_data):
+    def manual_load(self, record_data):
 
-        package_data = ppd.get_hash().lookup_item(key)  # O(1)
+        print(f'record_data is: {record_data}')
+        print(f'ppd.record is: {ppd.record}')
+
+        # Get Truck
+        for record in record_data:
+
+            truck = record_data[record].get('Truck')
+
+            if truck == None:
+                print('No Truck')
+            else:
+                if truck == 1:
+                    print('Truck 1')
+                if truck == 2:
+                    print('Truck 2')
+                if truck == 3:
+                    print('Truck 3')
+
+        # Get Delivery By Time
+        for record in record_data:
+
+            deliver_by_time = record_data[record].get('Deliver By')
+
+            if deliver_by_time == None:
+                print('No deliver by time')
+            else:
+                print(f'deliver_by_time is: {deliver_by_time}')
+
+        # package_data = ppd.get_hash().lookup_item(key)  # O(1)
 
         # print(f'record_data is: {record_data}')
 
         # if 'Can only be on truck' in package_data[1][7] or 'Must be delivered with' in package_data[1][7] or 'Delayed' in package_data[1][7] or package_data[1][2] != 'EOD':
         #     self.high_priority_packages.update({package_data[0]: {}})
 
-        # ~~~~~~~~~~ Try using REGEX here ~~~~~~~~~~ #
-        # Get packages that need to be delivered together on the same truck
-        if 'Must be delivered with' in package_data[1][7]:
-            self.packages_to_be_delivered_together.add(package_data[0])
-            package1 = int(package_data[1][7][-7:-5])
-            self.packages_to_be_delivered_together.add(package1)
-            package2 = int(package_data[1][7][-2:])
-            self.packages_to_be_delivered_together.add(package2)
-
-            # self.high_priority_packages[package_data[0]]['Deliver Together'] = self.packages_to_be_delivered_together
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
-        # Loading packages into the specific trucks that special instructions request.
-        if 'Can only be on truck' in package_data[1][7]:
-
-            # For truck 1
-            if package_data[1][7][-1] == '1':
-                if int(package_data[0]) not in self.first_truck:
-                    self.first_truck.append(int(package_data[0]))
-                    self.been_loaded.append(int(package_data[0]))
-                    self.total_packages_loaded += 1
-                    # self.high_priority_packages[package_data[0]].update({'Truck': 1})
-
-            # For truck 2
-            elif package_data[1][7][-1] == '2':
-                if int(package_data[0]) not in self.second_truck:
-                    self.second_truck.append(int(package_data[0]))
-                    self.been_loaded.append(int(package_data[0]))
-                    self.total_packages_loaded += 1
-                    # self.high_priority_packages[package_data[0]].update({'Truck': 2})
-
-            # For truck 3
-            elif package_data[1][7][-1] == '3':
-                if int(package_data[0]) not in self.third_truck:
-                    self.third_truck.append(int(package_data[0]))
-                    self.been_loaded.append(int(package_data[0]))
-                    self.total_packages_loaded += 1
-                    # self.high_priority_packages[package_data[0]].update({'Truck': 3})
-
-        # Determine priority and load delayed packages on later trucks
-        if 'Delayed on flight' in package_data[1][7]:
-            package_eta = package_data[1][7][-7:-3]
-
-            # self.high_priority_packages[package_data[0]].update({'Delayed ETA': self.convert_time(package_eta + ':00').strftime('%H:%M:%S')})
-
-            if package_data[1][2] != 'EOD':
-                print(f'DELAYED | HIGH PRIORITY: {package_data[0]}'
-                f'- ETA: {package_eta} (Deliver by: {package_data[1][2]})')
-                self.second_truck.append(int(package_data[0]))
-                self.high_priority_count += 0
-                self.been_loaded.append(int(package_data[0]))
-                self.total_packages_loaded += 1
-                self.second_truck_departure_time = package_eta + ':00'
-            else:
-                print(f'DELAYED | {package_data[0]} - ETA: {package_eta} (Deliver by: {package_data[1][2]})')
-                self.third_truck.append(int(package_data[0]))
-                self.been_loaded.append(int(package_data[0]))
-                self.total_packages_loaded += 1
-
-        # Get "delivery by" time hour and minute
-        if package_data[1][2] != 'EOD':# and package_data[1][7] == "None":
-            hour = int(package_data[1][2][0:package_data[1][2].find(':')])
-            minute = int(package_data[1][2][-5:-3])
-
-            # if len(package_data[1][0]) < 2:
-            #     package_data[1][0] = '0' + package_data[1][0]
-
-            # self.high_priority_packages[package_data[0]].update({'Deliver By': self.convert_time(package_data[1][2]).strftime('%H:%M:%S')})
-
-        # else:
-        #     self.high_priority_packages[package_data[0]].update({'Deliver By': package_data[1][2]})
-            # self.high_priority_packages['Package ID'][package_data[0]]['Deliver By'] = f'{hour}:{minute}'
-
-            # if hour < 10 and minute <= 30:
-            # self.first_truck.append(int(package_data[0]))
-            self.second_truck.append(int(package_data[0]))
-            self.been_loaded.append(int(package_data[0]))
-            self.total_packages_loaded += 1
-            # else:
-            #     # self.second_truck.append(int(package_data[0]))
-            #     self.been_loaded.append(int(package_data[0]))
-            #     self.total_packages_loaded += 1
-            #     self.second_truck.insert(self.high_priority_count, int(package_data[0]))
-
-
-        # print(f'\nHigh Priority Packages: {self.high_priority_packages}')
-
-        # Loading packages into the specific trucks that special instructions request.
+        # # Get packages that need to be delivered together on the same truck
+        # if 'Must be delivered with' in package_data[1][7]:
+        #     self.packages_to_be_delivered_together.add(package_data[0])
+        #     package1 = int(package_data[1][7][-7:-5])
+        #     self.packages_to_be_delivered_together.add(package1)
+        #     package2 = int(package_data[1][7][-2:])
+        #     self.packages_to_be_delivered_together.add(package2)
+        #
+        #     # self.high_priority_packages[package_data[0]]['Deliver Together'] = self.packages_to_be_delivered_together
+        # # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+        #
+        # # Loading packages into the specific trucks that special instructions request.
         # if 'Can only be on truck' in package_data[1][7]:
-
-
-        print(f'\nTruck 1: {self.first_truck}')
-        print(f'Truck 2: {self.second_truck}')
-        print(f'Truck 3: {self.third_truck}')
+        #
+        #     # For truck 1
+        #     if package_data[1][7][-1] == '1':
+        #         if int(package_data[0]) not in self.first_truck:
+        #             self.first_truck.append(int(package_data[0]))
+        #             self.been_loaded.append(int(package_data[0]))
+        #             self.total_packages_loaded += 1
+        #             # self.high_priority_packages[package_data[0]].update({'Truck': 1})
+        #
+        #     # For truck 2
+        #     elif package_data[1][7][-1] == '2':
+        #         if int(package_data[0]) not in self.second_truck:
+        #             self.second_truck.append(int(package_data[0]))
+        #             self.been_loaded.append(int(package_data[0]))
+        #             self.total_packages_loaded += 1
+        #             # self.high_priority_packages[package_data[0]].update({'Truck': 2})
+        #
+        #     # For truck 3
+        #     elif package_data[1][7][-1] == '3':
+        #         if int(package_data[0]) not in self.third_truck:
+        #             self.third_truck.append(int(package_data[0]))
+        #             self.been_loaded.append(int(package_data[0]))
+        #             self.total_packages_loaded += 1
+        #             # self.high_priority_packages[package_data[0]].update({'Truck': 3})
+        #
+        # # Determine priority and load delayed packages on later trucks
+        # if 'Delayed on flight' in package_data[1][7]:
+        #     package_eta = package_data[1][7][-7:-3]
+        #
+        #     # self.high_priority_packages[package_data[0]].update({'Delayed ETA': self.convert_time(package_eta + ':00').strftime('%H:%M:%S')})
+        #
+        #     if package_data[1][2] != 'EOD':
+        #         print(f'DELAYED | HIGH PRIORITY: {package_data[0]}'
+        #         f'- ETA: {package_eta} (Deliver by: {package_data[1][2]})')
+        #         self.second_truck.append(int(package_data[0]))
+        #         self.high_priority_count += 0
+        #         self.been_loaded.append(int(package_data[0]))
+        #         self.total_packages_loaded += 1
+        #         self.second_truck_departure_time = package_eta + ':00'
+        #     else:
+        #         print(f'DELAYED | {package_data[0]} - ETA: {package_eta} (Deliver by: {package_data[1][2]})')
+        #         self.third_truck.append(int(package_data[0]))
+        #         self.been_loaded.append(int(package_data[0]))
+        #         self.total_packages_loaded += 1
+        #
+        # # Get "delivery by" time hour and minute
+        # if package_data[1][2] != 'EOD':# and package_data[1][7] == "None":
+        #     hour = int(package_data[1][2][0:package_data[1][2].find(':')])
+        #     minute = int(package_data[1][2][-5:-3])
+        #
+        #     # if len(package_data[1][0]) < 2:
+        #     #     package_data[1][0] = '0' + package_data[1][0]
+        #
+        #     # self.high_priority_packages[package_data[0]].update({'Deliver By': self.convert_time(package_data[1][2]).strftime('%H:%M:%S')})
+        #
+        # # else:
+        # #     self.high_priority_packages[package_data[0]].update({'Deliver By': package_data[1][2]})
+        #     # self.high_priority_packages['Package ID'][package_data[0]]['Deliver By'] = f'{hour}:{minute}'
+        #
+        #     # if hour < 10 and minute <= 30:
+        #     # self.first_truck.append(int(package_data[0]))
+        #     self.second_truck.append(int(package_data[0]))
+        #     self.been_loaded.append(int(package_data[0]))
+        #     self.total_packages_loaded += 1
+        #     # else:
+        #     #     # self.second_truck.append(int(package_data[0]))
+        #     #     self.been_loaded.append(int(package_data[0]))
+        #     #     self.total_packages_loaded += 1
+        #     #     self.second_truck.insert(self.high_priority_count, int(package_data[0]))
+        #
+        #
+        # # print(f'\nHigh Priority Packages: {self.high_priority_packages}')
+        #
+        # # Loading packages into the specific trucks that special instructions request.
+        # # if 'Can only be on truck' in package_data[1][7]:
+        #
+        #
+        # print(f'\nTruck 1: {self.first_truck}')
+        # print(f'Truck 2: {self.second_truck}')
+        # print(f'Truck 3: {self.third_truck}')
 
     # Find shortest distance from and to the hub O(n)
     def find_shortest_distance_from_and_to_hub(self, distances, record_dict):

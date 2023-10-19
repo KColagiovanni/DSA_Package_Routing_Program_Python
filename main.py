@@ -65,6 +65,7 @@ Selection: """)
             minimum_hour = 25
             minimum_minute = 60
             first_package_id = 0
+            record_data = {}
 
             number_of_packages = len(ppd.get_package_data())
 
@@ -76,10 +77,10 @@ Selection: """)
                 print(f'package is: {package}')
                 record_data = ppd.sync_csv_data(package)  # O(n)
 
-
-                print(f"record_data is: {record_data}")
-                for package_num in range(1, len(record_data[package[1][2]].get('Package ID')) + 1):
-                    print(package_num)
+            # print(f"record_data is: {record_data}")
+            dp.manual_load(record_data)
+                # for package_num in range(1, len(record_data[package[1][1]].get('Package ID')) + 1):
+                #     print(package_num)
                 # print(record_data.get('Package ID').get(package_num))
 
                 # dp.analyze_package_data(package[0], record_data)  # O(1)
@@ -202,7 +203,7 @@ Selection: """)
 
                 package = ppd.get_hash().lookup_item(package_key)  # O(1)
                 ppd.sync_csv_data(package)  # O(n)
-                dp.analyze_package_data(package[0])  # O(1)
+                dp.manual_load(package[0])  # O(1)
 
                 # Get "delivery by" time hour and minute
                 if package[1][2] != 'EOD' and package[1][7] == "None":

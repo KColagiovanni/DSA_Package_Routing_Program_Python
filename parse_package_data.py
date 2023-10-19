@@ -1,7 +1,9 @@
 import csv
 from hash_table import HashTable
+from wgups_time import WgupsTime
 
 ht = HashTable()
+wtime = WgupsTime()
 
 
 class ParseCsvData:
@@ -86,7 +88,9 @@ class Packages(ParseCsvData):
             })
 
             # Append the highest priority "Deliver By" data to each address delivery.
-            if package_data[1][2] != 'EOD':
+            if package_data[1][2] != 'EOD': # XXXXX ADD STATEMENT HERE TO CHECK IF THE TIME BEING APPENDED IS LATER THAN WHAT'S ALREADY THERE XXXXX
+                print(f"deliver_by is currently: {self.record[package_data[1][1]]['Deliver By']}")
+                print(f"but wants to be: {package_data[1][2]}")
                 self.record[package_data[1][1]].update({'Deliver By': package_data[1][2]})
 
         # Add the first or only package and package data to the address that it will be delivered to.
