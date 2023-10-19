@@ -87,11 +87,14 @@ class Packages(ParseCsvData):
                 len(self.record[package_data[1][1]]['Package ID']) + 1: package_data[0]
             })
 
-            # Append the highest priority "Deliver By" data to each address delivery.
-            if package_data[1][2] != 'EOD': # XXXXX ADD STATEMENT HERE TO CHECK IF THE TIME BEING APPENDED IS LATER THAN WHAT'S ALREADY THERE XXXXX
-                print(f"deliver_by is currently: {self.record[package_data[1][1]]['Deliver By']}")
-                print(f"but wants to be: {package_data[1][2]}")
-                self.record[package_data[1][1]].update({'Deliver By': package_data[1][2]})
+            # Append the highest priority (earliest) "Deliver By" data to each address delivery.
+            if package_data[1][2] != 'EOD':
+                if self.record[package_data[1][1]]['Deliver By'] != 'EOD':
+                    if wtime.time_difference(self.record[package_data[1][1]]['Deliver By'], package_data[1][2]) > 0:
+                        self.record[package_data[1][1]].update({'Deliver By': package_data[1][2]})
+                else:
+                    self.record[package_data[1][1]].update({'Deliver By': package_data[1][2]})
+
 
         # Add the first or only package and package data to the address that it will be delivered to.
         else:
@@ -129,6 +132,9 @@ class Packages(ParseCsvData):
             self.packages_to_be_delivered_together.add(package1)
             package2 = int(package_data[1][7][-2:])
             self.packages_to_be_delivered_together.add(package2)
+
+            # for package in self.packages_to_be_delivered_together:
+
 
             self.record[package_data[1][1]]['Deliver Together'] = self.packages_to_be_delivered_together
 

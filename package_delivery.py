@@ -49,15 +49,15 @@ class DeliverPackages:
     def manual_load(self, record_data):
 
         print(f'record_data is: {record_data}')
-        print(f'ppd.record is: {ppd.record}')
+        # print(f'ppd.record is: {ppd.record}')
 
         # Get Truck
         for record in record_data:
 
             truck = record_data[record].get('Truck')
 
-            if truck == None:
-                print('No Truck')
+            if truck is None:
+                print('No Truck Data')
             else:
                 if truck == 1:
                     print('Truck 1')
@@ -71,10 +71,45 @@ class DeliverPackages:
 
             deliver_by_time = record_data[record].get('Deliver By')
 
-            if deliver_by_time == None:
+            if deliver_by_time is None:
                 print('No deliver by time')
             else:
                 print(f'deliver_by_time is: {deliver_by_time}')
+
+        # Delayed Package
+        for record in record_data:
+
+            delayed_package = record_data[record].get('Delayed ETA')
+
+            if delayed_package is None:
+                print('Package is not delayed')
+            else:
+                print(f'Delayed package ETA: {delayed_package}')
+
+        # Packages going to the same address
+        for record in record_data:
+
+            deliver_together = record_data[record].get('Package ID')
+
+            if deliver_together is None:
+                print('No Package Data')
+            else:
+                if len(deliver_together) == 1:
+                    print(f'Solo package: {deliver_together[1]}')
+                else:
+                    print('Packages going to the same address:')
+                    for package_num in deliver_together:
+                        print(f'\t\t\t{deliver_together[package_num]}')
+
+        # Must be on the same truck
+        for record in record_data:
+
+            deliver_together = record_data[record].get('Deliver Together')
+
+            if deliver_together is None:
+                print('No delivery grouping required')
+            else:
+                print(deliver_together)
 
         # package_data = ppd.get_hash().lookup_item(key)  # O(1)
 
