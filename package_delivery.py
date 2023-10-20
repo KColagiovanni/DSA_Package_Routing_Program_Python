@@ -45,172 +45,123 @@ class DeliverPackages:
         self.total_packages_loaded = 0
         self.high_priority_count = 0
 
+    def load_package_onto_first_truck(self, package_id):
+        if package_id == 1:
+            if len(self.first_truck) + 1 < MAX_PACKAGES_PER_TRUCK:
+                if package_id[1] not in self.been_loaded:
+                    self.first_truck.append(package_id[1])
+                    self.been_loaded.append(package_id[1])
+                    self.total_packages_loaded += 1
+        else:
+            if len(self.first_truck) + len(package_id) < MAX_PACKAGES_PER_TRUCK:
+                for package_num in package_id:
+                    if package_id[package_num] not in self.been_loaded:
+                        self.first_truck.append(package_id[package_num])
+                        self.been_loaded.append(package_id[package_num])
+                        self.total_packages_loaded += 1
+
+    def load_package_onto_second_truck(self, package_id):
+        if package_id == 1:
+            if len(self.second_truck) + 1 < MAX_PACKAGES_PER_TRUCK:
+                if package_id[1] not in self.been_loaded:
+                    self.second_truck.append(package_id[1])
+                    self.been_loaded.append(package_id[1])
+                    self.total_packages_loaded += 1
+        else:
+            if len(self.second_truck) + len(package_id) < MAX_PACKAGES_PER_TRUCK:
+                for package_num in package_id:
+                    if package_id[package_num] not in self.been_loaded:
+                        self.second_truck.append(package_id[package_num])
+                        self.been_loaded.append(package_id[package_num])
+                        self.total_packages_loaded += 1
+
+    def load_package_onto_third_truck(self, package_id):
+        if package_id == 1:
+            if len(self.third_truck) + 1 < MAX_PACKAGES_PER_TRUCK:
+                if package_id[1] not in self.been_loaded:
+                    self.third_truck.append(package_id[1])
+                    self.been_loaded.append(package_id[1])
+                    self.total_packages_loaded += 1
+        else:
+            if len(self.third_truck) + len(package_id) < MAX_PACKAGES_PER_TRUCK:
+                for package_num in package_id:
+                    if package_id[package_num] not in self.been_loaded:
+                        self.third_truck.append(package_id[package_num])
+                        self.been_loaded.append(package_id[package_num])
+                        self.total_packages_loaded += 1
+
     # Analyze the special notes and deliver by times and add packages to trucks as needed - [O(1)]
     def manual_load(self, record_data):
-
-        print(f'record_data is: {record_data}')
-        # print(f'ppd.record is: {ppd.record}')
-
-        # Get Truck
-        for record in record_data:
-
-            truck = record_data[record].get('Truck')
-
-            if truck is None:
-                print('No Truck Data')
-            else:
-                if truck == 1:
-                    print('Truck 1')
-                if truck == 2:
-                    print('Truck 2')
-                if truck == 3:
-                    print('Truck 3')
-
-        # Get Delivery By Time
-        for record in record_data:
-
-            deliver_by_time = record_data[record].get('Deliver By')
-
-            if deliver_by_time is None:
-                print('No deliver by time')
-            else:
-                print(f'deliver_by_time is: {deliver_by_time}')
-
-        # Delayed Package
-        for record in record_data:
-
-            delayed_package = record_data[record].get('Delayed ETA')
-
-            if delayed_package is None:
-                print('Package is not delayed')
-            else:
-                print(f'Delayed package ETA: {delayed_package}')
-
-        # Packages going to the same address
-        for record in record_data:
-
-            deliver_together = record_data[record].get('Package ID')
-
-            if deliver_together is None:
-                print('No Package Data')
-            else:
-                if len(deliver_together) == 1:
-                    print(f'Solo package: {deliver_together[1]}')
-                else:
-                    print('Packages going to the same address:')
-                    for package_num in deliver_together:
-                        print(f'\t\t\t{deliver_together[package_num]}')
 
         # Must be on the same truck
         for record in record_data:
 
             deliver_together = record_data[record].get('Deliver Together')
 
-            if deliver_together is None:
-                print('No delivery grouping required')
-            else:
+            if deliver_together is not None:
                 print(deliver_together)
+                if package
 
-        # package_data = ppd.get_hash().lookup_item(key)  # O(1)
+        # Load packages onto trucks that they are required to be on.
+        for record in record_data:
 
-        # print(f'record_data is: {record_data}')
+            truck = record_data[record].get('Truck')
+            deliver_together = record_data[record].get('Package ID')
 
-        # if 'Can only be on truck' in package_data[1][7] or 'Must be delivered with' in package_data[1][7] or 'Delayed' in package_data[1][7] or package_data[1][2] != 'EOD':
-        #     self.high_priority_packages.update({package_data[0]: {}})
+            if truck is not None:
 
-        # # Get packages that need to be delivered together on the same truck
-        # if 'Must be delivered with' in package_data[1][7]:
-        #     self.packages_to_be_delivered_together.add(package_data[0])
-        #     package1 = int(package_data[1][7][-7:-5])
-        #     self.packages_to_be_delivered_together.add(package1)
-        #     package2 = int(package_data[1][7][-2:])
-        #     self.packages_to_be_delivered_together.add(package2)
-        #
-        #     # self.high_priority_packages[package_data[0]]['Deliver Together'] = self.packages_to_be_delivered_together
-        # # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-        #
-        # # Loading packages into the specific trucks that special instructions request.
-        # if 'Can only be on truck' in package_data[1][7]:
-        #
-        #     # For truck 1
-        #     if package_data[1][7][-1] == '1':
-        #         if int(package_data[0]) not in self.first_truck:
-        #             self.first_truck.append(int(package_data[0]))
-        #             self.been_loaded.append(int(package_data[0]))
-        #             self.total_packages_loaded += 1
-        #             # self.high_priority_packages[package_data[0]].update({'Truck': 1})
-        #
-        #     # For truck 2
-        #     elif package_data[1][7][-1] == '2':
-        #         if int(package_data[0]) not in self.second_truck:
-        #             self.second_truck.append(int(package_data[0]))
-        #             self.been_loaded.append(int(package_data[0]))
-        #             self.total_packages_loaded += 1
-        #             # self.high_priority_packages[package_data[0]].update({'Truck': 2})
-        #
-        #     # For truck 3
-        #     elif package_data[1][7][-1] == '3':
-        #         if int(package_data[0]) not in self.third_truck:
-        #             self.third_truck.append(int(package_data[0]))
-        #             self.been_loaded.append(int(package_data[0]))
-        #             self.total_packages_loaded += 1
-        #             # self.high_priority_packages[package_data[0]].update({'Truck': 3})
-        #
-        # # Determine priority and load delayed packages on later trucks
-        # if 'Delayed on flight' in package_data[1][7]:
-        #     package_eta = package_data[1][7][-7:-3]
-        #
-        #     # self.high_priority_packages[package_data[0]].update({'Delayed ETA': self.convert_time(package_eta + ':00').strftime('%H:%M:%S')})
-        #
-        #     if package_data[1][2] != 'EOD':
-        #         print(f'DELAYED | HIGH PRIORITY: {package_data[0]}'
-        #         f'- ETA: {package_eta} (Deliver by: {package_data[1][2]})')
-        #         self.second_truck.append(int(package_data[0]))
-        #         self.high_priority_count += 0
-        #         self.been_loaded.append(int(package_data[0]))
-        #         self.total_packages_loaded += 1
-        #         self.second_truck_departure_time = package_eta + ':00'
-        #     else:
-        #         print(f'DELAYED | {package_data[0]} - ETA: {package_eta} (Deliver by: {package_data[1][2]})')
-        #         self.third_truck.append(int(package_data[0]))
-        #         self.been_loaded.append(int(package_data[0]))
-        #         self.total_packages_loaded += 1
-        #
-        # # Get "delivery by" time hour and minute
-        # if package_data[1][2] != 'EOD':# and package_data[1][7] == "None":
-        #     hour = int(package_data[1][2][0:package_data[1][2].find(':')])
-        #     minute = int(package_data[1][2][-5:-3])
-        #
-        #     # if len(package_data[1][0]) < 2:
-        #     #     package_data[1][0] = '0' + package_data[1][0]
-        #
-        #     # self.high_priority_packages[package_data[0]].update({'Deliver By': self.convert_time(package_data[1][2]).strftime('%H:%M:%S')})
-        #
-        # # else:
-        # #     self.high_priority_packages[package_data[0]].update({'Deliver By': package_data[1][2]})
-        #     # self.high_priority_packages['Package ID'][package_data[0]]['Deliver By'] = f'{hour}:{minute}'
-        #
-        #     # if hour < 10 and minute <= 30:
-        #     # self.first_truck.append(int(package_data[0]))
-        #     self.second_truck.append(int(package_data[0]))
-        #     self.been_loaded.append(int(package_data[0]))
-        #     self.total_packages_loaded += 1
-        #     # else:
-        #     #     # self.second_truck.append(int(package_data[0]))
-        #     #     self.been_loaded.append(int(package_data[0]))
-        #     #     self.total_packages_loaded += 1
-        #     #     self.second_truck.insert(self.high_priority_count, int(package_data[0]))
-        #
-        #
-        # # print(f'\nHigh Priority Packages: {self.high_priority_packages}')
-        #
-        # # Loading packages into the specific trucks that special instructions request.
-        # # if 'Can only be on truck' in package_data[1][7]:
-        #
-        #
-        # print(f'\nTruck 1: {self.first_truck}')
-        # print(f'Truck 2: {self.second_truck}')
-        # print(f'Truck 3: {self.third_truck}')
+                # Load onto first truck
+                if truck == 1:
+                    self.load_package_onto_first_truck(deliver_together)
+
+                # Load onto second truck
+                if truck == 2:
+                    self.load_package_onto_second_truck(deliver_together)
+
+                # Load onto third truck
+                if truck == 3:
+                    self.load_package_onto_third_truck(deliver_together)
+
+        # Determine which truck each package needs to be loaded onto based on whether it's delayed or not.
+        for record in record_data:
+
+            delayed_package = record_data[record].get('Delayed ETA')
+            deliver_together = record_data[record].get('Package ID')
+
+            if delayed_package is not None:
+
+                # Truck 2
+                if self.second_truck_departure_time == '':
+                    self.second_truck_departure_time = delayed_package
+
+                if wtime.time_difference(self.second_truck_departure_time, delayed_package) > 0:
+                    self.second_truck_departure_time = delayed_package
+                    self.load_package_onto_second_truck(deliver_together)
+
+        # Determine which truck each package needs to be on based on it's "deliver by" time.
+        for record in record_data:
+            deliver_by_time = record_data[record].get('Deliver By')
+            deliver_together = record_data[record].get('Package ID')
+
+            if deliver_by_time is not None:
+
+                # Truck 1
+                if deliver_by_time != 'EOD':
+                    if wtime.time_difference(deliver_by_time, FIRST_TRUCK_DEPARTURE_TIME) > 0:
+                        self.load_package_onto_first_truck(deliver_together)
+
+                # Truck 2
+                if deliver_by_time != 'EOD':
+                    if wtime.time_difference(deliver_by_time, self.second_truck_departure_time) > 0:
+                        self.load_package_onto_second_truck(deliver_together)
+
+                # Truck 3
+                else:
+                    self.load_package_onto_third_truck(deliver_together)
+
+        print(f'\nTruck 1: {self.first_truck}')
+        print(f'Truck 2: {self.second_truck}')
+        print(f'Truck 3: {self.third_truck}')
 
     # Find shortest distance from and to the hub O(n)
     def find_shortest_distance_from_and_to_hub(self, distances, record_dict):

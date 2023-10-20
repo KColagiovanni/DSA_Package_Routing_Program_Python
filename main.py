@@ -74,7 +74,7 @@ Selection: """)
 
                 package = ppd.get_hash().lookup_item(package_key)  # O(1)
 
-                print(f'package is: {package}')
+                # print(f'package is: {package}')
                 record_data = ppd.sync_csv_data(package)  # O(n)
 
             # print(f"record_data is: {record_data}")
