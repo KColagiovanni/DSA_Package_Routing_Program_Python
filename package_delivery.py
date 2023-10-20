@@ -51,7 +51,7 @@ class DeliverPackages:
                 if package_id[1] not in self.been_loaded:
                     self.first_truck.append(package_id[1])
                     self.been_loaded.append(package_id[1])
-                    self.total_packages_loaded += 1
+                    self.total_packages_loaded += 1  # MAKE SURE THIS IS STILL USED WHEN FINALIZING THINGS
         else:
             if len(self.first_truck) + len(package_id) < MAX_PACKAGES_PER_TRUCK:
                 for package_num in package_id:
@@ -97,36 +97,48 @@ class DeliverPackages:
         for record in record_data:
 
             deliver_together = record_data[record].get('Deliver Together')
+            package_id = record_data[record].get('Package ID')
+
 
             if deliver_together is not None:
-                print(deliver_together)
-                if package
+                print(f'deliver_together is {deliver_together}')
+                print(f'package_id is: {package_id}')
+                # if package_id
+                for package in package_id:
+                    print(f'paackage is: {package_id[package]}')
+                    # for package_num in package_id:
+                    #     print(f'package_id is: {package_id[package_num]}')
+                    #     if package_id[package_num] in deliver_together:
+                    #         print(f'{package_id[package_num]} in Deliver together')
+                    #     else:
+                    #         print(f'{package_id[package_num]} NOT in Deliver together')
 
         # Load packages onto trucks that they are required to be on.
         for record in record_data:
 
             truck = record_data[record].get('Truck')
-            deliver_together = record_data[record].get('Package ID')
+            package_id_data = record_data[record].get('Package ID')
 
             if truck is not None:
 
                 # Load onto first truck
                 if truck == 1:
-                    self.load_package_onto_first_truck(deliver_together)
+                    self.load_package_onto_first_truck(package_id_data)
 
                 # Load onto second truck
                 if truck == 2:
-                    self.load_package_onto_second_truck(deliver_together)
+
+                    self.load_package_onto_second_truck(package_id_data)
 
                 # Load onto third truck
                 if truck == 3:
-                    self.load_package_onto_third_truck(deliver_together)
+                    self.load_package_onto_third_truck(package_id_data)
 
         # Determine which truck each package needs to be loaded onto based on whether it's delayed or not.
         for record in record_data:
 
             delayed_package = record_data[record].get('Delayed ETA')
-            deliver_together = record_data[record].get('Package ID')
+            package_id_data = record_data[record].get('Package ID')
 
             if delayed_package is not None:
 
@@ -136,28 +148,28 @@ class DeliverPackages:
 
                 if wtime.time_difference(self.second_truck_departure_time, delayed_package) > 0:
                     self.second_truck_departure_time = delayed_package
-                    self.load_package_onto_second_truck(deliver_together)
+                    self.load_package_onto_second_truck(package_id_data)
 
         # Determine which truck each package needs to be on based on it's "deliver by" time.
         for record in record_data:
             deliver_by_time = record_data[record].get('Deliver By')
-            deliver_together = record_data[record].get('Package ID')
+            package_id_data = record_data[record].get('Package ID')
 
             if deliver_by_time is not None:
 
                 # Truck 1
                 if deliver_by_time != 'EOD':
                     if wtime.time_difference(deliver_by_time, FIRST_TRUCK_DEPARTURE_TIME) > 0:
-                        self.load_package_onto_first_truck(deliver_together)
+                        self.load_package_onto_first_truck(package_id_data)
 
                 # Truck 2
                 if deliver_by_time != 'EOD':
                     if wtime.time_difference(deliver_by_time, self.second_truck_departure_time) > 0:
-                        self.load_package_onto_second_truck(deliver_together)
+                        self.load_package_onto_second_truck(package_id_data)
 
                 # Truck 3
                 else:
-                    self.load_package_onto_third_truck(deliver_together)
+                    self.load_package_onto_third_truck(package_id_data)
 
         print(f'\nTruck 1: {self.first_truck}')
         print(f'Truck 2: {self.second_truck}')
