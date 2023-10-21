@@ -45,50 +45,47 @@ class DeliverPackages:
         self.total_packages_loaded = 0
         self.high_priority_count = 0
 
-    def load_package_onto_first_truck(self, package_id):
-        if package_id == 1:
-            if len(self.first_truck) + 1 < MAX_PACKAGES_PER_TRUCK:
-                if package_id[1] not in self.been_loaded:
-                    self.first_truck.append(package_id[1])
-                    self.been_loaded.append(package_id[1])
-                    self.total_packages_loaded += 1  # MAKE SURE THIS IS STILL USED WHEN FINALIZING THINGS
-        else:
-            if len(self.first_truck) + len(package_id) < MAX_PACKAGES_PER_TRUCK:
-                for package_num in package_id:
-                    if package_id[package_num] not in self.been_loaded:
-                        self.first_truck.append(package_id[package_num])
-                        self.been_loaded.append(package_id[package_num])
-                        self.total_packages_loaded += 1
+    # Truck 1
+    def load_package_onto_first_truck(self, package_id, deliver_together):
+        # if delayed_package is not None:
+        #     if package_id in delayed_package:
+        #         for package_num in package_id:
 
+        print(f'\npackage_id is: {package_id}')
+        print(f'deliver_together is: {deliver_together}')
+        if len(self.first_truck) + len(package_id) < MAX_PACKAGES_PER_TRUCK:
+            for package_num in package_id:
+                if package_id[package_num] not in self.been_loaded:
+                    # if deliver_together is not None:
+                    #     if package_id[package_num] in deliver_together:
+                    #         for package in deliver_together:
+                    #             print(f'package is: {package}')
+                    #             if package not in self.been_loaded:
+                    #                 self.first_truck.append(package)
+                    #                 self.been_loaded.append(package)
+                    #                 self.total_packages_loaded += 1
+                    self.first_truck.append(package_id[package_num])
+                    self.been_loaded.append(package_id[package_num])
+                    self.total_packages_loaded += 1
+
+
+    # Truck 2
     def load_package_onto_second_truck(self, package_id):
-        if package_id == 1:
-            if len(self.second_truck) + 1 < MAX_PACKAGES_PER_TRUCK:
-                if package_id[1] not in self.been_loaded:
-                    self.second_truck.append(package_id[1])
-                    self.been_loaded.append(package_id[1])
+        if len(self.second_truck) + len(package_id) < MAX_PACKAGES_PER_TRUCK:
+            for package_num in package_id:
+                if package_id[package_num] not in self.been_loaded:
+                    self.second_truck.append(package_id[package_num])
+                    self.been_loaded.append(package_id[package_num])
                     self.total_packages_loaded += 1
-        else:
-            if len(self.second_truck) + len(package_id) < MAX_PACKAGES_PER_TRUCK:
-                for package_num in package_id:
-                    if package_id[package_num] not in self.been_loaded:
-                        self.second_truck.append(package_id[package_num])
-                        self.been_loaded.append(package_id[package_num])
-                        self.total_packages_loaded += 1
 
+    # Truck 3
     def load_package_onto_third_truck(self, package_id):
-        if package_id == 1:
-            if len(self.third_truck) + 1 < MAX_PACKAGES_PER_TRUCK:
-                if package_id[1] not in self.been_loaded:
-                    self.third_truck.append(package_id[1])
-                    self.been_loaded.append(package_id[1])
+        if len(self.third_truck) + len(package_id) < MAX_PACKAGES_PER_TRUCK:
+            for package_num in package_id:
+                if package_id[package_num] not in self.been_loaded:
+                    self.third_truck.append(package_id[package_num])
+                    self.been_loaded.append(package_id[package_num])
                     self.total_packages_loaded += 1
-        else:
-            if len(self.third_truck) + len(package_id) < MAX_PACKAGES_PER_TRUCK:
-                for package_num in package_id:
-                    if package_id[package_num] not in self.been_loaded:
-                        self.third_truck.append(package_id[package_num])
-                        self.been_loaded.append(package_id[package_num])
-                        self.total_packages_loaded += 1
 
     # Analyze the special notes and deliver by times and add packages to trucks as needed - [O(1)]
     def manual_load(self, record_data):
@@ -99,19 +96,22 @@ class DeliverPackages:
             deliver_together = record_data[record].get('Deliver Together')
             package_id = record_data[record].get('Package ID')
 
-
             if deliver_together is not None:
-                print(f'deliver_together is {deliver_together}')
-                print(f'package_id is: {package_id}')
-                # if package_id
-                for package in package_id:
-                    print(f'paackage is: {package_id[package]}')
-                    # for package_num in package_id:
-                    #     print(f'package_id is: {package_id[package_num]}')
-                    #     if package_id[package_num] in deliver_together:
-                    #         print(f'{package_id[package_num]} in Deliver together')
-                    #     else:
-                    #         print(f'{package_id[package_num]} NOT in Deliver together')
+                for package in deliver_together:
+                    for package_num in package_id:
+                        print(f'package is: {package}')
+                        print(f'package_id[package_num] is: {package_id[package_num]}')
+
+            # if deliver_together is not None:
+            #     # if package_id
+            #     for package in package_id:
+            #         print(f'package is: {package_id[package]}')
+            #         for package_num in package_id:
+            #             print(f'package_id is: {package_id[package_num]}')
+            #             if package_id[package_num] in deliver_together:
+            #                 print(f'{package_id[package_num]} in Deliver together')
+            #             else:
+            #                 print(f'{package_id[package_num]} NOT in Deliver together')
 
         # Load packages onto trucks that they are required to be on.
         for record in record_data:
@@ -154,13 +154,14 @@ class DeliverPackages:
         for record in record_data:
             deliver_by_time = record_data[record].get('Deliver By')
             package_id_data = record_data[record].get('Package ID')
+            deliver_together = record_data[record].get('Deliver Together')
 
             if deliver_by_time is not None:
 
                 # Truck 1
                 if deliver_by_time != 'EOD':
                     if wtime.time_difference(deliver_by_time, FIRST_TRUCK_DEPARTURE_TIME) > 0:
-                        self.load_package_onto_first_truck(package_id_data)
+                        self.load_package_onto_first_truck(package_id_data, deliver_together)
 
                 # Truck 2
                 if deliver_by_time != 'EOD':
@@ -171,10 +172,10 @@ class DeliverPackages:
                 else:
                     self.load_package_onto_third_truck(package_id_data)
 
-        print(f'\nTruck 1: {self.first_truck}')
-        print(f'Truck 2: {self.second_truck}')
-        print(f'Truck 3: {self.third_truck}')
-
+        print(f'\nTruck 1({len(self.first_truck)}): {self.first_truck}')
+        print(f'Truck 2({len(self.second_truck)}): {self.second_truck}')
+        print(f'Truck 3({len(self.third_truck)}): {self.third_truck}')
+        print(f'Total packages loaded: {self.total_packages_loaded} <-- Check --> {len(self.first_truck) + len(self.second_truck) + len(self.third_truck)}')
     # Find shortest distance from and to the hub O(n)
     def find_shortest_distance_from_and_to_hub(self, distances, record_dict):
 
