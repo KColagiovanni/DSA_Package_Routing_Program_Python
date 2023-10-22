@@ -14,17 +14,17 @@ class Graph:
         self.edge_weights = {}  # edge dictionary {key:value}
 
     def add_vertex(self, new_vertex):
-        self.adjacency_list[new_vertex] = []  # {vertex_1: [], vertex_2: [], ...}
+        self.adjacency_list[new_vertex] = []  # {package_vertex_1: [], package_vertex_2: [], ...}
 
     def add_directed_edge(self, from_vertex, to_vertex, weight=1.0):
         self.edge_weights[(from_vertex, to_vertex)] = weight
-        # {(vertex_1,vertex_2): 484, (vertex_1,vertex_3): 626, (vertex_2,vertex_6): 1306, ...}
+        # {(package_vertex_1,package_vertex_2): 484, (package_vertex_1,package_vertex_3): 626, (package_vertex_2,package_vertex_6): 1306, ...}
         self.adjacency_list[from_vertex].append(to_vertex)
-        # {vertex_1: [vertex_2, vertex_3], vertex_2: [vertex_6], ...}
+        # {package_vertex_1: [package_vertex_2, package_vertex_3], package_vertex_2: [package_vertex_6], ...}
 
-    def add_undirected_edge(self, vertex_a, vertex_b, weight=1.0):
-        self.add_directed_edge(vertex_a, vertex_b, weight)
-        self.add_directed_edge(vertex_b, vertex_a, weight)
+    def add_undirected_edge(self, package_vertex_a, package_vertex_b, weight=1.0):
+        self.add_directed_edge(package_vertex_a, package_vertex_b, weight)
+        self.add_directed_edge(package_vertex_b, package_vertex_a, weight)
 
 
 # Dijkstra shortest path
@@ -34,7 +34,7 @@ def dijkstra_shortest_path(g, start_vertex):
 
     for current_vertex in g.adjacency_list:
         unvisited_queue.append(current_vertex)
-        # unvisited_queue = [vertex_1, vertex_2, ...]
+        # unvisited_queue = [package_vertex_1, package_vertex_2, ...]
 
     # Start_vertex has a distance of 0 from itself
     start_vertex.distance = 0
@@ -54,7 +54,7 @@ def dijkstra_shortest_path(g, start_vertex):
 
         # Check potential path lengths from the current vertex to all neighbors.
         for adj_vertex in g.adjacency_list[current_vertex]:  # values from  dictionary
-            # if current_vertex = vertex_1 => adj_vertex in [vertex_2, vertex_3], if vertex_2 => adj_vertex in [vertex_6], ...
+            # if current_vertex = package_vertex_1 => adj_vertex in [package_vertex_2, package_vertex_3], if package_vertex_2 => adj_vertex in [package_vertex_6], ...
             edge_weight = g.edge_weights[(current_vertex, adj_vertex)]  # values from dictionary
             # edge_weight = 484 then 626 then 1306, ...}
             alternative_path_distance = current_vertex.distance + edge_weight
@@ -93,64 +93,74 @@ def get_shortest_path_city(start_vertex, end_vertex):
 g = Graph()
 
 # add Vertices
-vertex_1 = Vertex("1")  # 1, "CITIZEN KANE", 1941, 25.00, Salt Lake City, Utah
-g.add_vertex(vertex_1)
-vertex_2 = Vertex("2")  # 2, "CASABLANCA", 1942, 25.00, Helena, Montana
-g.add_vertex(vertex_2)
-vertex_3 = Vertex("3")  # 3, "THE GODFATHER", 1972, 10.00, Santa Fe, New Mexico
-g.add_vertex(vertex_3)
-vertex_4 = Vertex("4")  # 4, "GONE WITH THE WIND", 1939, 10.00, Austin, Texas
-g.add_vertex(vertex_4)
-vertex_5 = Vertex("5")  # 5, "LAWRENCE OF ARABIA", 1962, 10.00, Lincoln, Nebraska
-g.add_vertex(vertex_5)
-vertex_6 = Vertex("6")  # 6, "THE WIZARD OF OZ", 1939, 10.00, Madison, Wisconsin
-g.add_vertex(vertex_6)
-vertex_7 = Vertex("7")  # 7, "THE GRADUATE", 1967, 5.00, New York, New York
-g.add_vertex(vertex_7)
-vertex_8 = Vertex("8")  # 8, "ON THE WATERFRONT", 1954, 5.00, Columbus, Ohio
-g.add_vertex(vertex_8)
-vertex_9 = Vertex("9")  # 9, "SCHINDLER'S LIST", 1993, 5.00, Raleigh, North Carolina
-g.add_vertex(vertex_9)
-vertex_10 = Vertex("10")  # 10, "SINGIN' IN THE RAIN", 1952, 5.00, Orlando, Florida
-g.add_vertex(vertex_10)
-vertex_11 = Vertex("11")  # 11, "STAR WARS", 1977, 1.00, Montgomery, Alabama
-g.add_vertex(vertex_11)
+package_vertex_1 = Vertex("1")  # 1, "CITIZEN KANE", 1941, 25.00, Salt Lake City, Utah
+g.add_vertex(package_vertex_1)
+package_vertex_2 = Vertex("2")  # 2, "CASABLANCA", 1942, 25.00, Helena, Montana
+g.add_vertex(package_vertex_2)
+package_vertex_3 = Vertex("3")  # 3, "THE GODFATHER", 1972, 10.00, Santa Fe, New Mexico
+g.add_vertex(package_vertex_3)
+package_vertex_4 = Vertex("4")  # 4, "GONE WITH THE WIND", 1939, 10.00, Austin, Texas
+g.add_vertex(package_vertex_4)
+package_vertex_5 = Vertex("5")  # 5, "LAWRENCE OF ARABIA", 1962, 10.00, Lincoln, Nebraska
+g.add_vertex(package_vertex_5)
+package_vertex_6 = Vertex("6")  # 6, "THE WIZARD OF OZ", 1939, 10.00, Madison, Wisconsin
+g.add_vertex(package_vertex_6)
+package_vertex_7 = Vertex("7")  # 7, "THE GRADUATE", 1967, 5.00, New York, New York
+g.add_vertex(package_vertex_7)
+package_vertex_8 = Vertex("8")  # 8, "ON THE WATERFRONT", 1954, 5.00, Columbus, Ohio
+g.add_vertex(package_vertex_8)
+package_vertex_9 = Vertex("9")  # 9, "SCHINDLER'S LIST", 1993, 5.00, Raleigh, North Carolina
+g.add_vertex(package_vertex_9)
+package_vertex_10 = Vertex("10")  # 10, "SINGIN' IN THE RAIN", 1952, 5.00, Orlando, Florida
+g.add_vertex(package_vertex_10)
+package_vertex_11 = Vertex("11")  # 11, "STAR WARS", 1977, 1.00, Montgomery, Alabama
+g.add_vertex(package_vertex_11)
+package_vertex_12 = Vertex("12")  # 11, "STAR WARS", 1977, 1.00, Montgomery, Alabama
+g.add_vertex(package_vertex_12)
+package_vertex_13 = Vertex("13")  # 11, "STAR WARS", 1977, 1.00, Montgomery, Alabama
+g.add_vertex(package_vertex_13)
+package_vertex_14 = Vertex("14")  # 11, "STAR WARS", 1977, 1.00, Montgomery, Alabama
+g.add_vertex(package_vertex_14)
+package_vertex_15 = Vertex("15")  # 11, "STAR WARS", 1977, 1.00, Montgomery, Alabama
+g.add_vertex(package_vertex_15)
+package_vertex_16 = Vertex("16")  # 11, "STAR WARS", 1977, 1.00, Montgomery, Alabama
+g.add_vertex(package_vertex_16)
 
 # add Edges
-g.add_undirected_edge(vertex_1, vertex_2, 484)  # 484 miles
-g.add_undirected_edge(vertex_1, vertex_3, 626)
-g.add_undirected_edge(vertex_2, vertex_6, 1306)
-g.add_undirected_edge(vertex_3, vertex_5, 774)
-g.add_undirected_edge(vertex_3, vertex_4, 687)
-g.add_undirected_edge(vertex_4, vertex_11, 797)
-g.add_undirected_edge(vertex_5, vertex_6, 482)
-g.add_undirected_edge(vertex_6, vertex_7, 936)
-g.add_undirected_edge(vertex_7, vertex_8, 535)
-g.add_undirected_edge(vertex_7, vertex_9, 504)
-g.add_undirected_edge(vertex_9, vertex_10, 594)
-g.add_undirected_edge(vertex_11, vertex_5, 970)
-g.add_undirected_edge(vertex_11, vertex_8, 664)
-g.add_undirected_edge(vertex_11, vertex_9, 567)
-g.add_undirected_edge(vertex_11, vertex_10, 453)
+g.add_undirected_edge(package_vertex_1, package_vertex_2, 484)  # 484 miles
+g.add_undirected_edge(package_vertex_1, package_vertex_3, 626)
+g.add_undirected_edge(package_vertex_2, package_vertex_6, 1306)
+g.add_undirected_edge(package_vertex_3, package_vertex_5, 774)
+g.add_undirected_edge(package_vertex_3, package_vertex_4, 687)
+g.add_undirected_edge(package_vertex_4, package_vertex_11, 797)
+g.add_undirected_edge(package_vertex_5, package_vertex_6, 482)
+g.add_undirected_edge(package_vertex_6, package_vertex_7, 936)
+g.add_undirected_edge(package_vertex_7, package_vertex_8, 535)
+g.add_undirected_edge(package_vertex_7, package_vertex_9, 504)
+g.add_undirected_edge(package_vertex_9, package_vertex_10, 594)
+g.add_undirected_edge(package_vertex_11, package_vertex_5, 970)
+g.add_undirected_edge(package_vertex_11, package_vertex_8, 664)
+g.add_undirected_edge(package_vertex_11, package_vertex_9, 567)
+g.add_undirected_edge(package_vertex_11, package_vertex_10, 453)
 
 # Run Dijkstra's algorithm first.
-dijkstra_shortest_path(g, vertex_1)
+dijkstra_shortest_path(g, package_vertex_1)
 
 # Get the vertices by the label for convenience; display shortest path for each vertex
-# from vertex_1.
+# from package_vertex_1.
 print("\nDijkstra shortest path:")
 for v in g.adjacency_list:
-    if v.pred_vertex is None and v is not vertex_1:
+    if v.pred_vertex is None and v is not package_vertex_1:
         print("1 to %s ==> no path exists" % v.label)
     else:
-        print("1 to %s ==> %s (total distance: %g)" % (v.label, get_shortest_path(vertex_1, v), v.distance))
+        print("1 to %s ==> %s (total distance: %g)" % (v.label, get_shortest_path(package_vertex_1, v), v.distance))
 
 print("\nDijkstra shortest path with Cities:")
 for v in g.adjacency_list:
     myMovie = myHash.search(int(v.label))
-    if v.pred_vertex is None and v is not vertex_1:
+    if v.pred_vertex is None and v is not package_vertex_1:
         print("Salt Lake City to %s ==> no path exists" % myMovie.city)
     else:
         print("Salt Lake City to %s ==> %s (total distance: %g)" % (
-        myMovie.city, get_shortest_path_city(vertex_1, v), v.distance))
+        myMovie.city, get_shortest_path_city(package_vertex_1, v), v.distance))
 # Dijkstra shortest path - END

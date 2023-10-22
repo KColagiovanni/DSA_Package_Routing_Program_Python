@@ -111,10 +111,10 @@ Selection: """)
 
             # dp.load_trucks(first_package_id, ppd.record)  # O(n^2)
             #
-            # for truck in range(len(dp.delivery_data)):
-            #     dp.update_package_delivery_status_and_print_output(
-            #         dp.delivery_data[truck][0], truck + 1, dp.delivery_data[truck][1], lookup_time
-            #     )
+            for truck in range(len(dp.delivery_data)):
+                dp.update_package_delivery_status_and_print_output(
+                    dp.delivery_data[truck][0], truck + 1, dp.delivery_data[truck][1], lookup_time
+                )
             #
             # print(f'{dp.maximize_efficiency(dp.delivery_data[truck][0])}')
             # dp.update_package_delivery_status(dp.second_truck, 2, dp.second_truck_delivery_times[1], lookup_time)

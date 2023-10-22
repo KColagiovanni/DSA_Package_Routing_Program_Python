@@ -46,28 +46,13 @@ class DeliverPackages:
         self.high_priority_count = 0
 
     # Truck 1
-    def load_package_onto_first_truck(self, package_id, deliver_together):
-        # if delayed_package is not None:
-        #     if package_id in delayed_package:
-        #         for package_num in package_id:
-
-        print(f'\npackage_id is: {package_id}')
-        print(f'deliver_together is: {deliver_together}')
+    def load_package_onto_first_truck(self, package_id):
         if len(self.first_truck) + len(package_id) < MAX_PACKAGES_PER_TRUCK:
             for package_num in package_id:
                 if package_id[package_num] not in self.been_loaded:
-                    # if deliver_together is not None:
-                    #     if package_id[package_num] in deliver_together:
-                    #         for package in deliver_together:
-                    #             print(f'package is: {package}')
-                    #             if package not in self.been_loaded:
-                    #                 self.first_truck.append(package)
-                    #                 self.been_loaded.append(package)
-                    #                 self.total_packages_loaded += 1
                     self.first_truck.append(package_id[package_num])
                     self.been_loaded.append(package_id[package_num])
                     self.total_packages_loaded += 1
-
 
     # Truck 2
     def load_package_onto_second_truck(self, package_id):
@@ -94,13 +79,18 @@ class DeliverPackages:
         for record in record_data:
 
             deliver_together = record_data[record].get('Deliver Together')
-            package_id = record_data[record].get('Package ID')
 
             if deliver_together is not None:
-                for package in deliver_together:
-                    for package_num in package_id:
-                        print(f'package is: {package}')
-                        print(f'package_id[package_num] is: {package_id[package_num]}')
+                self.packages_to_be_delivered_together = deliver_together
+        for package in self.packages_to_be_delivered_together:
+            package_id = record_data[ppd.get_hash().lookup_item(package)[1][1]].get('Package ID')
+            print(f'package_id is: {package_id}')
+            self.load_package_onto_first_truck(package_id)
+        print(f'self.packages_to_be_delivered_together is: {self.packages_to_be_delivered_together}')
+            # print(ppd.get_hash().lookup_item(package)[1][1])
+                #     for package_num in package_id:
+                #         print(f'package is: {package}')
+                #         print(f'package_id[package_num] is: {package_id[package_num]}')
 
             # if deliver_together is not None:
             #     # if package_id
@@ -161,7 +151,8 @@ class DeliverPackages:
                 # Truck 1
                 if deliver_by_time != 'EOD':
                     if wtime.time_difference(deliver_by_time, FIRST_TRUCK_DEPARTURE_TIME) > 0:
-                        self.load_package_onto_first_truck(package_id_data, deliver_together)
+                        # self.load_package_onto_first_truck(package_id_data, deliver_together)
+                        self.load_package_onto_first_truck(package_id_data)
 
                 # Truck 2
                 if deliver_by_time != 'EOD':
@@ -176,6 +167,27 @@ class DeliverPackages:
         print(f'Truck 2({len(self.second_truck)}): {self.second_truck}')
         print(f'Truck 3({len(self.third_truck)}): {self.third_truck}')
         print(f'Total packages loaded: {self.total_packages_loaded} <-- Check --> {len(self.first_truck) + len(self.second_truck) + len(self.third_truck)}')
+
+        if self.total_packages_loaded == len(ppd.get_input_data()):
+            # Calculate the distance that each truck traveled
+            self.total_dist_first_truck = self.calculate_truck_distance(self.first_truck, record_data)  # [O(n)]
+            self.total_dist_second_truck = self.calculate_truck_distance(self.second_truck, record_data)  # [O(n)]
+            self.total_dist_third_truck = self.calculate_truck_distance(self.third_truck, record_data)  # [O(n)]
+
+            # Calculate the time that each truck spent traveling to each destination.
+            self.first_truck_delivery_times = self.calculate_delivery_time(
+                self.total_dist_first_truck[1], FIRST_TRUCK_DEPARTURE_TIME)  # [O(n)]
+            self.second_truck_delivery_times = self.calculate_delivery_time(
+                self.total_dist_second_truck[1], self.second_truck_departure_time)  # [O(n)]
+            self.third_truck_delivery_times = self.calculate_delivery_time(
+                self.total_dist_third_truck[1], self.first_truck_delivery_times[1][-1])  # [O(n)]
+
+            self.delivery_data.append([self.first_truck, self.first_truck_delivery_times[1]])
+            self.delivery_data.append([self.second_truck, self.second_truck_delivery_times[1]])
+            self.delivery_data.append([self.third_truck, self.third_truck_delivery_times[1]])
+
+            self.print_verbose_output()
+
     # Find shortest distance from and to the hub O(n)
     def find_shortest_distance_from_and_to_hub(self, distances, record_dict):
 
@@ -194,21 +206,16 @@ class DeliverPackages:
     def find_shortest_distance(self, distances, search_row_index):
 
         # Get index where the search will begin.
-        if float(distances[search_row_index][1]) > 0:
-            # print(f'from find_shortest_distance float(distances[{search_row_index}][1]) (start search index) is: {float(distances[search_row_index][1])}')
-            min_dist = float(distances[search_row_index][1])
-            t_direction = 'horizontal'
-        else:
-            # print(f'from find_shortest_distance float(distances[{search_row_index + 1}][1]) (start search index) is: {float(distances[search_row_index + 1][1])}')
-            min_dist = float(distances[search_row_index + 1][1])
+        if float(distances[search_row_index][1]) == 0:
             t_direction = 'vertical'
+        else:
+            t_direction = 'horizontal'
 
         search_data = {
             'min_horizontal_index': 0,
             'min_vertical_index': 0,
             'traversal_direction': t_direction,
-            'min_dist': min_dist,
-            # 'min_dist': float(MAX_TRUCKS_TRAVEL_DISTANCE),
+            'min_dist': float('inf'),
             'min_dist_location': 'horizontal'
         }
 
@@ -307,7 +314,6 @@ class DeliverPackages:
         # if search_data['min_dist_location'] == 'vertical':
         #     print(f"returning vertical: {search_data['min_vertical_index']}")
         #     return search_data['min_vertical_index']
-
 
     # Check if a truck can be loaded more efficiently if it was initially loaded with
     # required packages prior to being loaded by the shortest distance method
