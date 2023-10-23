@@ -78,7 +78,8 @@ Selection: """)
                 record_data = ppd.sync_csv_data(package)  # O(n)
 
             # print(f"record_data is: {record_data}")
-            dp.manual_load(record_data)
+            loaded_trucks = dp.manual_load(record_data)
+            dp.first_truck = dp.find_shortest_distance(ppd.get_distance_data(), loaded_trucks[0], record_data)
                 # for package_num in range(1, len(record_data[package[1][1]].get('Package ID')) + 1):
                 #     print(package_num)
                 # print(record_data.get('Package ID').get(package_num))

@@ -186,7 +186,11 @@ class DeliverPackages:
             self.delivery_data.append([self.second_truck, self.second_truck_delivery_times[1]])
             self.delivery_data.append([self.third_truck, self.third_truck_delivery_times[1]])
 
+            # self.find_shortest_distance(ppd.get_distance_data(), self.first_truck)
+
             self.print_verbose_output()
+
+            return [self.first_truck, self.second_truck, self.third_truck]
 
     # Find shortest distance from and to the hub O(n)
     def find_shortest_distance_from_and_to_hub(self, distances, record_dict):
@@ -203,117 +207,202 @@ class DeliverPackages:
         return record_dict[ppd.get_distance_name_data()[shortest_index][2]]['Package ID'][1]
 
     # Returns the index of the shortest distance - [O(n^2)]
-    def find_shortest_distance(self, distances, search_row_index):
+    def find_shortest_distance(self, distances, packages_on_truck, record_data):
 
-        # Get index where the search will begin.
-        if float(distances[search_row_index][1]) == 0:
-            t_direction = 'vertical'
-        else:
-            t_direction = 'horizontal'
+        closest_to_the_hub = float('inf')
+        first_package = packages_on_truck[0]
 
-        search_data = {
-            'min_horizontal_index': 0,
-            'min_vertical_index': 0,
-            'traversal_direction': t_direction,
-            'min_dist': float('inf'),
-            'min_dist_location': 'horizontal'
-        }
+        # Find the package that is closest to the hub
+        for package in packages_on_truck:
+            print(f'\nPackage: {package}')
+            package_address = ppd.get_hash().lookup_item(package)[1][1]
+            print(f"ppd.get_hash().lookup_item({package})[1][1] is: {package_address}")
+            package_index = int(record_data[package_address].get('Index'))
+            print(f"ppd.record[{package_address}].get('Index') is: {package_index}")
+            print(f"distances[{package_index}] is: {distances[package_index]}")
+            print(f'closest_to_the_hub is: {closest_to_the_hub}')
+            print(f'distances[package_index][0] is: {distances[package_index][0]}')
+            print(f'{distances[package_index][0]} < {closest_to_the_hub}({float(distances[package_index][0]) < closest_to_the_hub})')
 
-        # row_data = ppd.get_hash().lookup_item(<package id>)
+            if float(distances[package_index][0]) < closest_to_the_hub:
+                closest_to_the_hub = float(distances[package_index][0])
+                first_package = package
+
+        print(f'Package {first_package} is the closest to the hub({closest_to_the_hub} miles)')
+
+        packages_on_truck.pop(first_package)
+        packages_on_truck.insert(0, first_package)
+
+
+
+
+        # # Get index where the search will begin.
+        # if float(distances[search_row_index][1]) == 0:
+        #     t_direction = 'vertical'
+        # else:
+        #     t_direction = 'horizontal'
         #
-        # print(f'row_data is: {row_data}')
-
-        ##### IF TRUCK IS EMPTY AND ABOUT TO START BEING PACKED, LOAD FIRST PACKAGE #####
-
-        # print(f'distances[search_row_index][1] is: {distances[search_row_index][1]}')
-
-        for row in range(1, len(distances[search_row_index])):  # O(n)
-
-            ##### iF THE TRUCK IS FULLY PACKED MINUS 1 PACKAGE, CHECK SHORTEST DISTANCE BACK TO HUB #####
-            if distances[search_row_index][row] == '0.0':
-                search_data['traversal_direction'] = 'vertical'
-
-            # if row in self.addresses:  # O(n) (in a for loop makes this O(n^2))
-            #     # print(f'{row} is in {self.addresses}')
-            #     continue
-
-            if search_data['traversal_direction'] == 'horizontal':
-                # print(f"\nsearch_data['traversal_direction'] is: {search_data['traversal_direction']}")
-                if distances[search_row_index][row] != '':
-                    # print(f"{float(distances[search_row_index][row])} < {search_data['min_dist']}({float(distances[search_row_index][row]) < search_data['min_dist']})")
-                    if float(distances[search_row_index][row]) < search_data['min_dist']:
-                        if float(distances[search_row_index][row]) != 0.0:
-                            if search_row_index not in self.addresses:  # O(n) (in a for loop makes this O(n^2))
-                                print(f'distances[{search_row_index}][{row}] is: {float(distances[search_row_index][row])}')
-                                search_data['min_dist'] = float(distances[search_row_index][row])
-                                # print(f"search_data['min_dist'] is: {search_data['min_dist']}")
-                                search_data['min_dist_location'] = 'horizontal'
-                                search_data['min_horizontal_index'] = row
-
-            if search_data['traversal_direction'] == 'vertical':
-                # print(f"\nsearch_data['traversal_direction'] is: {search_data['traversal_direction']}")
-                if distances[row][search_row_index] != '':
-                    # print(f"{float(distances[row][search_row_index])} < {search_data['min_dist']}({float(distances[row][search_row_index]) < search_data['min_dist']})")
-                    if float(distances[row][search_row_index]) < search_data['min_dist']:
-                        # print(f"{float(distances[row][search_row_index])} != 0.0 ({float(distances[row][search_row_index]) != 0.0})")
-                        if float(distances[row][search_row_index]) != 0.0:
-                            if row not in self.addresses:  # O(n) (in a for loop makes this O(n^2))
-                                print(f'distances[{row}][{search_row_index}] is: {float(distances[row][search_row_index])}')
-                                search_data['min_dist'] = float(distances[row][search_row_index])
-                                # print(f"search_data['min_dist'] is: {search_data['min_dist']}")
-                                search_data['min_dist_location'] = 'vertical'
-                                search_data['min_vertical_index'] = row
-
-            # print(f'distances[{search_row_index}][{row}] is: {distances[search_row_index][row]}')
-            # print(f'distances[{row}][{search_row_index}] is: {distances[row][search_row_index]}')
-
-        # print(f"from find_shortest_distance, search_data is: {search_data}")
-        # print(f'Address indexes that have been added: {self.addresses}')
-
-        self.distance_traveled.append(float(search_data["min_dist"]))
-        # print(f'self.first_truck is: {self.first_truck}')
-        # print(f'self.second_truck is: {self.second_truck}')
-        # print(f'self.third_truck is: {self.third_truck}')
-        # print(f'self.distance_traveled is: {self.distance_traveled}\n')
-
-        # print(f'distance_traveled is: {self.distance_traveled}')
-
-        if search_row_index not in self.addresses:  # O(n)
-            self.addresses.append(search_row_index)
-
-        if search_data["min_horizontal_index"] == 0 and search_data["min_vertical_index"] == 0:
-            for index in range(1, len(distances[search_row_index])):  # O(n)
-                if index not in self.addresses:  # O(n) (in a for loop makes this O(n^2))
-                    search_data['min_horizontal_index'] = index
-                    search_data['min_vertical_index'] = index
-
-        if search_data['min_dist_location'] == 'horizontal':
-            print(f"returning horizontal: {search_data['min_horizontal_index']}")
-            return search_data['min_horizontal_index']
-        if search_data['min_dist_location'] == 'vertical':
-            print(f"returning vertical: {search_data['min_vertical_index']}")
-            return search_data['min_vertical_index']
-
+        # search_data = {
+        #     'min_horizontal_index': 0,
+        #     'min_vertical_index': 0,
+        #     'traversal_direction': t_direction,
+        #     'min_dist': float('inf'),
+        #     'min_dist_location': 'horizontal'
+        # }
+        #
+        # for row in range(1, len(distances[search_row_index])):  # O(n)
+        #
+        #     ##### iF THE TRUCK IS FULLY PACKED MINUS 1 PACKAGE, CHECK SHORTEST DISTANCE BACK TO HUB #####
+        #     if distances[search_row_index][row] == '0.0':
+        #         search_data['traversal_direction'] = 'vertical'
+        #
+        #     if search_data['traversal_direction'] == 'horizontal':
+        #         if distances[search_row_index][row] != '':
+        #             if float(distances[search_row_index][row]) < search_data['min_dist']:
+        #                 if float(distances[search_row_index][row]) != 0.0:
+        #                     if search_row_index not in self.addresses:  # O(n) (in a for loop makes this O(n^2))
+        #                         print(f'distances[{search_row_index}][{row}] is: {float(distances[search_row_index][row])}')
+        #                         search_data['min_dist'] = float(distances[search_row_index][row])
+        #                         search_data['min_dist_location'] = 'horizontal'
+        #                         search_data['min_horizontal_index'] = row
+        #
+        #     if search_data['traversal_direction'] == 'vertical':
+        #         if distances[row][search_row_index] != '':
+        #             if float(distances[row][search_row_index]) < search_data['min_dist']:
+        #                 if float(distances[row][search_row_index]) != 0.0:
+        #                     if row not in self.addresses:  # O(n) (in a for loop makes this O(n^2))
+        #                         search_data['min_dist'] = float(distances[row][search_row_index])
+        #                         search_data['min_dist_location'] = 'vertical'
+        #                         search_data['min_vertical_index'] = row
+        #
+        # self.distance_traveled.append(float(search_data["min_dist"]))
+        #
         # if search_row_index not in self.addresses:  # O(n)
         #     self.addresses.append(search_row_index)
         #
         # if search_data["min_horizontal_index"] == 0 and search_data["min_vertical_index"] == 0:
         #     for index in range(1, len(distances[search_row_index])):  # O(n)
         #         if index not in self.addresses:  # O(n) (in a for loop makes this O(n^2))
-        #             print(f'index is(if): {index}')
         #             search_data['min_horizontal_index'] = index
         #             search_data['min_vertical_index'] = index
-        #         else:
-        #             print(f'self.addresses from shortest is: {self.addresses}')
-        #             print(f'index is(else): {index}')
-        #
         #
         # if search_data['min_dist_location'] == 'horizontal':
-        #     print(f"returning horizontal: {search_data['min_horizontal_index']}")
         #     return search_data['min_horizontal_index']
         # if search_data['min_dist_location'] == 'vertical':
-        #     print(f"returning vertical: {search_data['min_vertical_index']}")
         #     return search_data['min_vertical_index']
+
+    # # Returns the index of the shortest distance - [O(n^2)]
+    # def find_shortest_distance(self, distances, search_row_index):
+    #
+    #     # Get index where the search will begin.
+    #     if float(distances[search_row_index][1]) == 0:
+    #         t_direction = 'vertical'
+    #     else:
+    #         t_direction = 'horizontal'
+    #
+    #     search_data = {
+    #         'min_horizontal_index': 0,
+    #         'min_vertical_index': 0,
+    #         'traversal_direction': t_direction,
+    #         'min_dist': float('inf'),
+    #         'min_dist_location': 'horizontal'
+    #     }
+    #
+    #     # row_data = ppd.get_hash().lookup_item(<package id>)
+    #     #
+    #     # print(f'row_data is: {row_data}')
+    #
+    #     ##### IF TRUCK IS EMPTY AND ABOUT TO START BEING PACKED, LOAD FIRST PACKAGE #####
+    #
+    #     # print(f'distances[search_row_index][1] is: {distances[search_row_index][1]}')
+    #
+    #     for row in range(1, len(distances[search_row_index])):  # O(n)
+    #
+    #         ##### iF THE TRUCK IS FULLY PACKED MINUS 1 PACKAGE, CHECK SHORTEST DISTANCE BACK TO HUB #####
+    #         if distances[search_row_index][row] == '0.0':
+    #             search_data['traversal_direction'] = 'vertical'
+    #
+    #         # if row in self.addresses:  # O(n) (in a for loop makes this O(n^2))
+    #         #     # print(f'{row} is in {self.addresses}')
+    #         #     continue
+    #
+    #         if search_data['traversal_direction'] == 'horizontal':
+    #             # print(f"\nsearch_data['traversal_direction'] is: {search_data['traversal_direction']}")
+    #             if distances[search_row_index][row] != '':
+    #                 # print(f"{float(distances[search_row_index][row])} < {search_data['min_dist']}({float(distances[search_row_index][row]) < search_data['min_dist']})")
+    #                 if float(distances[search_row_index][row]) < search_data['min_dist']:
+    #                     if float(distances[search_row_index][row]) != 0.0:
+    #                         if search_row_index not in self.addresses:  # O(n) (in a for loop makes this O(n^2))
+    #                             print(f'distances[{search_row_index}][{row}] is: {float(distances[search_row_index][row])}')
+    #                             search_data['min_dist'] = float(distances[search_row_index][row])
+    #                             # print(f"search_data['min_dist'] is: {search_data['min_dist']}")
+    #                             search_data['min_dist_location'] = 'horizontal'
+    #                             search_data['min_horizontal_index'] = row
+    #
+    #         if search_data['traversal_direction'] == 'vertical':
+    #             # print(f"\nsearch_data['traversal_direction'] is: {search_data['traversal_direction']}")
+    #             if distances[row][search_row_index] != '':
+    #                 # print(f"{float(distances[row][search_row_index])} < {search_data['min_dist']}({float(distances[row][search_row_index]) < search_data['min_dist']})")
+    #                 if float(distances[row][search_row_index]) < search_data['min_dist']:
+    #                     # print(f"{float(distances[row][search_row_index])} != 0.0 ({float(distances[row][search_row_index]) != 0.0})")
+    #                     if float(distances[row][search_row_index]) != 0.0:
+    #                         if row not in self.addresses:  # O(n) (in a for loop makes this O(n^2))
+    #                             print(f'distances[{row}][{search_row_index}] is: {float(distances[row][search_row_index])}')
+    #                             search_data['min_dist'] = float(distances[row][search_row_index])
+    #                             # print(f"search_data['min_dist'] is: {search_data['min_dist']}")
+    #                             search_data['min_dist_location'] = 'vertical'
+    #                             search_data['min_vertical_index'] = row
+    #
+    #         # print(f'distances[{search_row_index}][{row}] is: {distances[search_row_index][row]}')
+    #         # print(f'distances[{row}][{search_row_index}] is: {distances[row][search_row_index]}')
+    #
+    #     # print(f"from find_shortest_distance, search_data is: {search_data}")
+    #     # print(f'Address indexes that have been added: {self.addresses}')
+    #
+    #     self.distance_traveled.append(float(search_data["min_dist"]))
+    #     # print(f'self.first_truck is: {self.first_truck}')
+    #     # print(f'self.second_truck is: {self.second_truck}')
+    #     # print(f'self.third_truck is: {self.third_truck}')
+    #     # print(f'self.distance_traveled is: {self.distance_traveled}\n')
+    #
+    #     # print(f'distance_traveled is: {self.distance_traveled}')
+    #
+    #     if search_row_index not in self.addresses:  # O(n)
+    #         self.addresses.append(search_row_index)
+    #
+    #     if search_data["min_horizontal_index"] == 0 and search_data["min_vertical_index"] == 0:
+    #         for index in range(1, len(distances[search_row_index])):  # O(n)
+    #             if index not in self.addresses:  # O(n) (in a for loop makes this O(n^2))
+    #                 search_data['min_horizontal_index'] = index
+    #                 search_data['min_vertical_index'] = index
+    #
+    #     if search_data['min_dist_location'] == 'horizontal':
+    #         print(f"returning horizontal: {search_data['min_horizontal_index']}")
+    #         return search_data['min_horizontal_index']
+    #     if search_data['min_dist_location'] == 'vertical':
+    #         print(f"returning vertical: {search_data['min_vertical_index']}")
+    #         return search_data['min_vertical_index']
+    #
+    #     # if search_row_index not in self.addresses:  # O(n)
+    #     #     self.addresses.append(search_row_index)
+    #     #
+    #     # if search_data["min_horizontal_index"] == 0 and search_data["min_vertical_index"] == 0:
+    #     #     for index in range(1, len(distances[search_row_index])):  # O(n)
+    #     #         if index not in self.addresses:  # O(n) (in a for loop makes this O(n^2))
+    #     #             print(f'index is(if): {index}')
+    #     #             search_data['min_horizontal_index'] = index
+    #     #             search_data['min_vertical_index'] = index
+    #     #         else:
+    #     #             print(f'self.addresses from shortest is: {self.addresses}')
+    #     #             print(f'index is(else): {index}')
+    #     #
+    #     #
+    #     # if search_data['min_dist_location'] == 'horizontal':
+    #     #     print(f"returning horizontal: {search_data['min_horizontal_index']}")
+    #     #     return search_data['min_horizontal_index']
+    #     # if search_data['min_dist_location'] == 'vertical':
+    #     #     print(f"returning vertical: {search_data['min_vertical_index']}")
+    #     #     return search_data['min_vertical_index']
 
     # Check if a truck can be loaded more efficiently if it was initially loaded with
     # required packages prior to being loaded by the shortest distance method
