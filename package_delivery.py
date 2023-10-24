@@ -195,7 +195,7 @@ class DeliverPackages:
                     else:
                         self.load_package_onto_first_truck(package_id_data)
 
-        # XXXXXXXXXX THIS CAN BE REMOVED WHEN PROGRAM IS FINISHED XXXXXXXXXX
+        # XXXXXXXXXX THIS CAN BE REMOVED AT A LATER TIME, BEFORE FINALIZING THE PROGRAM XXXXXXXXXX
         print('\nTrucks after manual Load Results:')
         print(f'Truck 1({len(self.first_truck)}): {self.first_truck}')
         print(f'Truck 2({len(self.second_truck)}): {self.second_truck}')
@@ -226,7 +226,7 @@ class DeliverPackages:
 
         self.print_verbose_output()
 
-        # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
         self.truck_list = [self.first_truck, self.second_truck, self.third_truck]
 
@@ -295,24 +295,49 @@ class DeliverPackages:
             #     'min_dist_location': 'horizontal'
             # }
 
-            package_index_set = set()
+            # package_index_set = set()
+            package_index_set = []
 
             for packages in trucks_list[truck]:
-                package_index = int(record_data[ppd.get_hash().lookup_item(packages)[1][1]].get('Index'))
-                # print(f'Truck {truck + 1} - distance_row({row}) is: {distances[row]}')
+                package_row = int(record_data[ppd.get_hash().lookup_item(packages)[1][1]].get('Index'))
+                # package_index_set.add(package_row)
+                # if package_row not in package_index_set:
+                package_index_set.append(package_row)
                 min_dist = float('inf')
-                min_dist_row_and_index = []
-                min_dist_row_and_index = ''
+                # min_dist_row_and_index = []
+                min_dist_index = ''
+                min_dist_truck_index = 0
 
-                print(f'Truck {truck + 1} package ID\'s is: {packages} and package ID({packages}) index is: {package_index}')
-                package_index_set.add(package_index)
+                for package_index in range(len(package_index_set)):
+                    print(f'\nTruck {truck + 1} - distance[{package_row}] is: {distances[package_row]}')
+                    print(f'packages is: {packages}')
+                    print(f'package_index is: {package_index_set[package_index]}')
+                    if package_row > package_index_set[package_index]:
+                        print(f'Truck {truck + 1} - distance[{package_row}][{package_index_set[package_index]}] is: {distances[package_row][package_index_set[package_index]]}')
+                        if float(distances[package_row][package_index_set[package_index]]) < min_dist:
+                            min_dist = float(distances[package_row][package_index_set[package_index]])
+                            min_dist_index = package_index_set[package_index]
+                            min_dist_truck_index = package_index
+                    elif package_row < package_index_set[package_index]:
+                        print(f'Truck {truck + 1} - distance[{package_index_set[package_index]}][{package_row}] is: {distances[package_index_set[package_index]][package_row]}')
+                        if float(distances[package_index_set[package_index]][package_row]) < min_dist:
+                            min_dist = float(distances[package_index_set[package_index]][package_row])
+                            min_dist_index = package_index_set[package_index]
+                            min_dist_truck_index = package_index
 
-            print(f'Truck {truck + 1} package_index_set is: {list(package_index_set)}\n')
-            for row in range(len(distances)):
-                print(f'row is: {distances[row]}')
-                for package_index in package_index_set:
-                    print(f'package_index is: {package_index}')
-                    print(f'distances[{distances[row][package_index]}] is: ')#{distances[row][package_index]}')
+                # for package_num in record_data[first_package_address].get('Package ID'):
+                #     trucks_list[truck].pop(min_dist_truck_index + (package_num - 1))
+                #     trucks_list[truck].insert(package_num - 1, record_data[first_package_address]['Package ID'][package_num])
+
+                print(f'Truck {truck + 1}, Package ID {packages}(Index {package_row}): min_dist is: {min_dist} at index {min_dist_index}')
+                # print(f'Truck {truck + 1} package ID\'s is: {packages} and package ID({packages}) index is: {package_index}')
+
+            # print(f'Truck {truck + 1} package_index_set is: {list(package_index_set)}\n')
+            # for row in range(len(distances)):
+            #     print(f'row is: {distances[row]}')
+            #     for package_index in package_index_set:
+            #         print(f'package ID is: {} and its package_index is: {package_index}')
+            #         print(f'distances[{distances[row][package_index]}] is: ')#{distances[row][package_index]}')
                 # for search_index in trucks_list[truck]:
                 #     index = int(record_data[ppd.get_hash().lookup_item(search_index)[1][1]].get('Index'))
                 #     # print(f'index is: {index}')
