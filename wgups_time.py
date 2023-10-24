@@ -1,7 +1,7 @@
 class WgupsTime:
 
     @staticmethod
-    def check_input(time):
+    def check_input(time):  # [O(1)]
         if not isinstance(time, str):
             raise TypeError(f'{time} must be a string.')
         # elif not <hr:min:sec present>
@@ -51,7 +51,9 @@ class WgupsTime:
     def add_time(self, time1, time2):
 
         if self.check_input(time1) and self.check_input(time2):
-            total_seconds = self.convert_time_to_seconds(time1) + self.convert_time_to_seconds(time2)
+            total_seconds = (
+                    self.convert_string_time_to_int_seconds(time1) + self.convert_string_time_to_int_seconds(time2)
+            )
             return self.convert_int_seconds_to_string_time(total_seconds)
 
     def time_difference(self, time1, time2):
@@ -59,6 +61,9 @@ class WgupsTime:
         This method takes two times in string format and returns the difference. If the first variable, time1, is larger
         than the second variable, time2, then the method returns a positive number(difference in seconds), else it will
         return a negative number (difference in seconds). If there is no difference, 0 will be returned.
+
+        Time Complexity: Technically O(n), but the length of the 2 parameters that are being split will never be longer
+        than 8, no matter how large the input of the program. Worse case: O(n), Avg Case: O(8) = O(1)
 
         Parameters:
             time1(str): First time parameter.
@@ -68,7 +73,7 @@ class WgupsTime:
             int: Difference between the two parameters in seconds.
         """
 
-        if self.check_input(time1) and self.check_input(time2):
+        if self.check_input(time1) and self.check_input(time2):  #[O(1)
 
             # print(f"time1.split(':') is: {time1.split(':')}")
             # print(f"time2.split(':') is: {time2.split(':')}")

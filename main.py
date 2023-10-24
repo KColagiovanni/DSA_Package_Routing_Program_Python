@@ -61,25 +61,25 @@ Selection: """)
             ppd = Packages()
             dp = DeliverPackages()
 
-            min_dist = ppd.get_distance_data()[1][0]
-            minimum_hour = 25
-            minimum_minute = 60
-            first_package_id = 0
+            # min_dist = ppd.get_distance_data()[1][0]
+            # minimum_hour = 25
+            # minimum_minute = 60
+            # first_package_id = 0
             record_data = {}
-
             number_of_packages = len(ppd.get_package_data())
 
-            # Determine which package has the highest priority O(n^2)
+            # Define the record data dictionary O(n^2)
             for package_key in range(1, number_of_packages + 1):  # O(n)
-
                 package = ppd.get_hash().lookup_item(package_key)  # O(1)
-
-                # print(f'package is: {package}')
                 record_data = ppd.sync_csv_data(package)  # O(n)
 
-            # print(f"record_data is: {record_data}")
-            loaded_trucks = dp.manual_load(record_data)
-            dp.first_truck = dp.find_shortest_distance(ppd.get_distance_data(), loaded_trucks[0], record_data)
+            # Manually load the trucks. Input: Package_data (sync_csv_data). Output: Manually loaded trucks.
+            loaded_trucks = dp.manual_load(record_data)  # [O(n)]
+
+            # Algorithm to rearrange each truck by finding the shortest between each package individually. Input: The
+            # WGU provided distance list, a 2D list of the manually loaded trucks, and the Package Data (sync_csv_data).
+            # Output: a 2D list of the rearranged trucks.
+            truck_list = dp.find_shortest_distance(ppd.get_distance_data(), loaded_trucks, record_data)  # [O(n^2)]
                 # for package_num in range(1, len(record_data[package[1][1]].get('Package ID')) + 1):
                 #     print(package_num)
                 # print(record_data.get('Package ID').get(package_num))

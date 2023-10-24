@@ -132,10 +132,6 @@ class Packages(ParseCsvData):
             self.packages_to_be_delivered_together.add(package1)
             package2 = int(package_data[1][7][-2:])
             self.packages_to_be_delivered_together.add(package2)
-
-            # for package in self.packages_to_be_delivered_together:
-
-
             self.record[package_data[1][1]]['Deliver Together'] = self.packages_to_be_delivered_together
 
         name_data = self.get_distance_name_data()
@@ -145,5 +141,4 @@ class Packages(ParseCsvData):
             if package_data[1][1] == delivery_address[2]:
                 self.record[package_data[1][1]]['Index'] = delivery_address[0]
 
-        # print(f'\n{self.record}')
         return self.record
