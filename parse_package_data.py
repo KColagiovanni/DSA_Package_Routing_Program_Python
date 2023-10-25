@@ -7,9 +7,18 @@ wtime = WgupsTime()
 
 
 class ParseCsvData:
+    """
+    Parse data from the provided CSV files and merge the data from the input and distance name files into a dictionary.
 
+    Attributes: None
+    """
     @staticmethod
     def get_input_data():
+        """
+        Parse the input data CSV file using the csv library and convert it into a list.
+
+        Return(list of strings): A list of the input data.
+        """
         with open('./data/input_data.csv', newline='') as delivery_data:
 
             package_data = csv.reader(delivery_data, delimiter=',')
@@ -18,14 +27,29 @@ class ParseCsvData:
 
     @staticmethod
     def get_distance_data():
+        """
+        Parse the distance data CSV file using the csv library and convert it into a list.
+
+        Return(list of strings): A list of the distance data.
+        """
         with open('./data/distance_data.csv', newline='') as distance_data:
 
-            distance_data = csv.reader(distance_data, delimiter=',')
+            distance_data = csv.reader(distance_data, delimiter=',')        """
+        This method parses the distance data CSV file using the csv library and converts it into a list.
+
+        Return(list of strings): A list of the distance data.
+        """
+
 
             return list(distance_data)
 
     @staticmethod
     def get_distance_name_data():
+        """
+        Parse the distance name data CSV file using the csv library and convert it into a list.
+
+        Return(list of strings): A list of the distance name data.
+        """
         with open('./data/distance_name_data.csv', newline='') as distance_name_data:
 
             distance_name_data = csv.reader(distance_name_data, delimiter=',')
@@ -34,6 +58,13 @@ class ParseCsvData:
 
 
 class Packages(ParseCsvData):
+    """
+    Convert a list of input data . Inherits from the ParseCsvData class.
+
+
+
+    Attributes: None
+    """
 
     def __init__(self):
 

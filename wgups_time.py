@@ -1,6 +1,7 @@
 class WgupsTime:
     """
-    This class converts time and adds and subtracts two different times.
+    Convert string time in HH:MM:SS format to integer time in seconds and vice versa, and also add or subtract two
+    different times.
 
     Attributes: None
     """
