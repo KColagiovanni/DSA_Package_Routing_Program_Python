@@ -6,7 +6,7 @@ For each truck, the basics:
 3. Find the shortest distance from the last delivery back to the hub. (Note: Trucks 2 and 3 can be left in the "field")
 
 Restrictions:
-- Some packages are delayed and wont arrive until a specified time.
+- Some packages are delayed and won't arrive until a specified time.
     - Some of the delayed packages have a "deliver by" time that is less than 90 minutes after they've arrived.
 - Some packages have a deliver by time that needs to be met.
 - Some packages are going to the same address and should be delivered together at the same time.
@@ -15,7 +15,7 @@ Restrictions:
 
 load_trucks():
 
-[Issues: if a package that has a deliver by time earlier than when it gets loaded and there is no where to put it, how
+[Issues: if a package that has a deliver by time earlier than when it gets loaded and there is nowhere to put it, how
  should that be handled?]
 If truck 1 is not full, continue...
 Loop though the package id dict so that all packages going to the same address are analyzed at the same time
@@ -40,3 +40,12 @@ Load package(s) onto truck
 
 Call find_shortest_distance() to get the next package id and call load_trucks() recursively sending the package id of
 the next closest delivery.
+
+
+Shortest distance algorithm will load packages onto the truck based on the shortest distance between each. The order in
+which they're loaded is also the order that they'll be delivered.
+
+Find the shortest distance:
+1. Find the package that has the shortest distance to the hub. This will be the first package loaded onto the truck.
+2. Find the package that has the shortest distance from the previous package until all the packages have been
+re-ordered.
