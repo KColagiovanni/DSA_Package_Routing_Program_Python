@@ -14,6 +14,7 @@ FIRST_TRUCK_DEPARTURE_TIME = '8:00:00'
 MAX_TRUCKS_TRAVEL_DISTANCE = 140
 
 
+
 class DeliverPackages:
 
     def __init__(self):
@@ -39,8 +40,6 @@ class DeliverPackages:
         self.total_delivery_time = []
 
         self.packages_to_be_delivered_together = set(())
-        self.high_priority_packages = {}
-        self.delivery_status = {}
 
         self.second_truck_departure_time = ''
         self.total_packages_loaded = 0
@@ -199,42 +198,7 @@ class DeliverPackages:
                     else:
                         self.load_package_onto_first_truck(package_id_data)
 
-        # XXXXXXXXXX THIS CAN BE REMOVED AT A LATER TIME, BEFORE FINALIZING THE PROGRAM XXXXXXXXXX
-        # print('\nTrucks after manual Load Results:')
-        # print(f'Truck 1({len(self.first_truck)}): {self.first_truck}')
-        # print(f'Truck 2({len(self.second_truck)}): {self.second_truck}')
-        # print(f'Truck 3({len(self.third_truck)}): {self.third_truck}')
-        # print(f'Total packages loaded: {self.total_packages_loaded} <-- Check --> {len(self.first_truck) + len(self.second_truck) + len(self.third_truck)}')
-        #
-        # # if self.total_packages_loaded == len(ppd.get_input_data()):
-        # # Calculate the distance that each truck traveled
-        # self.total_dist_first_truck = self.calculate_truck_distance(self.first_truck, record_data)  # [O(n)]
-        # self.total_dist_second_truck = self.calculate_truck_distance(self.second_truck, record_data)  # [O(n)]
-        # self.total_dist_third_truck = self.calculate_truck_distance(self.third_truck, record_data)  # [O(n)]
-        #
-        # # Calculate the time that each truck spent traveling to each destination.
-        # self.first_truck_delivery_times = self.calculate_delivery_time(
-        #     self.total_dist_first_truck[1], FIRST_TRUCK_DEPARTURE_TIME)  # [O(n)]
-        # self.second_truck_delivery_times = self.calculate_delivery_time(
-        #     self.total_dist_second_truck[1], self.second_truck_departure_time)  # [O(n)]
-        # self.third_truck_delivery_times = self.calculate_delivery_time(
-        #     self.total_dist_third_truck[1], self.first_truck_delivery_times[1][-1])  # [O(n)]
-        #
-        # # self.delivery_data.append([self.first_truck, self.first_truck_delivery_times[1]])
-        # # self.delivery_data.append([self.second_truck, self.second_truck_delivery_times[1]])
-        # # self.delivery_data.append([self.third_truck, self.third_truck_delivery_times[1]])
-        #
-        # print(f'self.delivery_data is: {self.delivery_data}')
-        #
-        # # self.find_shortest_distance(ppd.get_distance_data(), self.first_truck)
-        #
-        # self.print_verbose_output()
-        #
-        # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
         self.truck_list = [self.first_truck, self.second_truck, self.third_truck]
-
-        # print(f'self.truck_list is: {self.truck_list}')
 
         return self.truck_list
 

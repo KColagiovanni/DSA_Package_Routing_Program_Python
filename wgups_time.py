@@ -1,26 +1,64 @@
 class WgupsTime:
+    """
+    This class converts time and adds and subtracts two different times.
+
+    Attributes: None
+    """
 
     @staticmethod
-    def check_input(time):  # [O(1)]
-        if not isinstance(time, str):
-            raise TypeError(f'{time} must be a string.')
-        # elif not <hr:min:sec present>
-        #     raise ValueError('Time format (HH:MM:SS) is incorrect.')
-        else:
+    def check_input(time):
+        """
+        This method checks time it was provided and verifies that it's type is string. It returns True if the input
+         parameter is a string and raises a TypeError if not.
+
+        Time Complexity: O(1)
+
+        Parameters:
+            time(str):
+
+        Return:
+            True if input parameter is a string, otherwise nothing gets returned, but a TypeError is raised.
+        """
+
+        if isinstance(time, str):
             return True
+        else:
+            raise TypeError(f'{time} must be a string.')
 
     def convert_string_time_to_int_seconds(self, time):
+        """
+        This method takes a string and returns the converted time in seconds as an int.
+
+        Time Complexity: O(8) ==> O(1)
+
+        Parameters:
+            time(str):
+
+        Return:
+            The converted time as a int.
+        """
+
         if self.check_input(time):
-            (time_hr, time_min, time_sec) = time.split(':')
+            (time_hr, time_min, time_sec) = time.split(':')  # [O(8)
             return int(time_hr * 3600) + int(time_min * 60) + int(time_sec)
 
     @staticmethod
     def convert_int_seconds_to_string_time(seconds):
+        """
+        This method takes a time in seconds and returns the time in string format(HH:MM:SS).
+
+        Time Complexity: O(1)
+
+        Parameters:
+            seconds(int):
+
+        Return:
+            The converted time as a string in (HH:MM:SS) format.
+        """
 
         if seconds >= 3600:
             hour = seconds // 3600
             minutes = (seconds % 3600) // 60
-            print(f'minutes id: {minutes}')
             if minutes < 10:
                 minutes = '0' + str(minutes)
             else:
@@ -33,6 +71,7 @@ class WgupsTime:
             else:
                 seconds = str(seconds)
             return f'{hour}:{minutes}:{seconds}'
+
         else:
             minutes = seconds // 60
             if minutes < 10:
@@ -46,9 +85,21 @@ class WgupsTime:
                 seconds = '0' + str(seconds)
             else:
                 seconds = str(seconds)
-            return f'{minutes}:{seconds}'
+            return f'00:{minutes}:{seconds}'
 
     def add_time(self, time1, time2):
+        """
+        This method takes two times in string format and returns the sum of the two times.
+
+        Time Complexity: The time complexity for this method is O(1).
+
+        Parameters:
+            time1(str): First time parameter.
+            time2(str): Second time parameter.
+
+        Return:
+            int: Sum of the two parameters in seconds.
+        """
 
         if self.check_input(time1) and self.check_input(time2):
             total_seconds = (
@@ -74,9 +125,6 @@ class WgupsTime:
         """
 
         if self.check_input(time1) and self.check_input(time2):  #[O(1)
-
-            # print(f"time1.split(':') is: {time1.split(':')}")
-            # print(f"time2.split(':') is: {time2.split(':')}")
 
             (time1_hr, time1_min, time1_sec) = time1.split(':')
             (time2_hr, time2_min, time2_sec) = time2.split(':')
