@@ -36,7 +36,7 @@ class WgupsTime:
             time(str):
 
         Return:
-            The converted time as a int.
+            The converted time as an int.
         """
 
         if self.check_input(time):
@@ -114,8 +114,9 @@ class WgupsTime:
         than the second variable, time2, then the method returns a positive number(difference in seconds), else it will
         return a negative number (difference in seconds). If there is no difference, 0 will be returned.
 
-        Time Complexity: Technically O(n), but the length of the 2 parameters that are being split will never be longer
-        than 8, no matter how large the input of the program. Worse case: O(n), Avg Case: O(8) = O(1)
+        Time Complexity: Technically O(n), because of the string.split method, but the length of the 2 parameters that
+        are being split will never be longer than 8, no matter how large the input of the program. Worse case: O(n),
+        Avg Case: O(8) = O(1)
 
         Parameters:
             time1(str): First time parameter.
@@ -125,7 +126,7 @@ class WgupsTime:
             int: Difference between the two parameters in seconds.
         """
 
-        if self.check_input(time1) and self.check_input(time2):  #[O(1)
+        if self.check_input(time1) and self.check_input(time2):  # [O(1)
 
             (time1_hr, time1_min, time1_sec) = time1.split(':')
             (time2_hr, time2_min, time2_sec) = time2.split(':')

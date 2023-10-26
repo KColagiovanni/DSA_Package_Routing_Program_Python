@@ -34,12 +34,7 @@ class ParseCsvData:
         """
         with open('./data/distance_data.csv', newline='') as distance_data:
 
-            distance_data = csv.reader(distance_data, delimiter=',')        """
-        This method parses the distance data CSV file using the csv library and converts it into a list.
-
-        Return(list of strings): A list of the distance data.
-        """
-
+            distance_data = csv.reader(distance_data, delimiter=',')
 
             return list(distance_data)
 
@@ -59,11 +54,13 @@ class ParseCsvData:
 
 class Packages(ParseCsvData):
     """
-    Convert a list of input data . Inherits from the ParseCsvData class.
+    This class merges the needed data from the input_data.csv file and the distance_name_data.csv file with the data
+    needed to load the trucks. This class inherits from the ParseCsvData class.
 
-
-
-    Attributes: None
+    Attributes:
+        record(dictionary): This dictionary will hold specific package data for each deliver address.
+        packages_to_be_delivered_together(set): This set it used to store the package id's of the packages that need to
+        be delivered together.
     """
 
     def __init__(self):
@@ -73,11 +70,21 @@ class Packages(ParseCsvData):
 
     @staticmethod
     def get_hash():
+        """
+        This method is used to access the hash table.
+
+        Parameters: None
+        Returns: The data that was returned from the hash table.
+        """
         return ht
 
     # Parse package data and send it to the hash table - [O(n)]
     @staticmethod
     def get_package_data():
+        """
+
+        :return:
+        """
 
         package_data_list = list(ParseCsvData.get_input_data())
 
@@ -104,7 +111,7 @@ class Packages(ParseCsvData):
                 special_note
             ]
 
-            ht.add_package(int(package_id), desired_data)  # O(1)
+            ht.add_package(int(package_id))  # , desired_data)  # O(1)
 
         return package_data_list
 
