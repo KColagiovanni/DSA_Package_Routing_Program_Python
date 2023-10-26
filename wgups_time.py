@@ -10,11 +10,11 @@ class WgupsTime:
     def check_input(time):
         """
         This method checks time it was provided and verifies that it's type is string. It returns True if the input
-         parameter is a string and raises a TypeError if not.
+         parameter is a string and raises a TypeError if it is not a string.
 
         Time Complexity: O(1)
 
-        Parameters:
+        Parameter:
             time(str):
 
         Return:
@@ -22,7 +22,19 @@ class WgupsTime:
         """
 
         if isinstance(time, str):
-            return True
+            input_check = time.split(':')
+            print(len(input_check))
+            print(input_check)
+            if len(input_check) == 3:
+                # print('Its good')
+                # print(len(input_check))
+                # print(input_check)
+                return True
+            elif len(input_check) == 2:
+                time += ':00'
+                return True
+            else:
+                return False
         else:
             raise TypeError(f'{time} must be a string.')
 
@@ -32,7 +44,7 @@ class WgupsTime:
 
         Time Complexity: O(8) ==> O(1)
 
-        Parameters:
+        Parameter:
             time(str):
 
         Return:
@@ -50,7 +62,7 @@ class WgupsTime:
 
         Time Complexity: O(1)
 
-        Parameters:
+        Parameter:
             seconds(int):
 
         Return:
@@ -94,12 +106,12 @@ class WgupsTime:
 
         Time Complexity: The time complexity for this method is O(1).
 
-        Parameters:
+        Parameter:
             time1(str): First time parameter.
             time2(str): Second time parameter.
 
         Return:
-            int: Sum of the two parameters in seconds.
+            int: Sum of the two Parameter in seconds.
         """
 
         if self.check_input(time1) and self.check_input(time2):
@@ -114,16 +126,16 @@ class WgupsTime:
         than the second variable, time2, then the method returns a positive number(difference in seconds), else it will
         return a negative number (difference in seconds). If there is no difference, 0 will be returned.
 
-        Time Complexity: Technically O(n), because of the string.split method, but the length of the 2 parameters that
+        Time Complexity: Technically O(n), because of the string.split method, but the length of the 2 Parameter that
         are being split will never be longer than 8, no matter how large the input of the program. Worse case: O(n),
         Avg Case: O(8) = O(1)
 
-        Parameters:
+        Parameter:
             time1(str): First time parameter.
             time2(str): Second time parameter.
 
         Return:
-            int: Difference between the two parameters in seconds.
+            int: Difference between the two Parameter in seconds.
         """
 
         if self.check_input(time1) and self.check_input(time2):  # [O(1)

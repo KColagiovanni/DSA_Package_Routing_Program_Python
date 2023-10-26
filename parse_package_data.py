@@ -2,7 +2,9 @@ import csv
 from hash_table import HashTable
 from wgups_time import WgupsTime
 
-ht = HashTable()
+TABLE_SIZE = 40
+
+ht = HashTable(TABLE_SIZE)
 wtime = WgupsTime()
 
 
@@ -17,7 +19,12 @@ class ParseCsvData:
         """
         Parse the input data CSV file using the csv library and convert it into a list.
 
-        Return(list of strings): A list of the input data.
+        Time Complexity: O(1)
+
+        Parameter: None
+
+        Return:
+            package_data(list of strings): A list of the package input data.
         """
         with open('./data/input_data.csv', newline='') as delivery_data:
 
@@ -30,7 +37,12 @@ class ParseCsvData:
         """
         Parse the distance data CSV file using the csv library and convert it into a list.
 
-        Return(list of strings): A list of the distance data.
+        Time Complexity: O(1)
+
+        Parameter: None
+
+        Return:
+            distance_data(list of strings): A list of the distance data.
         """
         with open('./data/distance_data.csv', newline='') as distance_data:
 
@@ -43,7 +55,12 @@ class ParseCsvData:
         """
         Parse the distance name data CSV file using the csv library and convert it into a list.
 
-        Return(list of strings): A list of the distance name data.
+        Time Complexity: O(1)
+
+        Parameter: None
+
+        Return:
+            distance_name_data(list of strings): A list of the distance name data.
         """
         with open('./data/distance_name_data.csv', newline='') as distance_name_data:
 
@@ -73,8 +90,11 @@ class Packages(ParseCsvData):
         """
         This method is used to access the hash table.
 
-        Parameters: None
-        Returns: The data that was returned from the hash table.
+        Time Complexity: O(1)
+
+        Parameter: None
+
+        Return: The data that was returned from the hash table.
         """
         return ht
 
@@ -82,8 +102,15 @@ class Packages(ParseCsvData):
     @staticmethod
     def get_package_data():
         """
+        this method takes the values from input_data.csv and adds them to a list with the name desired_data, then adds
+        that list to the hash table using the package_id as the hash table key.
 
-        :return:
+        Time Complexity: O(n)
+
+        Parameter: None
+
+        Return:
+            package_data_list(list): The values from input_data.csv.
         """
 
         package_data_list = list(ParseCsvData.get_input_data())
@@ -111,13 +138,26 @@ class Packages(ParseCsvData):
                 special_note
             ]
 
-            ht.add_package(int(package_id))  # , desired_data)  # O(1)
+            ht.add_package(int(package_id), desired_data)  # O(1)
 
         return package_data_list
 
     # Match input_data.csv with distance_name_data.csv and return a dict with the important data with the delivery
     # addresses as keys - [O(n)]
     def sync_csv_data(self, package_data):
+        """
+        This method combines data from the input_data.csv and distance_name_data.csv files and adds that data to a
+        nested python dictionary using the delivery address as a key for the main entry, and "Package ID(s)",
+        "Deliver By", "Delayed ETA", "Truck", and "Deliver Together" as keys in the nested dictionary.
+
+        Time Complexity: O(n)
+
+        Parameter:
+            package_data(list): A list with the data for each package that was provided in the input_data.csv file.
+
+        Return:
+            record(dict): A dictionary with address data.
+        """
 
         # Check if multiple packages are going to the same address. If so, append each one to the dictionary.
         if package_data[1][1] in self.record.keys():  # [O(n)]

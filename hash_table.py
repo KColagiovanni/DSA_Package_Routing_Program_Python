@@ -3,6 +3,8 @@ class HashTable:
     A hash table data structure that implements an associative list, a.k.a. a dictionary, which is an abstract data type
     that maps keys to values.
 
+    Time Complexity: O(n) - Creating the empty list/array of size n.
+
     Attributes:
         hash_table(list): A list that will be used as a bucket.
         table_size(int): The size of the hash table.
@@ -20,8 +22,10 @@ class HashTable:
         """
         This method is a hash function used to compute an index, into a list of buckets.
 
+        Time Complexity: O(1)
+
         Parameters:
-            key(string or int): The value that is used as the bucket where the data will be stored.
+            key(int): The value that is used as the bucket where the data will be stored.
 
         Return: None
         """
@@ -31,9 +35,11 @@ class HashTable:
         """
         This method is used to add values to the hash table.
 
+        Time Complexity: O(1)
+
         Parameters:
-            key(string or int): The value that is used as the bucket where the data will be stored.
-            value(string or int): The value to be stored in the bucket.
+            key(int): The value that is used as the bucket where the data will be stored.
+            value(list): The value to be stored in the bucket.
 
         Return: None
         """
@@ -43,8 +49,10 @@ class HashTable:
         """
         This method is used to look up/view an item that has been added to the hash table.
 
+        Time Complexity: O(1)
+
         Parameters:
-            key(string or int): The value that is used as the bucket where the data will be stored.
+            key(int): The value that is used as the bucket where the data will be stored.
 
         Return(list): The value that is stored in the bucket.
         """
@@ -54,10 +62,12 @@ class HashTable:
         """
         This method is used to update a value that has already been added to the hash table.
 
+        Time Complexity: O(1)
+
         Parameters:
-            key(string or int): The value that is used as the bucket where the data will be stored.
+            key(int): The value that is used as the bucket where the data will be stored.
             value_index(int): The index of the stored list where the update will happen.
-            new_value(string or int): The updated value.
+            new_value(any): The updated value.
 
         Return: None
         """

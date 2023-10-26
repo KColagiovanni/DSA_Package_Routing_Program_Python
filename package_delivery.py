@@ -4,8 +4,10 @@ from wgups_time import WgupsTime
 import datetime
 from datetime import time
 
+TABLE_SIZE = 40
+
 ppd = Packages()
-ht = HashTable()
+ht = HashTable(TABLE_SIZE)
 wtime = WgupsTime()
 
 DELIVERY_TRUCK_SPEED_MPH = 18
@@ -450,9 +452,12 @@ class DeliverPackages:
         converted_delivery_time_list = list(map(self.convert_time, delivery_time_list))
 
         # If user entered look up time is prior to the truck leaving the hub
-        if ((truck_num == 1 and self.convert_time(FIRST_TRUCK_DEPARTURE_TIME) > lookup_time) or
-                (truck_num == 2 and self.convert_time(self.second_truck_departure_time) > lookup_time) or
-                (truck_num == 3 and self.convert_time(self.first_truck_delivery_times[1][-1]) > lookup_time)):
+        # if ((truck_num == 1 and self.convert_time(FIRST_TRUCK_DEPARTURE_TIME) > lookup_time) or
+        #         (truck_num == 2 and self.convert_time(self.second_truck_departure_time) > lookup_time) or
+        #         (truck_num == 3 and self.convert_time(self.first_truck_delivery_times[1][-1]) > lookup_time)):
+        if (wtime.time_difference(FIRST_TRUCK_DEPARTURE_TIME, lookup_time) or
+                wtime.time_difference(self.second_truck_departure_time, lookup_time) or
+                wtime.time_difference(self.first_truck_delivery_times[1][-1], lookup_time)):
             truck_status = truck_status_options[0]
 
         # If user entered time is past the time that the truck has returned to the hub
