@@ -37,7 +37,7 @@ Selection: """)
 
             lookup_time = input('Enter a time (HH:MM): ')
             print(f'lookup time is: {lookup_time}')
-            wtime.check_input(lookup_time)
+            time_check = wtime.check_input(lookup_time)
 
             # try:
             #     (lookup_hours, lookup_minutes, lookup_seconds) = lookup_time.split(':')
