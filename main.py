@@ -4,7 +4,6 @@
 from parse_package_data import Packages
 from package_delivery import DeliverPackages
 from hash_table import HashTable
-from datetime import time
 from wgups_time import WgupsTime
 
 TABLE_SIZE = 40
@@ -37,7 +36,10 @@ Selection: """)
 
             lookup_time = input('Enter a time (HH:MM): ')
             print(f'lookup time is: {lookup_time}')
+
             time_check = wtime.check_input(lookup_time)
+
+            print(f'time_check is: {time_check}')
 
             # try:
             #     (lookup_hours, lookup_minutes, lookup_seconds) = lookup_time.split(':')
@@ -81,6 +83,8 @@ Selection: """)
 
             truck_list = dp.find_shortest_distance(ppd.get_distance_data(), loaded_trucks, record_data)  # [O(n^2)]
 
+            print(f'lookup_time is: {lookup_time}')
+
             for truck in range(len(dp.delivery_data)):
                 dp.update_package_delivery_status_and_print_output(
                     dp.delivery_data[truck][0], truck + 1, dp.delivery_data[truck][1], lookup_time
@@ -94,9 +98,9 @@ Selection: """)
 
             package_id = input('Enter a valid package ID: ')
             display_time = input('Enter a time (HH:MM:SS): ')
-            (hours, minutes, seconds) = display_time.split(':')
-            convert_time = time(hours=int(hours), minutes=int(minutes), seconds=int(seconds))
-            print(f'User entered package ID {package_id} at {convert_time}')
+            # (hours, minutes, seconds) = display_time.split(':')
+            # convert_time = time(hours=int(hours), minutes=int(minutes), seconds=int(seconds))
+            print(f'User entered package ID {package_id} at {display_time}')
             print(ht.lookup_item(package_id))
             cont_or_quit = input('Press any key, then enter to continue or type "quit" to quit')
             if cont_or_quit != 'quit':

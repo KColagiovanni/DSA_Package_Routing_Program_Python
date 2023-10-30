@@ -1,8 +1,6 @@
 from parse_package_data import Packages
 from hash_table import HashTable
 from wgups_time import WgupsTime
-# import datetime
-from datetime import time
 
 TABLE_SIZE = 40
 
@@ -454,17 +452,17 @@ class DeliverPackages:
         print(f'\nTotal Distance traveled: {total_distance_traveled} miles')
         print('#' * 120)
 
-    @staticmethod
-    def convert_time(input_time):
-
-        (input_hour, input_minute, input_second) = input_time.split(':')
-
-        # Convert the delivery time string to datetime format
-        return datetime.time(
-            hour=int(input_hour),
-            minute=int(input_minute),
-            second=int(input_second)
-        )
+    # @staticmethod
+    # def convert_time(input_time):
+    #
+    #     (input_hour, input_minute, input_second) = input_time.split(':')
+    #
+    #     # Convert the delivery time string to datetime format
+    #     return datetime.time(
+    #         hour=int(input_hour),
+    #         minute=int(input_minute),
+    #         second=int(input_second)
+    #     )
 
     # Update package status - [O(1)]
     # status_value --> 1 for "At the Hub", 2 for "En Route", or 3 for "Delivered at <time of delivery>
@@ -721,14 +719,18 @@ class DeliverPackages:
                 third_total_truck_diff
         )
 
+        print(f"wtime.time_difference(self.third_truck_delivery_times[1][-1], self.second_truck_delivery_times[1][-1]) is: {wtime.time_difference(self.third_truck_delivery_times[1][-1], self.second_truck_delivery_times[1][-1])}")
+
         # Print output if truck 3 is the last truck to complete deliveries
-        if self.convert_time(self.second_truck_delivery_times[1][-1]) <= self.convert_time(self.third_truck_delivery_times[1][-1]):
+        # if self.convert_time(self.second_truck_delivery_times[1][-1]) <= self.convert_time(self.third_truck_delivery_times[1][-1]):
+        if wtime.time_difference(self.third_truck_delivery_times[1][-1], self.second_truck_delivery_times[1][-1]) <= 0:
             if truck_status == truck_status_options[2] and truck_num == 3:
                 print(f'\nTotal combined distance traveled: {self.total_distance_traveled} miles')
                 print(f'Total time trucks were delivering packages: {self.total_delivery_time} (HH:MM:SS)')
 
         # Print output if truck 2 is the last truck to complete deliveries
-        if self.convert_time(self.second_truck_delivery_times[1][-1]) >= self.convert_time(self.third_truck_delivery_times[1][-1]):
+        # if self.convert_time(self.second_truck_delivery_times[1][-1]) >= self.convert_time(self.third_truck_delivery_times[1][-1]):
+        if wtime.time_difference(self.third_truck_delivery_times[1][-1], self.second_truck_delivery_times[1][-1]) > 0:
             if truck_status == truck_status_options[2] and truck_num == 2:
                 print(f'\nTotal combined distance traveled: {self.total_distance_traveled} miles')
                 print(f'Total time trucks were delivering packages: {self.total_delivery_time} (HH:MM:SS)')

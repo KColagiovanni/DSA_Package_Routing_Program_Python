@@ -23,7 +23,7 @@ class WgupsTime:
 
         if isinstance(time, str):
             input_check = time.split(':')
-            print(len(input_check))
+            # print(len(input_check))
 
             if len(input_check) == 3:
                 # print(f'input_check[0] is: {input_check[0]}')
@@ -47,8 +47,8 @@ class WgupsTime:
                                      f' {input_check[1]} is not a valid hour value.')
 
             elif len(input_check) == 2:
-                print(f'input_check[0] is: {input_check[0]}')
-                print(f'input_check[1] is: {input_check[1]}')
+                # print(f'input_check[0] is: {input_check[0]}')
+                # print(f'input_check[1] is: {input_check[1]}')
                 # Hour
                 if int(input_check[0]) >= 0 and int(input_check[0]) <= 23:
                     # Minute
@@ -103,7 +103,7 @@ class WgupsTime:
             The converted time as a string in (HH:MM:SS) format.
         """
 
-        print(f'seconds is: {seconds}')
+        # print(f'seconds is: {seconds}')
 
         if seconds >= 3600:
             hour = seconds // 3600
