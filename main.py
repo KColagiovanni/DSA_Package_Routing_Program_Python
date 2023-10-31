@@ -90,12 +90,21 @@ Selection: """)
             loaded_trucks = dp.manual_load(record_data)  # [O(n)]
 
             truck_list = dp.find_shortest_distance(ppd.get_distance_data(), loaded_trucks, record_data)  # [O(n^2)]
+            print(f'truck_list is: {truck_list}')
 
             print(f'Package Data is: {ppd.get_hash().lookup_item(int(package_id))[1]}')
             for truck in range(len(dp.delivery_data)):
-                dp.update_package_delivery_status_and_print_output_for_single_package(
-                    dp.delivery_data[truck][0], truck + 1, dp.delivery_data[truck][1], lookup_time, package_id
-                )
+                # print(f'dp.delivery_data[truck] is: {dp.delivery_data[truck][0]}')
+                # print(f'truck is: {truck}')
+                # print(type(package_id))
+                # for package in dp.delivery_data[truck][0]:
+                #     print(package)
+                if int(package_id) in dp.delivery_data[truck][0]:
+                    print(f'Package_id is in truck {truck + 1}')
+                    truck_num = truck
+            dp.update_package_delivery_status_and_print_output_for_single_package(
+                dp.delivery_data[truck_num][0], truck + 1, dp.delivery_data[truck][1], lookup_time, package_id
+            )
 
             # cont_or_quit = input('Press any key, then enter to continue or type "quit" to quit: ')
             # if cont_or_quit != 'quit':

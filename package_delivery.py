@@ -742,28 +742,28 @@ class DeliverPackages:
 
             # Padding the single digits with a leading space for prettier output
             if truck_list[package_index] < 10:
-                package_id = f' {str(truck_list[package_index])}'
+                package_id_loop = f' {str(truck_list[package_index])}'
             else:
-                package_id = str(truck_list[package_index])
+                package_id_loop = str(truck_list[package_index])
 
-            # Package has been delivered
-            if wtime.time_difference(lookup_time, delivery_time_list[package_index]) > 0:
-                ppd.get_hash().update_item(package_id, value_index, f'{package_status_options[2]} at {delivery_time_list[package_index]}')
-                delivered_count += 1
+        # Package has been delivered
+        if wtime.time_difference(lookup_time, delivery_time_list[package_index]) > 0:
+            ppd.get_hash().update_item(package_id, value_index, f'{package_status_options[2]} at {delivery_time_list[package_index]}')
+            delivered_count += 1
 
-            # Package is en route
-            elif truck_status == truck_status_options[1]:# and converted_delivery_time_list[package_index] >= lookup_time:
-                ppd.get_hash().update_item(package_id, value_index, package_status_options[1])
+        # Package is en route
+        elif truck_status == truck_status_options[1]:# and converted_delivery_time_list[package_index] >= lookup_time:
+            ppd.get_hash().update_item(package_id, value_index, package_status_options[1])
 
-            # Package is still at the hub
-            else:
-                ppd.get_hash().update_item(package_id, value_index, package_status_options[0])
+        # Package is still at the hub
+        else:
+            ppd.get_hash().update_item(package_id, value_index, package_status_options[0])
 
-            package_id = ppd.get_hash().lookup_item(package_id)[1][0]
+        package_id = ppd.get_hash().lookup_item(package_id)[1][0]
 
-            # Padding the single digits with a leading space for prettier output
-            if int(package_id) < 10:
-                package_id = ' ' + package_id
+        # Padding the single digits with a leading space for prettier output
+        if int(package_id) < 10:
+            package_id = ' ' + package_id
 
         address = ppd.get_hash().lookup_item(package_id)[1][1]
         deliver_by = ppd.get_hash().lookup_item(package_id)[1][2]
