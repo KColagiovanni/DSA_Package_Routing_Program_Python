@@ -2,6 +2,6 @@
 - Get the option 2 working in main.py.
 - Get the changed address package working. *****
 - Get the program working with the provided xlsx/csv files.
-- Implement my time class for all time related things.
+- Implement my time class for all time related things. *****
 - Add comments everywhere they are needed.
 - Remove unnecessary comments and commented out stale code.

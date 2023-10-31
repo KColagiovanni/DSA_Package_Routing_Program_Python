@@ -5,6 +5,7 @@ from parse_package_data import Packages
 from package_delivery import DeliverPackages
 from hash_table import HashTable
 from wgups_time import WgupsTime
+from datetime import time
 
 TABLE_SIZE = 40
 NUMBER_OF_TRUCKS = 3
@@ -35,36 +36,8 @@ Selection: """)
         if user_input == '1':
 
             lookup_time = input('Enter a time (HH:MM): ')
-            print(f'lookup time is: {lookup_time}')
+            wtime.check_input(lookup_time)
 
-            time_check = wtime.check_input(lookup_time)
-
-            print(f'time_check is: {time_check}')
-
-            # try:
-            #     (lookup_hours, lookup_minutes, lookup_seconds) = lookup_time.split(':')
-            # except ValueError:
-            #     if len(lookup_time.split(':')) ==2:
-            #         (lookup_hours, lookup_minutes) = lookup_time.split(':')
-            #         lookup_seconds = '00'
-            #     else:
-            #         print(f'{INVALID_ENTRY} Please check format and try again.')
-            #         continue
-            #
-            #
-            #
-            # try:
-            #     lookup_time = time(hour=int(lookup_hours), minute=int(lookup_minutes), second=int(lookup_seconds))
-            # except ValueError:
-            #     if int(lookup_hours) < 0 or int(lookup_hours) > 23:
-            #         print(f'{INVALID_ENTRY} Hour must be between 0 and 23!')
-            #     if int(lookup_minutes) < 0 or int(lookup_minutes) > 59:
-            #         print(f'{INVALID_ENTRY} Minutes must be between 0 and 59!')
-            #     if int(lookup_seconds) < 0 or int(lookup_seconds) > 59:
-            #         print(f'{INVALID_ENTRY} Seconds must be between 0 and 59!')
-            #     continue
-            #     # if int(lookup_hours) > 24:
-            #     #     print('In')
             print()
             print(f'Showing package info for all packages and trucks at {lookup_time}:')
 
@@ -83,10 +56,8 @@ Selection: """)
 
             truck_list = dp.find_shortest_distance(ppd.get_distance_data(), loaded_trucks, record_data)  # [O(n^2)]
 
-            print(f'lookup_time is: {lookup_time}')
-
             for truck in range(len(dp.delivery_data)):
-                dp.update_package_delivery_status_and_print_output(
+                dp.update_package_delivery_status_and_print_output_for_all_packages(
                     dp.delivery_data[truck][0], truck + 1, dp.delivery_data[truck][1], lookup_time
                 )
 
@@ -97,16 +68,40 @@ Selection: """)
             ht = HashTable(TABLE_SIZE)
 
             package_id = input('Enter a valid package ID: ')
-            display_time = input('Enter a time (HH:MM:SS): ')
-            # (hours, minutes, seconds) = display_time.split(':')
-            # convert_time = time(hours=int(hours), minutes=int(minutes), seconds=int(seconds))
-            print(f'User entered package ID {package_id} at {display_time}')
-            print(ht.lookup_item(package_id))
-            cont_or_quit = input('Press any key, then enter to continue or type "quit" to quit')
-            if cont_or_quit != 'quit':
-                continue
-            else:
-                break
+            lookup_time = input('Enter a time (HH:MM:SS): ')
+            print(f'User entered package ID {package_id} at {lookup_time}')
+
+            wtime.check_input(lookup_time)
+
+            print()
+            print(f'Showing package info for Package ID {package_id} at {lookup_time}:')
+
+            ppd = Packages()
+            dp = DeliverPackages()
+            record_data = {}
+            number_of_packages = len(ppd.get_package_data())
+
+            # Define the record data dictionary O(n^2)
+            for package_key in range(1, number_of_packages + 1):  # O(n)
+                package = ppd.get_hash().lookup_item(package_key)  # O(1)
+                record_data = ppd.sync_csv_data(package)  # O(n)
+
+            # Manually load the trucks. Input: Package_data (sync_csv_data). Output: Manually loaded trucks.
+            loaded_trucks = dp.manual_load(record_data)  # [O(n)]
+
+            truck_list = dp.find_shortest_distance(ppd.get_distance_data(), loaded_trucks, record_data)  # [O(n^2)]
+
+            print(f'Package Data is: {ppd.get_hash().lookup_item(int(package_id))[1]}')
+            for truck in range(len(dp.delivery_data)):
+                dp.update_package_delivery_status_and_print_output_for_single_package(
+                    dp.delivery_data[truck][0], truck + 1, dp.delivery_data[truck][1], lookup_time, package_id
+                )
+
+            # cont_or_quit = input('Press any key, then enter to continue or type "quit" to quit: ')
+            # if cont_or_quit != 'quit':
+            #     continue
+            # else:
+            #     break
 
         # Case 'exit'
         # This exits the program

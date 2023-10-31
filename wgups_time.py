@@ -23,12 +23,8 @@ class WgupsTime:
 
         if isinstance(time, str):
             input_check = time.split(':')
-            # print(len(input_check))
 
             if len(input_check) == 3:
-                # print(f'input_check[0] is: {input_check[0]}')
-                # print(f'input_check[1] is: {input_check[1]}')
-                # print(f'input_check[2] is: {input_check[2]}')
                 # Hour
                 if int(input_check[0]) >= 0 and int(input_check[0]) <= 23:
                     # Minute
@@ -47,8 +43,6 @@ class WgupsTime:
                                      f' {input_check[1]} is not a valid hour value.')
 
             elif len(input_check) == 2:
-                # print(f'input_check[0] is: {input_check[0]}')
-                # print(f'input_check[1] is: {input_check[1]}')
                 # Hour
                 if int(input_check[0]) >= 0 and int(input_check[0]) <= 23:
                     # Minute
@@ -164,20 +158,20 @@ class WgupsTime:
 
     def time_difference(self, time1, time2):
         """
-        This method takes two times in string format and returns the difference. If the first variable, time1, is larger
-        than the second variable, time2, then the method returns a positive number(difference in seconds), else it will
-        return a negative number (difference in seconds). If there is no difference, 0 will be returned.
+        This method takes two times in string format and returns the difference in integer seconds. If the first
+        variable, time1, is larger than the second variable, time2, then the method returns a positive number(difference
+        in seconds), else it will return a negative number (difference in seconds). If there is no difference, 0 will be
+        returned.
 
         Time Complexity: Technically O(n), because of the string.split and string.count methods, but the length of the 2
         parameters that are being split and counted will never be longer than 8, no matter how large the input of the
         program. Worse case: O(n), Avg Case: O(8) = O(1)
 
-        Parameter:
-            time1(str): First time parameter.
-            time2(str): Second time parameter.
-
-        Return:
-            int: Difference between the two Parameter in seconds.
+        :param
+            time1(str): The first time parameter.
+            time2(str): The second time parameter.
+        :returns
+            diff(int): Difference between the two parameters in seconds.
         """
 
         if self.check_input(time1) and self.check_input(time2):  # [O(1)
