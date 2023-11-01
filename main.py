@@ -65,7 +65,7 @@ Selection: """)
         # Get info for a single package at a particular time -> O(n)
         elif user_input == '2':
 
-            ht = HashTable(TABLE_SIZE)
+            # ht = HashTable(TABLE_SIZE)
 
             package_id = input('Enter a valid package ID: ')
             lookup_time = input('Enter a time (HH:MM:SS): ')
@@ -100,11 +100,21 @@ Selection: """)
                 # for package in dp.delivery_data[truck][0]:
                 #     print(package)
                 if int(package_id) in dp.delivery_data[truck][0]:
-                    print(f'Package_id is in truck {truck + 1}')
+                    print(f'Package_id {package_id} is on truck {truck + 1}')
                     truck_num = truck
+
+            print(f'dp.delivery_data[truck_num] is: {dp.delivery_data[truck_num]}')
+            print(f'truck is: {truck_num}')
             dp.update_package_delivery_status_and_print_output_for_single_package(
-                dp.delivery_data[truck_num][0], truck + 1, dp.delivery_data[truck][1], lookup_time, package_id
+                dp.delivery_data[truck_num][0],
+                truck_num + 1,
+                dp.delivery_data[truck_num][1],
+                lookup_time,
+                package_id=package_id
             )
+            # dp.update_package_delivery_status_and_print_output_for_all_packages(
+            #     dp.delivery_data[truck][0], truck + 1, dp.delivery_data[truck][1], lookup_time
+            # )
 
             # cont_or_quit = input('Press any key, then enter to continue or type "quit" to quit: ')
             # if cont_or_quit != 'quit':

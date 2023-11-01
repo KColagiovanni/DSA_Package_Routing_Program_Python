@@ -610,7 +610,6 @@ class DeliverPackages:
         if truck_status == truck_status_options[2]:
 
             if truck_num == 1:
-                print(f'first_truck is: {self.first_truck}')
                 print('|', f'Truck 1 Summary: {len(self.first_truck)} packages were delivered in {first_total_truck_diff} and traveled {self.total_dist_first_truck[0]} miles.'.center(122), '|')
             if truck_num == 2:
                 print('|', f'Truck 2 Summary: {len(self.second_truck)} packages were delivered in {second_total_truck_diff} and traveled {self.total_dist_second_truck[0]} miles.'.center(122), '|')
@@ -666,15 +665,16 @@ class DeliverPackages:
                 print(f'\nTotal combined distance traveled: {self.total_distance_traveled} miles')
                 print(f'Total time trucks were delivering packages: {self.total_delivery_time} (HH:MM:SS)')
 
-    def update_package_delivery_status_and_print_output_for_single_package(self, truck_list, truck_num, delivery_time_list, lookup_time, package_id):
+    def update_package_delivery_status_and_print_output_for_single_package(self, truck_list, truck_num, delivery_time_list, lookup_time, **kwargs):
         delivered_count = 0
         first_truck_diff = 0
         second_truck_diff = 0
         third_truck_diff = 0
         truck_status_options = ['At the hub', 'Delivering packages', 'Returned to the hub']
         package_status_options = ['At the hub', 'En route', 'Delivered']
-
         value_index = 6  # The package status index
+
+        package_id = kwargs['package_id']
 
         # If user entered look up time is prior to the truck leaving the hub
         if ((truck_num == 1 and wtime.time_difference(FIRST_TRUCK_DEPARTURE_TIME, lookup_time) > 0) or
@@ -735,20 +735,24 @@ class DeliverPackages:
 
         print('-' * 126)
 
-        for package_index in range(len(truck_list) + 1):
+        package_id_loop = 0
 
-            if package_index >= len(truck_list):
-                continue
-
-            # Padding the single digits with a leading space for prettier output
-            if truck_list[package_index] < 10:
-                package_id_loop = f' {str(truck_list[package_index])}'
-            else:
-                package_id_loop = str(truck_list[package_index])
+        # for package_index in range(len(truck_list) + 1):
+        #
+        #     if package_index >= len(truck_list):
+        #         continue
+        #
+        #     # Padding the single digits with a leading space for prettier output
+        #     if truck_list[package_index] < 10:
+        #         package_id_loop = f' {str(truck_list[package_index])}'
+        #     else:
+        #         package_id_loop = str(truck_list[package_index])
 
         # Package has been delivered
-        if wtime.time_difference(lookup_time, delivery_time_list[package_index]) > 0:
-            ppd.get_hash().update_item(package_id, value_index, f'{package_status_options[2]} at {delivery_time_list[package_index]}')
+        # print(f'package_id_loop is: {package_id_loop}')
+        # print(f'wtime.time_difference(lookup_time, package_id_loop) is {wtime.time_difference(lookup_time, delivery_time_list)}')
+        if wtime.time_difference(lookup_time, delivery_time_list) > 0:
+            ppd.get_hash().update_item(package_id, value_index, f'{package_status_options[2]} at {package_id_loop}')
             delivered_count += 1
 
         # Package is en route
@@ -815,7 +819,6 @@ class DeliverPackages:
         if truck_status == truck_status_options[2]:
 
             if truck_num == 1:
-                print(f'first_truck is: {self.first_truck}')
                 print('|', f'Truck 1 Summary: {len(self.first_truck)} packages were delivered in {first_total_truck_diff} and traveled {self.total_dist_first_truck[0]} miles.'.center(122), '|')
             if truck_num == 2:
                 print('|', f'Truck 2 Summary: {len(self.second_truck)} packages were delivered in {second_total_truck_diff} and traveled {self.total_dist_second_truck[0]} miles.'.center(122), '|')
