@@ -665,7 +665,15 @@ class DeliverPackages:
                 print(f'\nTotal combined distance traveled: {self.total_distance_traveled} miles')
                 print(f'Total time trucks were delivering packages: {self.total_delivery_time} (HH:MM:SS)')
 
-    def update_package_delivery_status_and_print_output_for_single_package(self, truck_list, truck_num, delivery_time_list, lookup_time, **kwargs):
+    def update_package_delivery_status_and_print_output_for_single_package(
+            self,
+            truck_list,
+            truck_num,
+            delivery_time_list,
+            lookup_time,
+            **kwargs
+    ):
+
         delivered_count = 0
         first_truck_diff = 0
         second_truck_diff = 0
@@ -675,6 +683,7 @@ class DeliverPackages:
         value_index = 6  # The package status index
 
         package_id = kwargs['package_id']
+        package_index = kwargs['package_index']
 
         # If user entered look up time is prior to the truck leaving the hub
         if ((truck_num == 1 and wtime.time_difference(FIRST_TRUCK_DEPARTURE_TIME, lookup_time) > 0) or
@@ -749,10 +758,8 @@ class DeliverPackages:
         #         package_id_loop = str(truck_list[package_index])
 
         # Package has been delivered
-        # print(f'package_id_loop is: {package_id_loop}')
-        # print(f'wtime.time_difference(lookup_time, package_id_loop) is {wtime.time_difference(lookup_time, delivery_time_list)}')
-        if wtime.time_difference(lookup_time, delivery_time_list) > 0:
-            ppd.get_hash().update_item(package_id, value_index, f'{package_status_options[2]} at {package_id_loop}')
+        if wtime.time_difference(lookup_time, delivery_time_list[package_index]) > 0:
+            ppd.get_hash().update_item(package_id, value_index, f'{package_status_options[2]} at {delivery_time_list[package_index]}')
             delivered_count += 1
 
         # Package is en route

@@ -100,6 +100,8 @@ Selection: """)
                 # for package in dp.delivery_data[truck][0]:
                 #     print(package)
                 if int(package_id) in dp.delivery_data[truck][0]:
+                    package_index = dp.delivery_data[truck][0].index(int(package_id))
+                    print(f'package_index is: {package_index}')
                     print(f'Package_id {package_id} is on truck {truck + 1}')
                     truck_num = truck
 
@@ -110,7 +112,8 @@ Selection: """)
                 truck_num + 1,
                 dp.delivery_data[truck_num][1],
                 lookup_time,
-                package_id=package_id
+                package_id=package_id,
+                package_index=package_index
             )
             # dp.update_package_delivery_status_and_print_output_for_all_packages(
             #     dp.delivery_data[truck][0], truck + 1, dp.delivery_data[truck][1], lookup_time
