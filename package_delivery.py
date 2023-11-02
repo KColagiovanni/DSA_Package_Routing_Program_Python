@@ -105,15 +105,15 @@ class DeliverPackages:
             if not truck and not delayed:
                 self.load_package_onto_first_truck(package_id_data)
 
-            # Load onto first truck
+            # Must be on first truck
             if truck == 1:
                 self.load_package_onto_first_truck(package_id_data)
 
-            # Load onto second truck
+            # Must be on second truck
             if truck == 2:
                 self.load_package_onto_second_truck(package_id_data)
 
-            # Load onto third truck
+            # Must be on third truck
             if truck == 3:
                 self.load_package_onto_third_truck(package_id_data)
 
@@ -145,7 +145,6 @@ class DeliverPackages:
 
                 # Load onto second truck
                 if truck == 2:
-
                     self.load_package_onto_second_truck(package_id_data)
 
                 # Load onto third truck
@@ -181,20 +180,23 @@ class DeliverPackages:
 
                 if deliver_by_time != 'EOD':
 
-                    # Truck 1
+                    # If deliver by time is after the departure time of the first truck
                     if wtime.time_difference(deliver_by_time, FIRST_TRUCK_DEPARTURE_TIME) > 0:
                         self.load_package_onto_first_truck(package_id_data)
 
-                    # Truck 2
+                    # If deliver by time is after the departure time of the second truck
                     if wtime.time_difference(deliver_by_time, self.second_truck_departure_time) > 0:
                         self.load_package_onto_second_truck(package_id_data)
 
                 # Truck 3
                 else:
+                    # If deliver by time is "EOD" and truck 3 is not full
                     if len(self.third_truck) + len(package_id_data) < MAX_PACKAGES_PER_TRUCK:
                         self.load_package_onto_third_truck(package_id_data)
+                    # If deliver by time is "EOD" and truck 3 is full, but truck 2 is not full
                     elif len(self.second_truck) + len(package_id_data) < MAX_PACKAGES_PER_TRUCK:
                         self.load_package_onto_second_truck(package_id_data)
+                    # If deliver by time is "EOD" and trucks 2 and 3 are full, but truck 1 is not full
                     else:
                         self.load_package_onto_first_truck(package_id_data)
 
@@ -205,7 +207,8 @@ class DeliverPackages:
     # Returns the index of the shortest distance - [O(n^2)]
     def find_shortest_distance(self, distances, trucks_list, record_data):
 
-        # Find the package with the shortest distance from the hub.
+        # Loop through the packages on each truck and find the package with the shortest distance from the hub, and from
+        # one delivery address to the next.
         for truck in range(len(trucks_list)):
 
             minimum_distance = float('inf')
@@ -218,21 +221,16 @@ class DeliverPackages:
             for package in trucks_list[truck]:
                 package_address = ppd.get_hash().lookup_item(package)[1][1]
                 package_index = int(record_data[package_address].get('Index'))
-
                 if float(distances[package_index][0]) < minimum_distance:
                     minimum_distance = float(distances[package_index][0])
                     first_package_index_on_truck = trucks_list[truck].index(package)
                     min_dist_package_address = package_address
                     min_dist_index = package_index
-                    # print(f'minimum_distance is: {minimum_distance}')
-                    # print(f'first_package_index_on_truck is: {first_package_index_on_truck}')
 
             for package_num in record_data[min_dist_package_address].get('Package ID'):
                 package_id = record_data[min_dist_package_address].get('Package ID')[package_num]
-                # if package_id not in loaded_in_ordered_list:
                 ordered_truck_list.append(package_id)
                 self.addresses.append(min_dist_index)
-                # loaded_in_ordered_list.append(package_id)
 
             package_index_list = []
 
@@ -251,6 +249,9 @@ class DeliverPackages:
 
                 # Traversing the distance list horizontally
                 for package_index in range(len(package_index_list)):
+                    # print(f'[package_row][package_index] is: [{package_row}][{package_index + 3}]')
+                    # print(f'package_index_list[package_index] is: {package_index_list[package_index]}')
+
                     if package_row > package_index_list[package_index]:
                         if distances[package_row][package_index_list[package_index]] != '':
                             if float(distances[package_row][package_index_list[package_index]]) < min_dist:
@@ -278,7 +279,7 @@ class DeliverPackages:
 
                 for package_num in min_dist_package_id:
                     ordered_truck_list.append(min_dist_package_id[package_num])
-                self.addresses.append(min_dist_index)
+                    self.addresses.append(min_dist_index)
 
             trucks_list[truck] = ordered_truck_list
             print(f'Truck {truck + 1}({len(trucks_list[truck])}): {trucks_list[truck]}')
@@ -287,7 +288,7 @@ class DeliverPackages:
         self.second_truck = trucks_list[1]
         self.third_truck = trucks_list[2]
 
-        # Last minute adjustment
+        # Move the packages that have a "deliver by" time to "EOD" to the bottom of the delivery queue.
         triple_check = 0
         while triple_check < 1:
             for package_index in range(len(self.second_truck)):
@@ -305,6 +306,8 @@ class DeliverPackages:
         self.total_dist_first_truck = self.calculate_truck_distance(self.first_truck, record_data)  # [O(n)]
         self.total_dist_second_truck = self.calculate_truck_distance(self.second_truck, record_data)  # [O(n)]
         self.total_dist_third_truck = self.calculate_truck_distance(self.third_truck, record_data)  # [O(n)]
+
+        print(f'self.total_dist_first_truck[1] is {self.total_dist_first_truck[1]}')
 
         # Calculate the time that each truck spent traveling to each destination.
         self.first_truck_delivery_times = self.calculate_delivery_time(
@@ -324,9 +327,13 @@ class DeliverPackages:
 
     # Calculate the delivery distance between each package in the loaded truck - [O(n)]
     @staticmethod
-    def calculate_truck_distance(package_list, delivery_info_dict):
+    # def calculate_truck_distance(package_list, delivery_info_dict):
+    def calculate_truck_distance(package_id, delivery_info_dict):
 
         truck_distance_list = []
+
+        print(f'package_list is: {package_list}')
+        print(f'delivery_info_dict is: {delivery_info_dict}')
 
         hub_to_first_delivery = float(ppd.get_distance_data()[int(
             delivery_info_dict.get(ppd.get_input_data()[package_list[0] - 1][1])["Index"]
@@ -360,59 +367,33 @@ class DeliverPackages:
     # Calculates the time it takes to go from one delivery to the next
     # and also the total delivery time for the truck - [O(n)]
     @staticmethod
+    # def calculate_delivery_time(package_distance_list, departure_time):
     def calculate_delivery_time(package_distance_list, departure_time):
+        """
 
-        # (hours, minutes, seconds) = departure_time.split(':')
-        # converted_departure_time = datetime.timedelta(hours=int(hours), minutes=int(minutes), seconds=int(seconds))
 
-        cumulative_delivery_duration_list = []
-        delivery_time_list = []
+        :param package_distance_list:
+        :param departure_time:
+        :return:
+        """
+
+        # cumulative_delivery_duration_list = []
+        # delivery_time_list = []
         total_duration = 0.0
-        # print(f'\ntotal_duration before for loop is: {total_duration}')
 
         for package_distance in package_distance_list:
 
             duration = round((package_distance / DELIVERY_TRUCK_AVG_SPEED_MPH), 2) * 3600
-            # print(f'duration is: {duration}')
 
-            # print(f'type(total_duration) before is {type(total_duration)}')
-            # print(f'total_duration before is {total_duration}')
             if type(total_duration) is float:
-                # print('in total_duration if')
                 total_duration = wtime.convert_int_seconds_to_string_time(int(total_duration))
-            # print(f'type(total_duration) after is {type(total_duration)}')
-            # print(f'total_duration after is {total_duration}')
 
-            # print(f'type(duration) before is: {type(duration)}')
-            # print(f'duration before is: {duration}')
             if type(duration) is float:
-                # print('in duration if')
                 duration = wtime.convert_int_seconds_to_string_time(int(duration))
-            # print(f'type(duration) after is {type(duration)}')
-            # print(f'duration after is: {duration}')
 
             total_duration = wtime.add_time(total_duration, duration)
-            # total_duration += duration
-            # print(f'total_duration in for loop is: {total_duration}')
-
-            # total_duration_seconds = total_duration * 3600
-            # print(f'total_duration_seconds is: {total_duration_seconds}')
-
-            # total_duration = wtime.convert_int_seconds_to_string_time(total_duration)
-            # print(f'total_duration is: {total_duration}')
-
-            # print(f'departure_time is: {departure_time}')
             cumulative_delivery_duration_list.append(wtime.add_time(departure_time, total_duration))
-            # print(f'cumulative_delivery_duration_list is {cumulative_delivery_duration_list}')
-
-            # cumulative_delivery_duration_list.append(
-                # str(converted_departure_time + datetime.timedelta(hours=float(total_duration))))
-            # delivery_time_list.append(str(datetime.timedelta(hours=float(duration))))
-
-            # print(f'duration({duration}) is being appended to delivery_time_list')
             delivery_time_list.append(duration)
-
-            # print(f'deliver_time_list is: {delivery_time_list}')
 
         return delivery_time_list, cumulative_delivery_duration_list
 
@@ -654,16 +635,17 @@ class DeliverPackages:
         self.total_delivery_time = wtime.convert_int_seconds_to_string_time(self.total_delivery_time)
 
         # Print output if truck 3 is the last truck to complete deliveries
-        if wtime.time_difference(self.third_truck_delivery_times[1][-1], self.second_truck_delivery_times[1][-1]) >= 0:
-            if truck_status == truck_status_options[2] and truck_num == 3:
-                print(f'\nTotal combined distance traveled: {self.total_distance_traveled} miles')
-                print(f'Total time trucks were delivering packages: {self.total_delivery_time} (HH:MM:SS)')
+        # if wtime.time_difference(self.third_truck_delivery_times[1][-1], self.second_truck_delivery_times[1][-1]) >= 0:
+        #     if truck_status == truck_status_options[2] and truck_num == 3:
+        if truck_num == 3:
+            print(f'\nTotal combined distance traveled: {self.total_distance_traveled} miles')
+            print(f'Total time trucks were delivering packages: {self.total_delivery_time} (HH:MM:SS)')
 
-        # Print output if truck 2 is the last truck to complete deliveries
-        if wtime.time_difference(self.third_truck_delivery_times[1][-1], self.second_truck_delivery_times[1][-1]) <= 0:
-            if truck_status == truck_status_options[2] and truck_num == 2:
-                print(f'\nTotal combined distance traveled: {self.total_distance_traveled} miles')
-                print(f'Total time trucks were delivering packages: {self.total_delivery_time} (HH:MM:SS)')
+        # # Print output if truck 2 is the last truck to complete deliveries
+        # if wtime.time_difference(self.third_truck_delivery_times[1][-1], self.second_truck_delivery_times[1][-1]) <= 0:
+        #     if truck_status == truck_status_options[2] and truck_num == 2:
+        #         print(f'\nTotal combined distance traveled: {self.total_distance_traveled} miles')
+        #         print(f'Total time trucks were delivering packages: {self.total_delivery_time} (HH:MM:SS)')
 
     def update_package_delivery_status_and_print_output_for_single_package(
             self,

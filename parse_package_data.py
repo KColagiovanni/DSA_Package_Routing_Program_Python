@@ -26,7 +26,8 @@ class ParseCsvData:
         Return:
             package_data(list of strings): A list of the package input data.
         """
-        with open('./data/input_data.csv', newline='') as delivery_data:
+        # with open('./data/input_data.csv', newline='') as delivery_data:
+        with open('./actualData/WGUPS Package File.csv', newline='') as delivery_data:
 
             package_data = csv.reader(delivery_data, delimiter=',')
 
@@ -44,11 +45,18 @@ class ParseCsvData:
         Return:
             distance_data(list of strings): A list of the distance data.
         """
-        with open('./data/distance_data.csv', newline='') as distance_data:
+        # with open('./data/distance_data.csv', newline='') as distance_data:
+        with open('./actualData/WGUPS Distance Table.csv', newline='') as distance_table:
 
-            distance_data = csv.reader(distance_data, delimiter=',')
+            distance_table = csv.reader(distance_table, delimiter=',')
 
-            return list(distance_data)
+            distance_data_list = []
+
+            for row in distance_table:
+                # print(f'distance_data row[3:] is {row[3:]}')
+                distance_data_list.append(row[3:])
+
+            return distance_data_list
 
     @staticmethod
     def get_distance_name_data():
@@ -62,11 +70,18 @@ class ParseCsvData:
         Return:
             distance_name_data(list of strings): A list of the distance name data.
         """
-        with open('./data/distance_name_data.csv', newline='') as distance_name_data:
+        # with open('./data/distance_name_data.csv', newline='') as distance_name_data:
+        with open('./actualData/WGUPS Distance Table.csv', newline='') as distance_table:
 
-            distance_name_data = csv.reader(distance_name_data, delimiter=',')
+            distance_table = csv.reader(distance_table, delimiter=',')
 
-            return list(distance_name_data)
+            distance_name_data_list = []
+
+            for row in distance_table:
+                # print(f'distance_name_data row[:3] is {row[:3]}')
+                distance_name_data_list.append(row[:3])
+
+            return distance_name_data_list
 
 
 class Packages(ParseCsvData):
@@ -114,6 +129,8 @@ class Packages(ParseCsvData):
         """
 
         package_data_list = list(ParseCsvData.get_input_data())
+
+        # print(f'package_data_list is: {package_data_list}')
 
         # Unpack the input data
         for package_details in package_data_list:  # [O(n)]
@@ -183,9 +200,11 @@ class Packages(ParseCsvData):
             })
 
         # Adding packages to the dictionary that are delayed.
-        if 'Delayed on flight' in package_data[1][7]:  # [O(n)]
-            package_eta = package_data[1][7][-7:-3]
-
+        if 'Delayed' in package_data[1][7]:  # [O(n)]
+            if package_data[1][7][-8] == ' ':
+                package_eta = package_data[1][7][-7:-3]
+            else:
+                package_eta = package_data[1][7][-8:-3]
             self.record[package_data[1][1]].update({'Delayed ETA': package_eta + ':00'})
 
         # Adding packages to the dictionary with truck number that the special instructions request.
@@ -216,6 +235,7 @@ class Packages(ParseCsvData):
 
         # For loop to iterate over the distance name data to add an index to each entry.
         for delivery_address in name_data:  # [O(n)]
+
             if package_data[1][1] == delivery_address[2]:
                 self.record[package_data[1][1]]['Index'] = delivery_address[0]
 

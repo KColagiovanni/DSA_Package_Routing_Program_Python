@@ -38,9 +38,6 @@ Selection: """)
             lookup_time = input('Enter a time (HH:MM): ')
             wtime.check_input(lookup_time)
 
-            print()
-            print(f'Showing package info for all packages and trucks at {lookup_time}:')
-
             ppd = Packages()
             dp = DeliverPackages()
             record_data = {}
