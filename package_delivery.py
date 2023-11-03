@@ -286,6 +286,7 @@ class DeliverPackages:
                     if truck == 0:
                         self.first_truck_delivery_times.append(self.calculate_delivery_time(min_dist, FIRST_TRUCK_DEPARTURE_TIME))  # [O(n)]
 
+
                     if truck == 1:
                         self.second_truck_delivery_times.append(self.calculate_delivery_time(min_dist, self.second_truck_departure_time))  # [O(n)]
                     if truck == 2 and len(self.first_truck_delivery_times) > 0:
