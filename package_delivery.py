@@ -215,6 +215,7 @@ class DeliverPackages:
             min_dist_package_address = ''
             ordered_truck_list = []
             total_truck_dist = []
+            delivery_times_list = []
             min_dist_index = ''
 
             # Find the package that is closest to the hub and add it to the first position in the truck.
@@ -235,6 +236,10 @@ class DeliverPackages:
                     total_truck_dist.append(minimum_distance)
                 else:
                     total_truck_dist.append(0.0)
+            delivery_time_seconds = self.calculate_delivery_time(minimum_distance, FIRST_TRUCK_DEPARTURE_TIME)
+            delivery_time = wtime.convert_int_seconds_to_string_time(delivery_time_seconds)
+            delivery_times_list.append(wtime.convert_int_seconds_to_string_time(wtime.add_time(delivery_time, FIRST_TRUCK_DEPARTURE_TIME)))  # [O(n)]
+            print(f'delivery_times is: {delivery_times_list}')
 
             package_index_list = []
 
@@ -279,18 +284,29 @@ class DeliverPackages:
                     ordered_truck_list.append(min_dist_package_id[package_num])
                     self.addresses.append(min_dist_index)
                     if package_num == 1:
+                        if truck == 0:
+                            delivery_time_seconds = self.calculate_delivery_time(min_dist, FIRST_TRUCK_DEPARTURE_TIME)
+                            # delivery_time = wtime.convert_int_seconds_to_string_time(delivery_time_seconds)
+                            # delivery_times_list.append(wtime.convert_int_seconds_to_string_time(wtime.add_time(delivery_time, delivery_times_list[-1])))  # [O(n)]
+                        if truck == 1:
+                            delivery_time_seconds = self.calculate_delivery_time(min_dist, FIRST_TRUCK_DEPARTURE_TIME)
+                            # delivery_time = wtime.convert_int_seconds_to_string_time(delivery_time_seconds)
+                            # delivery_times_list.append(self.calculate_delivery_time(min_dist, self.second_truck_departure_time))  # [O(n)]
+                        if truck == 2 and len(self.first_truck_delivery_times) > 0:
+                            delivery_time_seconds = self.calculate_delivery_time(min_dist, FIRST_TRUCK_DEPARTURE_TIME)
+                            # delivery_time = wtime.convert_int_seconds_to_string_time(delivery_time_seconds)
+                            # delivery_times_list.append(self.calculate_delivery_time(min_dist,self.first_truck_delivery_times[-1]))  # [O(n)]
+
+                        delivery_time = wtime.convert_int_seconds_to_string_time(delivery_time_seconds)
+                        delivery_times_list.append(wtime.convert_int_seconds_to_string_time(wtime.add_time(delivery_time, delivery_times_list[-1])))  # [O(n)]
                         total_truck_dist.append(min_dist)
                     else:
+                        delivery_times_list.append(wtime.convert_int_seconds_to_string_time(wtime.add_time('00:00:00', delivery_times_list[-1])))  # [O(n)]
                         total_truck_dist.append(0.0)
 
-                    if truck == 0:
-                        self.first_truck_delivery_times.append(self.calculate_delivery_time(min_dist, FIRST_TRUCK_DEPARTURE_TIME))  # [O(n)]
+                        # self.first_truck_delivery_times.append(wtime.convert_int_seconds_to_string_time(delivery_time_seconds))  # [O(n)]
 
 
-                    if truck == 1:
-                        self.second_truck_delivery_times.append(self.calculate_delivery_time(min_dist, self.second_truck_departure_time))  # [O(n)]
-                    if truck == 2 and len(self.first_truck_delivery_times) > 0:
-                        self.third_truck_delivery_times.append(self.calculate_delivery_time(min_dist, self.first_truck_delivery_times[1][-1]))  # [O(n)]
 
             # Get distance from last package back to the hub
             return_to_hub = float(ppd.get_distance_data()[int(
@@ -300,15 +316,23 @@ class DeliverPackages:
 
             trucks_list[truck] = ordered_truck_list
             print(f'Truck {truck + 1}({len(trucks_list[truck])}): {trucks_list[truck]}')
+
+            # Assign the value of the distances and delivery times to the appropriate truck.
             if truck == 0:
                 self.total_dist_first_truck = total_truck_dist
+                self.first_truck_delivery_times = delivery_times_list
                 print(f'Truck 1: {self.total_dist_first_truck}')
+                print(f'Truck 1: {self.first_truck_delivery_times}')
             if truck == 1:
                 self.total_dist_second_truck = total_truck_dist
+                self.second_truck_delivery_times = delivery_times_list
                 print(f'Truck 2: {self.total_dist_second_truck}')
+                print(f'Truck 2: {self.second_truck_delivery_times}')
             if truck == 2:
                 self.total_dist_third_truck = total_truck_dist
+                self.third_truck_delivery_times = delivery_times_list
                 print(f'Truck 3: {self.total_dist_third_truck}')
+                print(f'Truck 3: {self.third_truck_delivery_times}')
 
         self.first_truck = trucks_list[0]
         self.second_truck = trucks_list[1]
@@ -417,7 +441,7 @@ class DeliverPackages:
     #
     #     return delivery_time_list, cumulative_delivery_duration_list
 
-    def calculate_delivery_time(package_distance, departure_time):
+    def calculate_delivery_time(distance, departure_time):
         """
 
 
@@ -426,15 +450,15 @@ class DeliverPackages:
         :return:
         """
 
-        print(f'\npackage_distance is: {package_distance}')
-        print(f'departure_time is: {departure_time}')
+        # print(f'\npackage_distance is: {distance}')
+        # print(f'departure_time is: {departure_time}')
 
-        duration = int(round((package_distance / DELIVERY_TRUCK_AVG_SPEED_MPH), 2) * 3600)
-        duration = wtime.convert_int_seconds_to_string_time(duration)
+        duration_seconds = int(round((distance / DELIVERY_TRUCK_AVG_SPEED_MPH), 2) * 3600)
+        # duration = wtime.convert_int_seconds_to_string_time(duration_seconds)
 
-        print(f'duration is: {duration}')
+        # print(f'duration is: {duration}')
 
-        return duration
+        return duration_seconds
 
     # Print verbose delivery data
     def print_verbose_output(self):

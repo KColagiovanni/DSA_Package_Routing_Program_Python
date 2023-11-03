@@ -136,7 +136,7 @@ class WgupsTime:
 
     def add_time(self, time1, time2):
         """
-        This method takes two times in string format and returns the sum of the two times.
+        This method takes two times in string format and returns the sum of the two times in integer seconds.
 
         Time Complexity: The time complexity for this method is O(1).
 
@@ -145,7 +145,7 @@ class WgupsTime:
             time2(str): Second time parameter.
 
         Return:
-            int: Sum of the two Parameter in seconds.
+            total_seconds(int): Sum of the two Parameter in seconds.
         """
         # print(f'time1 is: {time1}')
         # print(f'time2 is: {time2}')
@@ -154,7 +154,7 @@ class WgupsTime:
             total_seconds = (
                     self.convert_string_time_to_int_seconds(time1) + self.convert_string_time_to_int_seconds(time2)
             )
-            return self.convert_int_seconds_to_string_time(total_seconds)
+            return total_seconds
 
     def time_difference(self, time1, time2):
         """
