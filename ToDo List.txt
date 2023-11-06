@@ -5,3 +5,5 @@
 - Implement my time class for all time related things. *****
 - Add comments everywhere they are needed.
 - Remove unnecessary comments and commented out stale code.
+- Get package filtering working (Deliver by and delayed eta checking)
+- Turn the single and all update and print output methods into 1 method.
