@@ -200,22 +200,12 @@ class Packages(ParseCsvData):
             })
 
         # Adding packages to the dictionary that are delayed.
-        print(f'package_data[1] is {package_data[1]}')
         if 'Delayed' in package_data[1][7]:  # [O(n)]
             if package_data[1][7][-8] == ' ':
                 package_eta = package_data[1][7][-7:-3]
             else:
                 package_eta = package_data[1][7][-8:-3]
             self.record[package_data[1][1]].update({'Delayed ETA': package_eta + ':00'})
-        elif 'Delayed' in package_data[1][7] or self.record[package_data[1][1]].get('Delayed ETA') is None:
-            if package_data[1][7][-8] == ' ':
-                package_eta = package_data[1][7][-7:-3]
-            else:
-                package_eta = package_data[1][7][-8:-3]
-            self.record[package_data[1][1]].update({'Delayed ETA': package_eta + ':00'})
-
-        else:
-            self.record[package_data[1][1]].update({'Delayed ETA': None})
 
         # Adding packages to the dictionary with truck number that the special instructions request.
         if 'Can only be on truck' in package_data[1][7]:  # [O(n)]

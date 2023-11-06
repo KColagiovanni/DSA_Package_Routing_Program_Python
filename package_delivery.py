@@ -215,12 +215,15 @@ class DeliverPackages:
         # one delivery address to the next.
         for truck in range(len(trucks_list)):
 
+            print('\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+
+            delivery_times_list = []
             min_dist = float('inf')
+            min_dist_index = ''
             min_dist_package_address = ''
             ordered_truck_list = []
+            swap_candidate = []
             total_truck_dist = []
-            delivery_times_list = []
-            min_dist_index = ''
 
             # Find the package that is closest to the hub.
             for package in trucks_list[truck]:
@@ -272,7 +275,11 @@ class DeliverPackages:
                     package_index_list.append(package_row_index)
 
             # Iterate over each package on the truck that has been manually loaded.
-            for packages in range(len(trucks_list[truck])):
+            # for packages in range(len(trucks_list[truck])):
+            packages = 0
+            while packages < len(trucks_list[truck]):
+
+                # packages in range(len(trucks_list[truck]))):
                 package_info = record_data[ppd.get_hash().lookup_item(ordered_truck_list[packages])[1][1]]
                 package_row_index = int(record_data[ppd.get_hash().lookup_item(ordered_truck_list[-1])[1][1]].get('Index'))
                 min_dist = float('inf')  # Set the minimum distance to infinity
@@ -281,8 +288,6 @@ class DeliverPackages:
 
                 # Iterate over each package index (all packages going to the same delivery address are the same index).
                 for package_index in range(len(package_index_list)):
-                    # print(f'[package_row_index][package_index] is: [{package_row_index}][{package_index + 3}]')
-                    # print(f'package_index_list[package_index] is: {package_index_list[package_index]}')
 
                     # Searching for the lowest value/distance, by traversing the distance list horizontally
                     if package_row_index > package_index_list[package_index]:
@@ -328,59 +333,67 @@ class DeliverPackages:
 
                     print(f'\nPackage ID is: {min_dist_package_id[package_num]}')
                     # print(f'min_dist_package_id is: {min_dist_package_id}')
-                    print(f'time delivered is: {time_sum_converted}')
-                    print(f'truck # {truck}')
-                    print(f'package ID : {record_data[ppd.get_hash().lookup_item(min_dist_package_id[package_num])[1][1]]}')
+                    # print(f'time delivered is: {time_sum_converted}')
+                    # print(f'truck # {truck}')
+                    # print(f'package record: {record_data[ppd.get_hash().lookup_item(min_dist_package_id[package_num])[1][1]]}')
                     # print(f"Package ID {min_dist_package_id[package_num]} deliver by time: {package_info['Deliver By']}")
 
-                    deliver_by = package_info['Deliver By']
-                    delayed_eta = package_info['Delayed ETA']
+                    deliver_by = record_data[ppd.get_hash().lookup_item(min_dist_package_id[package_num])[1][1]]['Deliver By']
+                    try:
+                        delayed_eta = record_data[ppd.get_hash().lookup_item(min_dist_package_id[package_num])[1][1]]['Delayed ETA']
+                    except KeyError:
+                        delayed_eta = None
+
                     delivery_window = False
+
+                    # print(f'delayed_eta is: {delayed_eta}')
+                    # print(f'deliver_by is: {deliver_by}')
                     if delayed_eta is None and deliver_by == 'EOD':
                         delivery_window = True
-                        print(f'Package ID {min_dist_package_id[package_num]} is not delayed and needs to be delivered by EOD')
+                        swap_candidate.append([min_dist_package_id[package_num], len(ordered_truck_list) - 1, ])
+                        # print(f'Package ID {min_dist_package_id[package_num]} is not delayed and needs to be delivered by EOD')
                     elif delayed_eta is None and deliver_by != 'EOD':
                         deliver_by_diff = wtime.time_difference(deliver_by, time_sum_converted)
                         if deliver_by_diff >= 0:
-                            print(f'Package ID {min_dist_package_id[package_num]} was delivered at {time_sum_converted}, which is on or before {deliver_by}')
+                            # print(f'Package ID {min_dist_package_id[package_num]} was delivered at {time_sum_converted}, which is on or before {deliver_by}')
+                            delivery_window = True
                         else:
-                            print(f'Package ID {min_dist_package_id[package_num]} was delivered at {time_sum_converted}, which is after {deliver_by}')
+                            # print(f'Package ID {min_dist_package_id[package_num]} was delivered at {time_sum_converted}, which is after {deliver_by}')
+                            delivery_window = False
                     elif delayed_eta is not None and deliver_by == 'EOD':
                         delayed_eta_diff = wtime.time_difference(time_sum_converted, delayed_eta)
                         if delayed_eta_diff >= 0:
-                            print(f'Package ID {min_dist_package_id[package_num]} was delivered at {time_sum_converted}, which is on or after {delayed_eta}')
+                            # print(f'Package ID {min_dist_package_id[package_num]} was delivered at {time_sum_converted}, which is on or after {delayed_eta}')
+                            delivery_window = True
                         else:
-                            print(f'Package ID {min_dist_package_id[package_num]} was delivered at {time_sum_converted}, which is before {delayed_eta}')
+                            # print(f'Package ID {min_dist_package_id[package_num]} was delivered at {time_sum_converted}, which is before {delayed_eta}')
+                            delivery_window = False
                     else:
                         deliver_by_diff = wtime.time_difference(deliver_by, time_sum_converted)
                         delayed_eta_diff = wtime.time_difference(time_sum_converted, delayed_eta)
                         if delayed_eta_diff >= 0 and deliver_by_diff >= 0:
-                            print(f'Package ID {min_dist_package_id[package_num]} was delivered at {time_sum_converted}, which is on or after {delayed_eta} and on or before {deliver_by}')
+                            # print(f'Package ID {min_dist_package_id[package_num]} was delivered at {time_sum_converted}, which is on or after {delayed_eta} and on or before {deliver_by}')
+                            delivery_window = True
                         else:
                             if deliver_by_diff >= 0:
-                                print(f'Package ID {min_dist_package_id[package_num]} was delivered at {time_sum_converted}, which is before {delayed_eta}, but on or before {deliver_by}')
+                                # print(f'Package ID {min_dist_package_id[package_num]} was delivered at {time_sum_converted}, which is before {delayed_eta}, but on or before {deliver_by}')
+                                delivery_window = True
                             if delayed_eta_diff >= 0:
-                                print(f'Package ID {min_dist_package_id[package_num]} was delivered at {time_sum_converted}, which is on or after {delayed_eta}, but after {deliver_by}')
+                                # print(f'Package ID {min_dist_package_id[package_num]} was delivered at {time_sum_converted}, which is on or after {delayed_eta}, but after {deliver_by}')
+                                delivery_window = False
 
                     print(f'delivery_window is: {delivery_window}')
-                    #     print(f'Package ID {min_dist_package_id[package_num]} delayed eta is: {delayed_eta}')
-                    #     if wtime.time_difference(delivery_times_list[-1], delayed_eta) > 0:
-                    #         print(f'Delivered at {delivery_times_list[-1]} which is after the Delayed ETA time.')
-                    #     else:
-                    #         print(f'Delivered at {delivery_times_list[-1]} which is before or on the Delayed ETA time.')
-                    #         print(f"{delivery_times_list[-1]} > {package_info['Delayed ETA']}")
-                    #
-                    # if deliver_by != 'EOD':
-                    #     # print(f"wtime.time_difference(package_info['Deliver By'], delivery_times_list[-1]) is: {wtime.time_difference(package_info['Deliver By'], delivery_times_list[-1])}")
-                    #     if wtime.time_difference(package_info['Deliver By'], delivery_times_list[-1]) >= 0:
-                    #         print(f'Delivered at {delivery_times_list[-1]}, which is before or on the Deliver By time.')
-                    #     else:
-                    #         print(f'Delivered at {delivery_times_list[-1]}, which is after the Deliver By time.')
+                    # If the required "Deliver By" and "Delayed ETA" conditions have been met.
+                    if delivery_window:
+                        ordered_truck_list.append(min_dist_package_id[package_num])
+                        self.addresses.append(min_dist_index)
+                    else:
+                        # pop the best candidate off and append it back onto the list.
+                        print(f'swap_candidates is: {swap_candidate}')
 
-                    ordered_truck_list.append(min_dist_package_id[package_num])
-                    print(f'ordered_truck_list is: {ordered_truck_list}')
-                    self.addresses.append(min_dist_index)
-
+                print(ordered_truck_list)
+                print(f'packages is: {packages}')
+                packages += 1
 
             # Calculate and append the time and distance to get back to the hub from the last delivery.
             return_to_hub = float(ppd.get_distance_data()[int(
