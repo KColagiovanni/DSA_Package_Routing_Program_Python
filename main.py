@@ -51,7 +51,12 @@ Selection: """)
             # Manually load the trucks. Input: Package_data (sync_csv_data). Output: Manually loaded trucks.
             loaded_trucks = dp.manual_load(record_data)  # [O(n)]
 
-            truck_list = dp.find_shortest_distance(ppd.get_distance_data(), loaded_trucks, record_data)  # [O(n^2)]
+            print(f'loaded_trucks is: {loaded_trucks}')
+            # Loop through the packages on each truck and find the package with the shortest distance from the hub, and from
+            # one delivery address to the next.
+            for truck_num in range(len(loaded_trucks)):
+
+                truck_list = dp.find_shortest_distance(ppd.get_distance_data(), loaded_trucks[truck_num], truck_num, record_data)  # [O(n^2)]
 
             for truck in range(len(dp.delivery_data)):
                 dp.update_package_delivery_status_and_print_output_for_all_packages(
