@@ -222,7 +222,8 @@ class DeliverPackages:
             min_dist_index = ''
             min_dist_package_address = ''
             ordered_truck_list = []
-            swap_candidate = []
+            package_index_list = []
+            move_candidates = []
             total_truck_dist = []
 
             # Find the package that is closest to the hub.
@@ -265,8 +266,6 @@ class DeliverPackages:
                     delivery_times_list.append(wtime.convert_int_seconds_to_string_time(wtime.add_time('00:00:00', delivery_times_list[-1])))  # [O(n)]
                     total_truck_dist.append(0.0)
 
-            package_index_list = []
-
             # Append the indexes of each package (going to the same address) to the truck, starting at index 1 because
             # the first package (index 0) has already been loaded.
             for packages in range(len(trucks_list[truck])):
@@ -276,11 +275,10 @@ class DeliverPackages:
 
             # Iterate over each package on the truck that has been manually loaded.
             # for packages in range(len(trucks_list[truck])):
-            packages = 0
-            while packages < len(trucks_list[truck]):
+            packages = 1
+            while packages < len(trucks_list[truck]) - 1:
 
-                # packages in range(len(trucks_list[truck]))):
-                package_info = record_data[ppd.get_hash().lookup_item(ordered_truck_list[packages])[1][1]]
+                # package_info = record_data[ppd.get_hash().lookup_item(ordered_truck_list[packages])[1][1]]
                 package_row_index = int(record_data[ppd.get_hash().lookup_item(ordered_truck_list[-1])[1][1]].get('Index'))
                 min_dist = float('inf')  # Set the minimum distance to infinity
                 min_dist_index = ''
@@ -319,16 +317,20 @@ class DeliverPackages:
                         time_sum = wtime.add_time(delivery_time, delivery_times_list[-1])
                         time_sum_converted = wtime.convert_int_seconds_to_string_time(time_sum)
                         # print(f'time_sum_converted is: {time_sum_converted}')
-                        delivery_times_list.append(time_sum_converted)  # [O(n)]
-                        total_truck_dist.append(min_dist)
+                        # delivery_times_list.append(time_sum_converted)  # [O(n)]
+                        min_dist_value = min_dist
+                        # total_truck_dist.append(min_dist)
+                        packages += 1
 
                     # If the package is not the first package going to the delivery address.
                     else:
                         time_sum = wtime.add_time('00:00:00', delivery_times_list[-1])
                         time_sum_converted = wtime.convert_int_seconds_to_string_time(time_sum)
                         # print(f'time_sum_converted is: {time_sum_converted}')
-                        delivery_times_list.append(time_sum_converted)  # [O(n)]
-                        total_truck_dist.append(0.0)
+                        # delivery_times_list.append(time_sum_converted)  # [O(n)]
+                        min_dist_value = 0.0
+                        # total_truck_dist.append(0.0)
+                        packages += 1
 
 
                     print(f'\nPackage ID is: {min_dist_package_id[package_num]}')
@@ -350,7 +352,7 @@ class DeliverPackages:
                     # print(f'deliver_by is: {deliver_by}')
                     if delayed_eta is None and deliver_by == 'EOD':
                         delivery_window = True
-                        swap_candidate.append([min_dist_package_id[package_num], len(ordered_truck_list) - 1, ])
+                        move_candidates.append([min_dist_package_id[package_num], len(ordered_truck_list) - 1, float(ppd.get_distance_data()[int(record_data.get(ppd.get_input_data()[min_dist_package_id[package_num]][1])["Index"])][0])])  # [O(1)]
                         # print(f'Package ID {min_dist_package_id[package_num]} is not delayed and needs to be delivered by EOD')
                     elif delayed_eta is None and deliver_by != 'EOD':
                         deliver_by_diff = wtime.time_difference(deliver_by, time_sum_converted)
@@ -383,17 +385,45 @@ class DeliverPackages:
                                 delivery_window = False
 
                     print(f'delivery_window is: {delivery_window}')
+                    print(f'time_sum_converted is: {time_sum_converted}')
+                    print(f'min_dist_value is: {min_dist_value}')
+                    print(f'move_candidates is: {move_candidates}')
                     # If the required "Deliver By" and "Delayed ETA" conditions have been met.
-                    if delivery_window:
-                        ordered_truck_list.append(min_dist_package_id[package_num])
-                        self.addresses.append(min_dist_index)
-                    else:
+                    if not delivery_window:
+                        min_dist_from_hub = float('inf')
+                        print(f'move_candidates is: {move_candidates}')
+                        for candidate_min_dist in move_candidates:
+                            if candidate_min_dist[2] < min_dist_from_hub:
+                                min_dist_from_hub = candidate_min_dist[2]
+                                candidate_index = candidate_min_dist[1] + 1
+                                candidate_id = candidate_min_dist[0]
+                        print(f'ordered_truck_list after is: {ordered_truck_list}')
+                        # print(f'min_dist_from_hub is: {min_dist_from_hub}')
+                        print(f'popping package ID {candidate_id} from index {candidate_index} in ordered_truck_list')
+                        print(f'min_dist_index is: {min_dist_index}')
+                        ordered_truck_list.pop(candidate_index)
+                        delivery_times_list.pop(candidate_index)
+                        total_truck_dist.pop(candidate_index)
+                        candidate_index_popped = True
+                        # self.addresses.append(min_dist_index)
+                        print(f'appending package ID {candidate_id} to the ordered_truck_list')
+                        # ordered_truck_list.append(candidate_id)
+                        print(f'ordered_truck_list after is: {ordered_truck_list}')
+                        continue
+                        # delivery_times_list.append(time_sum_converted)  # [O(n)]
+                        # total_truck_dist.append(min_dist)
+                        # ordered_truck_list.append(min_dist_package_id[package_num])
+                        # continue
+                        # print(min(move_candidates[2]))
+                    # else:
                         # pop the best candidate off and append it back onto the list.
-                        print(f'swap_candidates is: {swap_candidate}')
 
-                print(ordered_truck_list)
+                    delivery_times_list.append(time_sum_converted)  # [O(n)]
+                    total_truck_dist.append(min_dist)
+                    ordered_truck_list.append(min_dist_package_id[package_num])
+                    self.addresses.append(min_dist_index)
+
                 print(f'packages is: {packages}')
-                packages += 1
 
             # Calculate and append the time and distance to get back to the hub from the last delivery.
             return_to_hub = float(ppd.get_distance_data()[int(
