@@ -282,7 +282,8 @@ class DeliverPackages:
                 package_index_list.append(package_row_index)
 
         # Iterate over each package on the truck that has been manually loaded.
-        # for packages in range(len(package_list[truck])):
+        # for packages in range(len(package_list)):
+
         packages = 1
         while packages < len(package_list) - 1:
 
@@ -315,7 +316,10 @@ class DeliverPackages:
                                 min_dist_index_address = ppd.get_distance_name_data()[min_dist_index][2]
                                 min_dist_package_id = record_data[min_dist_index_address].get('Package ID')
 
-            # Appending each package to the new truck list
+            print(f'min_dist is: {min_dist}')
+            print(f'min_dist_package_id is: {min_dist_package_id}')
+
+            # Iterating over each package going to the same delivery address.
             for package_num in min_dist_package_id:
 
                 # If the package is the first or only package that is going to the delivery address.
@@ -430,6 +434,7 @@ class DeliverPackages:
                 total_truck_dist.append(min_dist)
                 ordered_truck_list.append(min_dist_package_id[package_num])
                 self.addresses.append(min_dist_index)
+                packages += 1
 
                 print(f'packages is: {packages}')
 
