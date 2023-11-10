@@ -94,8 +94,15 @@ Selection: """)
             # Manually load the trucks. Input: Package_data (sync_csv_data). Output: Manually loaded trucks.
             loaded_trucks = dp.manual_load(record_data)  # [O(n)]
 
-            truck_list = dp.find_shortest_distance(ppd.get_distance_data(), loaded_trucks, record_data)  # [O(n^2)]
-            print(f'truck_list is: {truck_list}')
+            for truck_num in range(len(loaded_trucks)):
+
+                print(f'from main.py loaded_trucks[truck_num] is: {loaded_trucks[truck_num]}')
+                print(f'from main.py truck_num is: {truck_num}')
+                # print(f'from main.py {}')
+                # truck_list = dp.find_shortest_distance(ppd.get_distance_data(), loaded_trucks[truck_num], truck_num, record_data)  # [O(n^2)]
+                truck_list = dp.find_shortest_distance(ppd.get_distance_data(), loaded_trucks[truck_num], truck_num, record_data)  # [O(n^2)]
+
+                # print(f'truck_list is: {truck_list}')
 
             print(f'Package Data is: {ppd.get_hash().lookup_item(int(package_id))[1]}')
             for truck in range(len(dp.delivery_data)):
