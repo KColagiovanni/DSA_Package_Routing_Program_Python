@@ -10,77 +10,94 @@ class WgupsTime:
     def check_input(time):
         """
         This method checks time it was provided and verifies that it's type is string. It returns True if the input
-         parameter is a string and raises a TypeError if it is not a string.
+        parameter is a string and raises a TypeError if it is not a string.
 
-        Time Complexity: O(1)
+        Time Complexity: Technically O(n), because of the string.split method, but the length of the 2 parameter that is
+        being split will never be longer than 8, no matter how large the input of the program. Worse case: O(n), Avg
+         Case: O(8) = O(1)
 
         Parameter:
-            time(str):
+            time(str): The time to be checked in standard time (HH:MM:SS) format.
 
-        Return:
+        Return(bool):
             True if input parameter is a string, otherwise nothing gets returned, but a TypeError is raised.
         """
-
+        # If time format is (HH:MM:SS)
         if isinstance(time, str):
             input_check = time.split(':')
 
             if len(input_check) == 3:
                 # Hour
-                if int(input_check[0]) >= 0 and int(input_check[0]) <= 23:
+                if not input_check[0].isnumeric():
+                    raise ValueError(f'Hours must be numbers only.'
+                                     f' {input_check[0]} is not a valid hour value.')
+                if 0 <= int(input_check[0]) <= 23:
                     # Minute
-                    if int(input_check[1]) >= 0 and int(input_check[1]) <= 59:
+                    if not input_check[1].isnumeric():
+                        raise ValueError(f'Minutes must be numbers only.'
+                                         f' {input_check[1]} is not a valid minute value.')
+                    if 0 <= int(input_check[1]) <= 59:
                         # Second
-                        if int(input_check[2]) >= 0 and int(input_check[2]) <= 59:
+                        if not input_check[2].isnumeric():
+                            raise ValueError(f'Seconds must be numbers only.'
+                                             f' {input_check[2]} is not a valid second value.')
+                        if 0 <= int(input_check[2]) <= 59:
                             return True
                         else:
                             raise ValueError(f'Seconds must be between 0 and 59(inclusive).'
-                                             f' {input_check[1]} is not a valid second value.')
+                                             f' {input_check[2]} is not a valid second value.')
                     else:
                         raise ValueError(f'Minutes must be between 0 and 59(inclusive).'
                                          f' {input_check[1]} is not a valid minute value.')
                 else:
                     raise ValueError(f'Hours must be between 0 and 23(inclusive).'
-                                     f' {input_check[1]} is not a valid hour value.')
+                                     f' {input_check[0]} is not a valid hour value.')
 
+            # If time format is (HH:MM)
             elif len(input_check) == 2:
                 # Hour
-                if int(input_check[0]) >= 0 and int(input_check[0]) <= 23:
+                if not input_check[0].isnumeric():
+                    raise ValueError(f'Hours must be numbers only.'
+                                     f' {input_check[0]} is not a valid hour value.')
+                if 0 <= int(input_check[0]) <= 23:
+
                     # Minute
-                    if int(input_check[1]) >= 0 and int(input_check[1]) <= 59:
+                    if not input_check[1].isnumeric():
+                        raise ValueError(f'Minutes must be numbers only.'
+                                         f' {input_check[1]} is not a valid minute value.')
+                    if 0 <= int(input_check[1]) <= 59:
                         return True
                     else:
                         raise ValueError(f'Minutes must be between 0 and 59(inclusive).'
                                          f' {input_check[1]} is not a valid minute value.')
                 else:
                     raise ValueError(f'Hours must be between 0 and 23(inclusive).'
-                                     f' {input_check[1]} is not a valid minute value.')
+                                     f' {input_check[0]} is not a valid hour value.')
             else:
                 raise ValueError(f'{input_check} is an invalid entry. Please check your entry and try again.')
 
         else:
-            raise TypeError(f'{time} must be a string.')
+            raise TypeError(f'{time} is an Invalid time entry.')
 
     def convert_string_time_to_int_seconds(self, time):
         """
         This method takes a string and returns the converted time in seconds as an int.
 
-        Time Complexity: O(8) ==> O(1)
+        Time Complexity: Technically O(n), because of the string.split and string.count methods, but the length of the
+        parameter that is being split and counted will never be longer than 8, no matter how large the input of the
+        program. Worse case: O(n), Avg Case: O(8) = O(1)
 
         Parameter:
-            time(str):
+            time(str): The time to be converted in standard time (HH:MM:SS) format.
 
-        Return:
-            The converted time as an int.
+        Return(int):
+            The converted time in seconds.
         """
-
         if self.check_input(time):
             if time.count(':') == 1:
                 time += ':00'
-            # print(f'time from str_to_int is: {time}')
             (time_hr, time_min, time_sec) = time.split(':')  # [O(8)
-            # print(f'time_hr is: {time_hr}')
-            # print(f'time_min is: {time_min}')
-            # print(f'time_sec is: {time_sec}')
+
             return (int(time_hr) * 3600) + (int(time_min) * 60) + int(time_sec)
 
     @staticmethod
@@ -91,24 +108,22 @@ class WgupsTime:
         Time Complexity: O(1)
 
         Parameter:
-            seconds(int):
+            seconds(int): The time to be converted in seconds.
 
-        Return:
-            The converted time as a string in (HH:MM:SS) format.
+        Return(str):
+            The converted time in standard time (HH:MM:SS) format.
         """
-
-        # print(f'seconds is: {seconds}')
-
         if seconds >= 3600:
+
             hour = seconds // 3600
+
             minutes = (seconds % 3600) // 60
             if minutes < 10:
                 minutes = '0' + str(minutes)
             else:
                 minutes = str(minutes)
+
             seconds = seconds % 60
-            # if seconds % 10 == 0:
-            #     seconds = str(seconds) + '0'
             if seconds < 10:
                 seconds = '0' + str(seconds)
             else:
@@ -116,18 +131,13 @@ class WgupsTime:
             return f'{hour}:{minutes}:{seconds}'
 
         else:
-            # if seconds == 0:
-            #     minutes = 0
-            # else:
             minutes = seconds // 60
-            # print(f'minutes is: {minutes}')
             if minutes < 10:
                 minutes = '0' + str(minutes)
             else:
                 minutes = str(minutes)
+
             seconds = int(seconds % 60)
-            # if seconds % 10 == 0:
-            #     seconds = str(seconds) + '0'
             if seconds < 10:
                 seconds = '0' + str(seconds)
             else:
@@ -138,18 +148,15 @@ class WgupsTime:
         """
         This method takes two times in string format and returns the sum of the two times in integer seconds.
 
-        Time Complexity: The time complexity for this method is O(1).
+        Time Complexity: O(1).
 
-        Parameter:
-            time1(str): First time parameter.
-            time2(str): Second time parameter.
+        Parameters:
+            time1(str): The first time parameter in standard time (HH:MM:SS) format.
+            time2(str): The second time parameter in standard time (HH:MM:SS) format.
 
         Return:
             total_seconds(int): Sum of the two Parameter in seconds.
         """
-        # print(f'time1 is: {time1}')
-        # print(f'time2 is: {time2}')
-
         if self.check_input(time1) and self.check_input(time2):
             total_seconds = (
                     self.convert_string_time_to_int_seconds(time1) + self.convert_string_time_to_int_seconds(time2)
@@ -167,10 +174,11 @@ class WgupsTime:
         parameters that are being split and counted will never be longer than 8, no matter how large the input of the
         program. Worse case: O(n), Avg Case: O(8) = O(1)
 
-        :param
-            time1(str): The first time parameter.
-            time2(str): The second time parameter.
-        :returns
+        Parameters:
+            time1(str): The first time parameter in standard time (HH:MM:SS) format.
+            time2(str): The second time parameter in standard time (HH:MM:SS) format.
+
+        Return:
             diff(int): Difference between the two parameters in seconds.
         """
 

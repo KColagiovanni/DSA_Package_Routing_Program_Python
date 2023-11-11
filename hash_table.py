@@ -15,8 +15,7 @@ class HashTable:
         self.table_size = table_size
 
         # Create an empty list/array of size "table_size" that will be used to store bucket keys.
-        for bucket in range(self.table_size):
-            self.hash_table.append([])
+        self.hash_table = [[] for bucket in range(self.table_size)]
 
     def create_key(self, key):
         """
@@ -24,7 +23,7 @@ class HashTable:
 
         Time Complexity: O(1)
 
-        Parameters:
+        Parameter:
             key(int): The value that is used as the bucket where the data will be stored.
 
         Return: None
@@ -51,7 +50,7 @@ class HashTable:
 
         Time Complexity: O(1)
 
-        Parameters:
+        Parameter:
             key(int): The value that is used as the bucket where the data will be stored.
 
         Return(list): The value that is stored in the bucket.

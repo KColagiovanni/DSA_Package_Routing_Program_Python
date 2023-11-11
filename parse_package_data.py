@@ -3,7 +3,8 @@ from hash_table import HashTable
 from wgups_time import WgupsTime
 
 TABLE_SIZE = 40
-
+DISTANCE_TABLE = './actualData/WGUPS Distance Table.csv'
+PACKAGE_FILE = './actualData/WGUPS Package File.csv'
 ht = HashTable(TABLE_SIZE)
 wtime = WgupsTime()
 
@@ -21,13 +22,12 @@ class ParseCsvData:
 
         Time Complexity: O(1)
 
-        Parameter: None
+        Parameters: None
 
         Return:
-            package_data(list of strings): A list of the package input data.
+            package_data(list): A list of the package input data in string format.
         """
-        # with open('./data/input_data.csv', newline='') as delivery_data:
-        with open('./actualData/WGUPS Package File.csv', newline='') as delivery_data:
+        with open(PACKAGE_FILE, newline='') as delivery_data:
 
             package_data = csv.reader(delivery_data, delimiter=',')
 
@@ -36,50 +36,40 @@ class ParseCsvData:
     @staticmethod
     def get_distance_data():
         """
-        Parse the distance data CSV file using the csv library and convert it into a list.
+        Parse the distance table CSV file using the csv library and convert it into a list.
 
-        Time Complexity: O(1)
+        Time Complexity: O(n)
 
-        Parameter: None
+        Parameters: None
 
         Return:
-            distance_data(list of strings): A list of the distance data.
+            distance_data_list(list): A list of the distance data in string format.
         """
-        # with open('./data/distance_data.csv', newline='') as distance_data:
-        with open('./actualData/WGUPS Distance Table.csv', newline='') as distance_table:
+        with open(DISTANCE_TABLE, newline='') as distance_table:
 
             distance_table = csv.reader(distance_table, delimiter=',')
 
-            distance_data_list = []
-
-            for row in distance_table:
-                # print(f'distance_data row[3:] is {row[3:]}')
-                distance_data_list.append(row[3:])
+            distance_data_list = [row[3:] for row in distance_table]
 
             return distance_data_list
 
     @staticmethod
     def get_distance_name_data():
         """
-        Parse the distance name data CSV file using the csv library and convert it into a list.
+        Parse the distance table CSV file using the csv library and convert it into a list.
 
-        Time Complexity: O(1)
+        Time Complexity: O(n)
 
-        Parameter: None
+        Parameters: None
 
         Return:
-            distance_name_data(list of strings): A list of the distance name data.
+            distance_name_data_list(list): A list of the distance name data in string format.
         """
-        # with open('./data/distance_name_data.csv', newline='') as distance_name_data:
-        with open('./actualData/WGUPS Distance Table.csv', newline='') as distance_table:
+        with open(DISTANCE_TABLE, newline='') as distance_table:
 
             distance_table = csv.reader(distance_table, delimiter=',')
 
-            distance_name_data_list = []
-
-            for row in distance_table:
-                # print(f'distance_name_data row[:3] is {row[:3]}')
-                distance_name_data_list.append(row[:3])
+            distance_name_data_list = [row[:3] for row in distance_table]
 
             return distance_name_data_list
 
@@ -90,7 +80,7 @@ class Packages(ParseCsvData):
     needed to load the trucks. This class inherits from the ParseCsvData class.
 
     Attributes:
-        record(dictionary): This dictionary will hold specific package data for each deliver address.
+        record(dict): This dictionary will hold specific package data for each deliver address.
         packages_to_be_delivered_together(set): This set it used to store the package id's of the packages that need to
         be delivered together.
     """
@@ -107,9 +97,9 @@ class Packages(ParseCsvData):
 
         Time Complexity: O(1)
 
-        Parameter: None
+        Parameters: None
 
-        Return: The data that was returned from the hash table.
+        Return(dict): The data that was returned from the hash table.
         """
         return ht
 
@@ -117,20 +107,17 @@ class Packages(ParseCsvData):
     @staticmethod
     def get_package_data():
         """
-        this method takes the values from input_data.csv and adds them to a list with the name desired_data, then adds
+        This method takes the values from input_data.csv and adds them to a list with the name desired_data, then adds
         that list to the hash table using the package_id as the hash table key.
 
         Time Complexity: O(n)
 
-        Parameter: None
+        Parameters: None
 
         Return:
-            package_data_list(list): The values from input_data.csv.
+            package_data_list(list): The unpacked values from the package file.
         """
-
         package_data_list = list(ParseCsvData.get_input_data())
-
-        # print(f'package_data_list is: {package_data_list}')
 
         # Unpack the input data
         for package_details in package_data_list:  # [O(n)]
@@ -155,29 +142,28 @@ class Packages(ParseCsvData):
                 special_note
             ]
 
+            # Add data to the hash table
             ht.add_package(int(package_id), desired_data)  # O(1)
 
         return package_data_list
 
-    # Match input_data.csv with distance_name_data.csv and return a dict with the important data with the delivery
-    # addresses as keys - [O(n)]
     def sync_csv_data(self, package_data):
         """
-        This method combines data from the input_data.csv and distance_name_data.csv files and adds that data to a
+        This method combines data from the package data csv file and distance data csv files and adds that data to a
         nested python dictionary using the delivery address as a key for the main entry, and "Package ID(s)",
         "Deliver By", "Delayed ETA", "Truck", and "Deliver Together" as keys in the nested dictionary.
 
         Time Complexity: O(n)
 
         Parameter:
-            package_data(list): A list with the data for each package that was provided in the input_data.csv file.
+            package_data(list): A list with the data for each package that was provided in the ipackage data csv file.
 
         Return:
-            record(dict): A dictionary with address data.
+            record(dict): A dictionary with package delivery data.
         """
 
         # Check if multiple packages are going to the same address. If so, append each one to the dictionary.
-        if package_data[1][1] in self.record.keys():  # [O(n)]
+        if package_data[1][1] in self.record.keys():
             self.record[package_data[1][1]]['Package ID'].update({
                 len(self.record[package_data[1][1]]['Package ID']) + 1: package_data[0]
             })
@@ -190,7 +176,6 @@ class Packages(ParseCsvData):
                 else:
                     self.record[package_data[1][1]].update({'Deliver By': package_data[1][2]})
 
-
         # Add the first or only package and package data to the address that it will be delivered to.
         else:
             self.record.update({package_data[1][1]: {
@@ -200,7 +185,7 @@ class Packages(ParseCsvData):
             })
 
         # Adding packages to the dictionary that are delayed.
-        if 'Delayed' in package_data[1][7]:  # [O(n)]
+        if 'Delayed' in package_data[1][7]:
             if package_data[1][7][-8] == ' ':
                 package_eta = package_data[1][7][-7:-3]
             else:
@@ -208,7 +193,7 @@ class Packages(ParseCsvData):
             self.record[package_data[1][1]].update({'Delayed ETA': package_eta + ':00'})
 
         # Adding packages to the dictionary with truck number that the special instructions request.
-        if 'Can only be on truck' in package_data[1][7]:  # [O(n)]
+        if 'Can only be on truck' in package_data[1][7]:
 
             # For truck 1
             if package_data[1][7][-1] == '1':
@@ -223,7 +208,7 @@ class Packages(ParseCsvData):
                 self.record[package_data[1][1]].update({'Truck': 3})
 
         # Adding packages to the dictionary that must be delivered together
-        if 'Must be delivered with' in package_data[1][7]:  # [O(n)]
+        if 'Must be delivered with' in package_data[1][7]:
             self.packages_to_be_delivered_together.add(package_data[0])
             package1 = int(package_data[1][7][-7:-5])
             self.packages_to_be_delivered_together.add(package1)
@@ -234,7 +219,7 @@ class Packages(ParseCsvData):
         name_data = self.get_distance_name_data()
 
         # For loop to iterate over the distance name data to add an index to each entry.
-        for delivery_address in name_data:  # [O(n)]
+        for delivery_address in name_data:
 
             if package_data[1][1] == delivery_address[2]:
                 self.record[package_data[1][1]]['Index'] = delivery_address[0]
