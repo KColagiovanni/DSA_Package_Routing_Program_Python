@@ -30,13 +30,14 @@ class DeliverPackages:
         self.third_truck_delivery_times = []
         self.total_dist_third_truck = []
 
-        self.truck_list = []
-        self.been_loaded = []
         self.addresses = [0]
-        self.distance_traveled = []
+        self.been_loaded = []
         self.delivery_data = []
+        self.distance_traveled = []
+        self.move_candidates = []
         self.total_distance_traveled = []
         self.total_delivery_time = []
+        self.truck_list = []
 
         self.packages_to_be_delivered_together = set(())
 
@@ -342,35 +343,45 @@ class DeliverPackages:
         if min_dist_index != '':
             self.addresses.append(min_dist_index)
 
-        print(f'Truck {truck_num + 1}({len(ordered_truck_list)}): {ordered_truck_list}')
+        # print(f'Truck {truck_num + 1}({len(ordered_truck_list)}): {ordered_truck_list}')
 
-        # Check the package list to make sure the that all packages meet the "deliver by" and delayed times.
-        adjusted_package_list = self.check_truck_times(ordered_truck_list, delivery_times_list, record_data)
+        while True:
 
-        if not adjusted_package_list[1]:
-            if truck_num == 0:
-                distance_and_delivery_times = self.get_distances_and_delivery_times(
-                    distances, adjusted_package_list, record_data, FIRST_TRUCK_DEPARTURE_TIME
-                )
-            elif truck_num == 1:
-                distance_and_delivery_times = self.get_distances_and_delivery_times(
-                    distances, adjusted_package_list, record_data, self.second_truck_departure_time
-                )
-            elif truck_num == 2 and len(self.first_truck_delivery_times) > 0:
-                distance_and_delivery_times = self.get_distances_and_delivery_times(
-                    distances, adjusted_package_list, record_data, self.first_truck_delivery_times[-1]
-                )
+            # Check the package list to make sure the that all packages meet the "deliver by" and delayed times.
+            adjusted_package_list = self.check_truck_times(ordered_truck_list, delivery_times_list, record_data)
+
+            if not adjusted_package_list[1]:
+                if truck_num == 0:
+                    distance_and_delivery_times = self.get_distances_and_delivery_times(
+                        distances, adjusted_package_list, record_data, FIRST_TRUCK_DEPARTURE_TIME
+                    )
+                elif truck_num == 1:
+                    distance_and_delivery_times = self.get_distances_and_delivery_times(
+                        distances, adjusted_package_list, record_data, self.second_truck_departure_time
+                    )
+                elif truck_num == 2 and len(self.first_truck_delivery_times) > 0:
+                    distance_and_delivery_times = self.get_distances_and_delivery_times(
+                        distances, adjusted_package_list, record_data, self.first_truck_delivery_times[-1]
+                    )
+                else:
+                    raise ValueError("This method wasn't designed to handle more than 3 trucks")
+
+                print(f'\n{"X" * 20} Adjusted Package List {"X" * 20}')
+                print(f'Packages: {adjusted_package_list[0]}')
+                print(f'Distances: {distance_and_delivery_times[0]}')
+                print(f'Delivery Times: {distance_and_delivery_times[1]}')
+
+                ordered_truck_list = adjusted_package_list[0]
+                total_truck_dist = distance_and_delivery_times[0]
+                delivery_times_list = distance_and_delivery_times[1]
+
+                continue
+
             else:
-                raise ValueError("This method wasn't designed to handle more than 3 trucks")
 
-            print(f'\n{"X" * 20} Adjusted Package List {"X" * 20}')
-            print(f'Packages: {adjusted_package_list[0]}')
-            print(f'Distances: {distance_and_delivery_times[0]}')
-            print(f'Delivery Times: {distance_and_delivery_times[1]}')
-
-            ordered_truck_list = adjusted_package_list[0]
-            total_truck_dist = distance_and_delivery_times[0]
-            delivery_times_list = distance_and_delivery_times[1]
+                self.move_candidates.clear()
+                print('Leaving while loop')
+                break
 
         # Assign the value of the distances and delivery times to the appropriate truck.
         if truck_num == 0:  # Truck 1
@@ -378,22 +389,22 @@ class DeliverPackages:
             self.first_truck_delivery_times = delivery_times_list
             self.first_truck = ordered_truck_list
             self.delivery_data.append([self.first_truck, self.first_truck_delivery_times])
-            print(f'Truck 1: {self.total_dist_first_truck}')
-            print(f'Truck 1: {self.first_truck_delivery_times}')
+            # print(f'Truck 1: {self.total_dist_first_truck}')
+            # print(f'Truck 1: {self.first_truck_delivery_times}')
         elif truck_num == 1:  # Truck 2
             self.total_dist_second_truck = total_truck_dist
             self.second_truck_delivery_times = delivery_times_list
             self.second_truck = ordered_truck_list
             self.delivery_data.append([self.second_truck, self.second_truck_delivery_times])
-            print(f'Truck 2: {self.total_dist_second_truck}')
-            print(f'Truck 2: {self.second_truck_delivery_times}')
+            # print(f'Truck 2: {self.total_dist_second_truck}')
+            # print(f'Truck 2: {self.second_truck_delivery_times}')
         elif truck_num == 2:  # Truck 3
             self.total_dist_third_truck = total_truck_dist
             self.third_truck_delivery_times = delivery_times_list
             self.third_truck = ordered_truck_list
             self.delivery_data.append([self.third_truck, self.third_truck_delivery_times])
-            print(f'Truck 3: {self.total_dist_third_truck}')
-            print(f'Truck 3: {self.third_truck_delivery_times}')
+            # print(f'Truck 3: {self.total_dist_third_truck}')
+            # print(f'Truck 3: {self.third_truck_delivery_times}')
         else:
             raise ValueError("This method wasn't designed to handle more than 3 trucks")
 
@@ -450,13 +461,13 @@ class DeliverPackages:
 
         return [new_package_dist_list, new_package_delivery_time_list]
 
-    @staticmethod
-    def check_truck_times(package_id_list, delivery_time_list, record_data):
+    def check_truck_times(self, package_id_list, delivery_time_list, record_data):
 
-        move_candidates = []
         delivery_window = True
 
         for package_id_list_index in range(len(package_id_list)):
+
+            print(f'\npackage_id_list_index is: {package_id_list_index}')
 
             deliver_by =\
                 record_data[ppd.get_hash().lookup_item(package_id_list[package_id_list_index])[1][1]]['Deliver By']
@@ -469,7 +480,20 @@ class DeliverPackages:
             if delayed_eta is None and deliver_by == 'EOD':
                 if delivery_window:
                     delivery_window = True
-                move_candidates.append(
+                # if [
+                #     package_id_list_index,
+                #     package_id_list[package_id_list_index],
+                #     float(ppd.get_distance_data()[int(
+                #         record_data.get(ppd.get_input_data()[package_id_list[package_id_list_index]][1])["Index"]
+                #     )][0])
+                # ] not in self.move_candidates:
+
+                print(f'package_id_list[package_id_list_index]] is: {package_id_list[package_id_list_index]}')
+
+            # if package_id_list_index not in self.move_candidates:
+                print(f'move_candidates is: {self.move_candidates}')
+                print(f'package_id_list is: {package_id_list}')
+                self.move_candidates.append(
                     [package_id_list_index, package_id_list[package_id_list_index],
                      float(ppd.get_distance_data()[
                                int(record_data.get(
@@ -508,14 +532,45 @@ class DeliverPackages:
         # If the required "Deliver By" and "Delayed ETA" conditions have been met.
         if not delivery_window:
 
-            print(f'move_candidates is: {move_candidates}')
-
-            # Swap candidate packages
-            package_id_list.remove(36)
-            package_id_list.append(36)
+            print('calling adjust_package_list')
+            package_id_list = self.adjust_package_list(package_id_list)
 
         return [package_id_list, delivery_window]
 
+    def adjust_package_list(self, package_id_list):
+
+        print(f'\nself.move_candidates is: {self.move_candidates}')
+        # dist = float('inf')
+        dist = 0
+        
+        for candidate in range(len(self.move_candidates)):
+            print(f'candidate is: {candidate}')
+            print(f'move_candiates[candidate] is: {self.move_candidates[candidate]}')
+            # print(f'candidate[0] is: {candidate[0]}')
+            # print(f'candidate[1] is: {candidate[1]}')
+            # print(f'candidate[2] is: {candidate[2]}')
+
+            if self.move_candidates[candidate][2] > dist:
+            # if self.move_candidates[candidate][2] < dist:
+                dist = self.move_candidates[candidate][2]
+                dist_id = self.move_candidates[candidate][1]
+                dist_index = self.move_candidates[candidate][0]
+                package_index_to_remove = candidate
+
+            # Swap candidate packages
+            # print(f'self.move_candidates.index(min_dist_id) is: {self.move_candidates.index(self.move_candidates[candidate][0])}')
+
+        print(f'min_dist_id is: {dist_id}')
+
+        # package_id_list.remove(36)
+        # package_id_list.append(36)
+
+        package_id_list.remove(dist_id)
+        package_id_list.append(dist_id)
+        self.move_candidates.pop(package_index_to_remove)
+
+        return package_id_list
+    
     @staticmethod
     def calculate_delivery_time(distance):
         """
