@@ -73,7 +73,7 @@ Selection: """)
 
             # Update and print out package data to the console.
             for truck in range(len(dp.delivery_data)):
-                dp.update_package_delivery_status_and_print_output_for_all_packages(
+                dp.update_package_delivery_status_and_print_output(
                     dp.delivery_data[truck][0],
                     truck + 1,
                     dp.delivery_data[truck][1],
@@ -134,7 +134,7 @@ Selection: """)
                     truck_num = truck
 
             # Update and print out package data to the console.
-            dp.update_package_delivery_status_and_print_output_for_all_packages(
+            dp.update_package_delivery_status_and_print_output(
                 dp.delivery_data[truck_num][0],
                 truck_num + 1,
                 dp.delivery_data[truck_num][1],

@@ -669,7 +669,7 @@ class DeliverPackages:
 
     # Update package status - [O(n)]
     # status_value --> 1 for "At the Hub", 2 for "En Route", or 3 for "Delivered at <time of delivery>
-    def update_package_delivery_status_and_print_output_for_all_packages(
+    def update_package_delivery_status_and_print_output(
             self,
             truck_list,
             truck_num,
@@ -678,16 +678,25 @@ class DeliverPackages:
             **kwargs
     ):
         """
-        Desctioption of method.
+        This method updates the package and truck status' based on the lookup time passed in by the user. The package
+        status options are: "At the hub", "En Route", or "Delivered at HH:MM:SS". The truck status options are: "At the
+        hub", "Delivering packages", or "Returned to the hub". Then the status' and package info are printed to the
+        console.
 
         Time Complexity: O(?)
 
-        :param truck_list:
-        :param truck_num:
-        :param delivery_time_list:
-        :param lookup_time:
-        :param kwargs:
-        :return:
+        Parameters
+            truck_list(list): A list of nested lists of package ID's for each truck.
+            truck_num(int): The truck number that is being analyzed.
+            delivery_time_list(list): A list of the delivery times for each truck.
+            lookup_time(str): The time that the user entered to see package information.
+            kwargs: (This is only used when the used chooses option 2.)
+                package_id(str): The package ID that the user entered to have info shown for.
+                package_index(int): The index in the truck list of the package.
+                single_package_lookup(bool): True if this will just be displaying info for one truck and False if it
+                will be displaying ingo for all trucks.
+
+        Return: None
         """
         delivered_count = 0
         first_truck_diff = 0
@@ -696,6 +705,7 @@ class DeliverPackages:
         truck_status_options = ['At the hub', 'Delivering packages', 'Returned to the hub']
         package_status_options = ['At the hub', 'En route', 'Delivered']
 
+        # kwargs that are used when the user chooses option 2.
         package_id = kwargs['package_id']
         package_index = kwargs['package_index']
         single_package_lookup = kwargs['single_package_lookup']
@@ -722,17 +732,14 @@ class DeliverPackages:
         # If the truck is either currently delivering packages or already returned to the hub.
         if truck_status == truck_status_options[1] or truck_status == truck_status_options[2]:
 
-            # First truck
             if truck_num == 1:
                 print('|', f'Truck {truck_num} left the the hub at {FIRST_TRUCK_DEPARTURE_TIME}'.center(122),
                       '|')
 
-            # Second truck
             if truck_num == 2:
                 print('|', f'Truck {truck_num} left the the hub at {self.second_truck_departure_time}'.center(122),
                       '|')
 
-            # Third truck
             if truck_num == 3:
                 print('|', f'Truck {truck_num} left the the hub at {self.first_truck_delivery_times[-1]}'.center(122),
                       '|')
@@ -809,7 +816,7 @@ class DeliverPackages:
         else:
 
             # Iterate over each package and update their status.
-            for package_index in range(len(truck_list) + 1):
+            for package_index in range(len(truck_list) + 1):  # [O(n)]
 
                 if package_index >= len(truck_list):
                     continue
