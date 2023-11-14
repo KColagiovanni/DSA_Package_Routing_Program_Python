@@ -555,7 +555,7 @@ class DeliverPackages:
 
         Parameters:
             package_id_list(list): A list of the package_id's that have been manually loaded onto the truck.
-            delivery_time_list(list): A list of the delivery timses
+            delivery_time_list(list): A list of the delivery times
             record_data(dict): This is data from the package data csv file and distance data csv files that has
             information for each delivery address to help load the trucks.
 
@@ -683,7 +683,7 @@ class DeliverPackages:
         hub", "Delivering packages", or "Returned to the hub". Then the status' and package info are printed to the
         console.
 
-        Time Complexity: O(?)
+        Time Complexity: O(n)
 
         Parameters
             truck_list(list): A list of nested lists of package ID's for each truck.
@@ -775,8 +775,9 @@ class DeliverPackages:
 
             # If the package has been delivered.
             if wtime.time_difference(lookup_time, delivery_time_list[package_index]) > 0:
-                ppd.get_hash().update_item(package_id, value_index,
-                                           f'{package_status_options[2]} at {delivery_time_list[package_index]}')
+                ppd.get_hash().update_item(
+                    package_id, value_index, f'{package_status_options[2]} at {delivery_time_list[package_index]}'
+                )
                 delivered_count += 1
 
             # If the package is en route.
