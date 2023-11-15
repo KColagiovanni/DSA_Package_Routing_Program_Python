@@ -422,35 +422,44 @@ class DeliverPackages:
             copy_of_ordered_truck_list = ordered_truck_list[:]
 
             # Check the package list to make sure the that all packages meet the "deliver by" and delayed times.
-            adjusted_package_list = self.check_truck_times(copy_of_ordered_truck_list, delivery_times_list, record_data)
+            time_check = self.check_truck_times(copy_of_ordered_truck_list, delivery_times_list, record_data)
+
+            if not time_check:
+                adjusted_package_list = self.adjust_package_list(copy_of_ordered_truck_list)
 
             # If the package list does not meet the "deliver by" or delayed time
-            if not adjusted_package_list[1]:
+            # if not adjusted_package_list:
                 if truck_num == 0:
                     distance_and_delivery_times = self.get_distances_and_calculate_delivery_times(
                         distances, adjusted_package_list, record_data, FIRST_TRUCK_DEPARTURE_TIME
-                    )
+                    )  # [O(n)]
                 elif truck_num == 1:
                     distance_and_delivery_times = self.get_distances_and_calculate_delivery_times(
                         distances, adjusted_package_list, record_data, self.second_truck_departure_time
-                    )
+                    )  # [O(n)]
                 elif truck_num == 2 and len(self.first_truck_delivery_times) > 0:
                     distance_and_delivery_times = self.get_distances_and_calculate_delivery_times(
                         distances, adjusted_package_list, record_data, self.first_truck_delivery_times[-1]
-                    )
+                    )  # [O(n)]
                 else:
                     raise ValueError("This method wasn't designed to handle more than 3 trucks")
 
                 print(f'\n{"X" * 20} Adjusted Package List {"X" * 20}')
-                print(f'Packages: {adjusted_package_list[0]}')
+                print(f'Packages: {adjusted_package_list}')
                 print(f'Distances: {distance_and_delivery_times[0]}')
                 print(f'Delivery Times: {distance_and_delivery_times[1]}')
 
-                copy_of_ordered_truck_list = adjusted_package_list[0]
-                total_truck_dist = distance_and_delivery_times[0]
-                delivery_times_list = distance_and_delivery_times[1]
+                # Check the package list to make sure the that all packages meet the "deliver by" and delayed times.
+                time_check = self.check_truck_times(adjusted_package_list, delivery_times_list, record_data)
+                print(f'time_check is: {time_check}')
 
-                continue
+                if time_check:
+                    copy_of_ordered_truck_list = adjusted_package_list[0]
+                    total_truck_dist = distance_and_delivery_times[0]
+                    delivery_times_list = distance_and_delivery_times[1]
+                    break
+                else:
+                    continue
 
             else:
                 ordered_truck_list = copy_of_ordered_truck_list[:]
@@ -501,7 +510,7 @@ class DeliverPackages:
         print(f'package_id_list is: {package_id_list}')
 
         # Get the index of each package and append it to a list
-        for package_id in package_id_list[0]:  # [O(n)]
+        for package_id in package_id_list:  # [O(n)]
             new_package_index = record_data.get(ppd.get_hash().lookup_item(package_id)[1][1])['Index']  # [O(1)]
             new_package_index_list.append(int(new_package_index))
 
@@ -629,11 +638,12 @@ class DeliverPackages:
 
             # print(f'\nPackage ID {package_id_list[package_id_list_index]} is {delivery_window}')
 
-        # If the required "Deliver By" and "Delayed ETA" conditions have been met.
-        if not delivery_window:
-            package_id_list = self.adjust_package_list(package_id_list)  # [O(n)]
+        # # If the required "Deliver By" and "Delayed ETA" conditions have been met.
+        # if not delivery_window:
+        #     package_id_list = self.adjust_package_list(package_id_list)  # [O(n)]
 
-        return [package_id_list, delivery_window]
+        # return [package_id_list, delivery_window]
+        return delivery_window
 
     def adjust_package_list(self, package_id_list):
         """
@@ -649,13 +659,13 @@ class DeliverPackages:
             package_id_list(list): The package id list after it's been adjusted.
         """
         # dist = 0
-        dist = float('inf')
+        # dist = float('inf')
 
         # print(f'self.move_candidates is: {self.move_candidates}')
         # print(f'self.move_candidates[0] is: {list(self.move_candidates)[0]}')
 
 
-        for candidate_package_id in range(len(self.move_candidates)):  # [O(n)]
+        for candidate_package_id in range(len(self.move_candidates)):  # [O(n)] (Worst case)
             # print(f'self.candidate_tried is: {self.candidate_tried}')
             # print(f'list(self.move_candidates)[candidate_package_id] is: {list(self.move_candidates)[candidate_package_id]}')
             if list(self.move_candidates)[candidate_package_id] not in self.candidate_tried:
