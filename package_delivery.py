@@ -37,14 +37,15 @@ class DeliverPackages:
 
         self.addresses = [0]
         self.been_loaded = []
+        self.candidate_tried = []
         self.delivery_data = []
         self.distance_traveled = []
-        self.move_candidates = []
         self.total_distance_traveled = []
         self.total_delivery_time = []
         self.truck_list = []
 
-        self.packages_to_be_delivered_together = set(())
+        self.move_candidates = set()
+        self.packages_to_be_delivered_together = set()
 
         self.second_truck_departure_time = ''
         self.total_packages_loaded = 0
@@ -418,8 +419,10 @@ class DeliverPackages:
         # Adjust the package list until it meets the requirements (returns True from check_truck_times).
         while True:  # [O(n)]
 
+            copy_of_ordered_truck_list = ordered_truck_list[:]
+
             # Check the package list to make sure the that all packages meet the "deliver by" and delayed times.
-            adjusted_package_list = self.check_truck_times(ordered_truck_list, delivery_times_list, record_data)
+            adjusted_package_list = self.check_truck_times(copy_of_ordered_truck_list, delivery_times_list, record_data)
 
             # If the package list does not meet the "deliver by" or delayed time
             if not adjusted_package_list[1]:
@@ -438,18 +441,19 @@ class DeliverPackages:
                 else:
                     raise ValueError("This method wasn't designed to handle more than 3 trucks")
 
-                # print(f'\n{"X" * 20} Adjusted Package List {"X" * 20}')
-                # print(f'Packages: {adjusted_package_list[0]}')
-                # print(f'Distances: {distance_and_delivery_times[0]}')
-                # print(f'Delivery Times: {distance_and_delivery_times[1]}')
+                print(f'\n{"X" * 20} Adjusted Package List {"X" * 20}')
+                print(f'Packages: {adjusted_package_list[0]}')
+                print(f'Distances: {distance_and_delivery_times[0]}')
+                print(f'Delivery Times: {distance_and_delivery_times[1]}')
 
-                ordered_truck_list = adjusted_package_list[0]
+                copy_of_ordered_truck_list = adjusted_package_list[0]
                 total_truck_dist = distance_and_delivery_times[0]
                 delivery_times_list = distance_and_delivery_times[1]
 
                 continue
 
             else:
+                ordered_truck_list = copy_of_ordered_truck_list[:]
                 self.move_candidates.clear()
                 break
 
@@ -493,6 +497,8 @@ class DeliverPackages:
         new_package_dist_list = []
         new_package_index_list = []
         new_package_delivery_time_list = []
+
+        print(f'package_id_list is: {package_id_list}')
 
         # Get the index of each package and append it to a list
         for package_id in package_id_list[0]:  # [O(n)]
@@ -579,15 +585,18 @@ class DeliverPackages:
                 # if delivery_window:
                 #     delivery_window = True
 
-                self.move_candidates.append([
-                    package_id_list_index,
-                    package_id_list[package_id_list_index],
-                    float(ppd.get_distance_data()[int(
-                        record_data.get(ppd.get_input_data()[package_id_list[package_id_list_index]][1])["Index"]
-                    )][0])])
+                self.move_candidates.add(package_id_list[package_id_list_index])
+
+                # self.move_candidates.update([
+                #     package_id_list_index,
+                #     package_id_list[package_id_list_index],
+                #     float(ppd.get_distance_data()[int(
+                #         record_data.get(ppd.get_input_data()[package_id_list[package_id_list_index]][1])["Index"]
+                #     )][0])])
 
             elif delayed_eta is None and deliver_by != 'EOD':
                 deliver_by_diff = wtime.time_difference(deliver_by, delivery_time_list[package_id_list_index])
+                # print(f'deliver_by_diff is: {deliver_by_diff}')
                 if deliver_by_diff < 0:
                 #     if delivery_window:
                 #         delivery_window = True
@@ -596,8 +605,9 @@ class DeliverPackages:
 
             elif delayed_eta is not None and deliver_by == 'EOD':
                 delayed_eta_diff = wtime.time_difference(delivery_time_list[package_id_list_index], delayed_eta)
+                # print(f'delayed_eta_diff is: {delayed_eta_diff}')
                 if delayed_eta_diff < 0:
-                #     if delivery_window:
+                    #     if delivery_window:
                 #         delivery_window = True
                 # else:
                     delivery_window = False
@@ -605,15 +615,19 @@ class DeliverPackages:
             else:
                 deliver_by_diff = wtime.time_difference(deliver_by, delivery_time_list[package_id_list_index])
                 delayed_eta_diff = wtime.time_difference(delivery_time_list[package_id_list_index], delayed_eta)
-                if delayed_eta_diff >= 0 and deliver_by_diff >= 0:
+                # print(f'deliver_by_diff is: {deliver_by_diff}')
+                # print(f'delayed_eta_diff is: {delayed_eta_diff}')
+                # if delayed_eta_diff >= 0 and deliver_by_diff >= 0:
                 #     if delivery_window:
                 #         delivery_window = True
                 # else:
-                    if deliver_by_diff < 0 or  delayed_eta_diff < 0:
+                if deliver_by_diff < 0 or delayed_eta_diff < 0:
                     #     if delivery_window:
                     #         delivery_window = True
                     # if delayed_eta_diff >= 0:
                         delivery_window = False
+
+            # print(f'\nPackage ID {package_id_list[package_id_list_index]} is {delivery_window}')
 
         # If the required "Deliver By" and "Delayed ETA" conditions have been met.
         if not delivery_window:
@@ -626,7 +640,7 @@ class DeliverPackages:
         This method checks the package list for "candidate" packages, which are chosen based on the fact that they
         don't have a delayed time and deliver by is EOD, since they can be in any position on the truck without penalty.
 
-        Time Complexity: O(n)
+        Time Complexity: O(n^2)
 
         Parameters:
             package_id_list(list): A list of the package_id's.
@@ -634,25 +648,41 @@ class DeliverPackages:
         Return:
             package_id_list(list): The package id list after it's been adjusted.
         """
-        dist = 0
+        # dist = 0
+        dist = float('inf')
+
+        # print(f'self.move_candidates is: {self.move_candidates}')
+        # print(f'self.move_candidates[0] is: {list(self.move_candidates)[0]}')
+
+
+        for candidate_package_id in range(len(self.move_candidates)):  # [O(n)]
+            # print(f'self.candidate_tried is: {self.candidate_tried}')
+            # print(f'list(self.move_candidates)[candidate_package_id] is: {list(self.move_candidates)[candidate_package_id]}')
+            if list(self.move_candidates)[candidate_package_id] not in self.candidate_tried:
+                self.candidate_tried.append(list(self.move_candidates)[candidate_package_id])
+            #     dist = list(self.move_candidates)[candidate_package_id]
 
         # Iterate through the package ID candidates.
-        for candidate in range(len(self.move_candidates)):  # [O(n)]
-            if self.move_candidates[candidate][2] > dist:
-            # if self.move_candidates[candidate][2] < dist:
-                dist = self.move_candidates[candidate][2]
-                dist_id = self.move_candidates[candidate][1]
-                package_index_to_remove = candidate
+        # for candidate in range(len(self.move_candidates)):  # [O(n)]
+        #     if self.move_candidates[candidate][2] > dist:
+        #     # if self.move_candidates[candidate][2] < dist:
+        #         dist = self.move_candidates[candidate][2]
+        #         dist_id = self.move_candidates[candidate][1]
+        #         package_index_to_remove = candidate
 
         # package_id_list.remove(36)
         # package_id_list.append(36)
 
-        # Remove the package ID that will be moved, then append it to the list.
-        package_id_list.remove(dist_id)  # [O(n)]]
-        package_id_list.append(dist_id)
-        self.move_candidates.pop(package_index_to_remove)
+                # Remove the package ID that will be moved, then append it to the list.
+                # print(f'package_id_list before is: {package_id_list}')
+                # print(f'moving {list(self.move_candidates)[candidate_package_id]}')
+                package_id_list.remove(list(self.move_candidates)[candidate_package_id])  # [O(n)]]
+                package_id_list.append(list(self.move_candidates)[candidate_package_id])
+                # self.move_candidates.pop(package_index_to_remove)
+                # print(f'package_id_list after is: {package_id_list}')
+                # checked_package_id_list = self.check_truck_times()
 
-        return package_id_list
+                return package_id_list
     
     @staticmethod
     def calculate_delivery_time(distance):
