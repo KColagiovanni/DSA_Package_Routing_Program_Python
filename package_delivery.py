@@ -106,7 +106,7 @@ class DeliverPackages:
             package_id(dict): A dict of the package(s) that are going to the same address. With the package number as
             the key and the package ID as the value (Ex: {1: 15, 2: 16, 3: 34}).
 
-        Returns: None
+        Returns: False if the truck is fullm otherwise None is returned.
         """
         if len(self.first_truck) + len(package_id) < MAX_PACKAGES_PER_TRUCK:
             for package_num in package_id:  # [O(3) ==> O(1)]
@@ -114,6 +114,7 @@ class DeliverPackages:
                     self.first_truck.append(package_id[package_num])
                     self.been_loaded.append(package_id[package_num])
                     self.total_packages_loaded += 1
+        return False
 
     def load_package_onto_second_truck(self, package_id):
         """
@@ -127,7 +128,7 @@ class DeliverPackages:
             package_id(dict): A dict of the package(s) that are going to the same address. With the package number as
             the key and the package ID as the value (Ex: {1: 15, 2: 16, 3: 34}).
 
-        Returns: None
+        Returns: False if the truck is fullm otherwise None is returned.
         """
         if len(self.second_truck) + len(package_id) < MAX_PACKAGES_PER_TRUCK:
             for package_num in package_id:  # [O(3) ==> O(1)] This wont changed with a bigger data set
@@ -135,6 +136,7 @@ class DeliverPackages:
                     self.second_truck.append(package_id[package_num])
                     self.been_loaded.append(package_id[package_num])
                     self.total_packages_loaded += 1
+        return False
 
     def load_package_onto_third_truck(self, package_id):
         """
@@ -148,7 +150,7 @@ class DeliverPackages:
             package_id(dict): A dict of the package(s) that are going to the same address. With the package number as
             the key and the package ID as the value (Ex: {1: 15, 2: 16, 3: 34}).
 
-        Returns: None
+        Returns: False if the truck is fullm otherwise None is returned.
         """
         if len(self.third_truck) + len(package_id) < MAX_PACKAGES_PER_TRUCK:
             for package_num in package_id:  # [O(3) ==> O(1)] This wont changed with a bigger data set
@@ -156,6 +158,7 @@ class DeliverPackages:
                     self.third_truck.append(package_id[package_num])
                     self.been_loaded.append(package_id[package_num])
                     self.total_packages_loaded += 1
+        return False
 
     def manual_load(self, record_data):
         """
@@ -470,8 +473,15 @@ class DeliverPackages:
             # requirements.
             time_check = self.check_truck_times(copy_of_ordered_truck_list, delivery_times_list, record_data)
 
-            if not time_check:
-                adjusted_package_list = self.adjust_package_list(copy_of_ordered_truck_list)
+            if not time_check[0]:
+                adjusted_package_list = self.adjust_package_list(
+                    copy_of_ordered_truck_list,
+                    truck_num,
+                    time_check[1],
+                    time_check[2],
+                    time_check[3],
+                    record_data
+                )
 
                 # If the package list does not meet the "deliver by" or delayed time requirements.
                 if truck_num == 0:
@@ -496,7 +506,7 @@ class DeliverPackages:
                 # by" and delayed times.
                 time_check = self.check_truck_times(adjusted_package_list, delivery_times_list, record_data)
 
-                if time_check:
+                if time_check[0]:
                     total_truck_dist = distance_and_delivery_times[0]
                     delivery_times_list = distance_and_delivery_times[1]
                     break
@@ -619,6 +629,9 @@ class DeliverPackages:
             delivery_window will be True, else False.
         """
         delivery_window = True
+        deliver_by_bool = False
+        delayed_bool = False
+        trouble_package_id = None
 
         for package_id_list_index in range(len(package_id_list)):  # [O(n)]
 
@@ -640,21 +653,30 @@ class DeliverPackages:
                 deliver_by_diff = wtime.time_difference(deliver_by, delivery_time_list[package_id_list_index])
                 if deliver_by_diff < 0:
                     delivery_window = False
+                    deliver_by_bool = True
+                    trouble_package_id = package_id_list[package_id_list_index]
 
             elif delayed_eta is not None and deliver_by == 'EOD':
                 delayed_eta_diff = wtime.time_difference(delivery_time_list[package_id_list_index], delayed_eta)
                 if delayed_eta_diff < 0:
                     delivery_window = False
+                    delayed_bool = True
+                    trouble_package_id = package_id_list[package_id_list_index]
 
             else:
                 deliver_by_diff = wtime.time_difference(deliver_by, delivery_time_list[package_id_list_index])
                 delayed_eta_diff = wtime.time_difference(delivery_time_list[package_id_list_index], delayed_eta)
                 if deliver_by_diff < 0 or delayed_eta_diff < 0:
                     delivery_window = False
+                    deliver_by_bool = True
+                    delayed_bool = True
+                    trouble_package_id = package_id_list[package_id_list_index]
 
-        return delivery_window
+        return [delivery_window, deliver_by_bool, delayed_bool, trouble_package_id]
 
-    def adjust_package_list(self, package_id_list):
+    def adjust_package_list(
+            self, package_id_list, truck_num, deliver_by_bool, delayed_bool, trouble_package_id, record_data
+    ):
         """
         This method checks the package list for "candidate" packages, which are chosen based on the fact that they
         don't have a delayed time and deliver by is EOD, since they can be in any position on the truck without penalty.
@@ -663,19 +685,48 @@ class DeliverPackages:
 
         Parameters:
             package_id_list(list): A list of the package_id's.
+            truck_num(int): The truck (1, 2, or 3) that is being adjusted.
 
         Returns:
             package_id_list(list): The package id list after it's been adjusted.
         """
-        for candidate_package_id in range(len(self.move_candidates)):  # [O(n)] (Worst case)
-            if list(self.move_candidates)[candidate_package_id] not in self.candidate_tried:  # [O(n)]]
-                if list(self.move_candidates)[candidate_package_id] != package_id_list[-1]:
-                    self.candidate_tried.append(list(self.move_candidates)[candidate_package_id])
-                    package_id_list.remove(list(self.move_candidates)[candidate_package_id])  # [O(n)]]
-                    package_id_list.append(list(self.move_candidates)[candidate_package_id])
+        if self.candidate_tried != list(self.move_candidates):
+            for candidate_package_id in range(len(self.move_candidates)):  # [O(n)] (Worst case)
+                if list(self.move_candidates)[candidate_package_id] not in self.candidate_tried:  # [O(n)]]
+                    if list(self.move_candidates)[candidate_package_id] != package_id_list[-1]:
+                        self.candidate_tried.append(list(self.move_candidates)[candidate_package_id])
+                        package_id_list.remove(list(self.move_candidates)[candidate_package_id])  # [O(n)]]
+                        package_id_list.append(list(self.move_candidates)[candidate_package_id])
 
-                    return package_id_list
-    
+                        return package_id_list
+        else:
+            package_id_list.remove(trouble_package_id)
+
+            troubled_package_id_address = ppd.get_hash().lookup_item(trouble_package_id)[1][1]
+            truck = record_data[troubled_package_id_address].get('Truck')  # [O(1)]
+            deliver_together = record_data[troubled_package_id_address].get('Deliver Together')
+
+            if truck_num == 0:
+                if deliver_by_bool:
+                    package_id_list.insert(0, trouble_package_id)
+                elif truck is None and deliver_together is None:
+                    if delayed_bool:
+                        self.third_truck.append(trouble_package_id)
+
+            if truck_num == 1:
+                if deliver_by_bool:
+                    package_id_list.insert(0, trouble_package_id)
+                elif truck is None and deliver_together is None:
+                    if delayed_bool:
+                        self.third_truck.append(trouble_package_id)
+
+            if truck_num == 2:
+                if deliver_by_bool and truck is None and deliver_together is None:
+                    self.first_truck.append(trouble_package_id)
+                else:
+                    if delayed_bool:
+                        package_id_list.append(trouble_package_id)
+
     @staticmethod
     def calculate_delivery_time(distance):
         """
