@@ -1,51 +1,55 @@
-Delivery Algorithm:
+Greedy Algorithm (find_shortest_distance() method) Pseudo Code:
 
-For each truck, the basics:
-1. Find the shortest distance from the hub to the first delivery.
-2. Find the shortest distance from one delivery to the next.
-3. Find the shortest distance from the last delivery back to the hub. (Note: Trucks 2 and 3 can be left in the "field")
+Prerequisites:
+The packages are already manually loaded onto the trucks based on their individual requirements (manual_load() method).
 
-Restrictions:
-- Some packages are delayed and won't arrive until a specified time.
-    - Some of the delayed packages have a "deliver by" time that is less than 90 minutes after they've arrived.
-- Some packages have a deliver by time that needs to be met.
-- Some packages are going to the same address and should be delivered together at the same time.
+Overview:
+    1. Start with the first truck
+    2. Iterate through all packages on the truck using a for loop and find the one that has the shortest distance to the
+    hub and append the package_id to an empty list called “order_truck_list”, append the distance to an empty list
+    called “total_truck_dist”, and calculate the travel time, based on the distance traveled, to an empty list called
+    “delivery_times_list”.
+    3. Iterate through the package list using a for loop and find the package that has the shortest distance from it to
+    the previous package that was appended to the “ordered_truck_list” and append it to the “ordered_truck_list”, append
+    the distance to the “total_truck_dist” list, and calculate the travel time, based on the distance traveled, and
+    append it to the “delivery_times_list” list. Continue doing that, each time finding the shortest distance from the
+    current package to the last package that was last loaded until the end of the package list is reached.
+    4. Finally, get the distance from the last package to the hub and, append it to the “total_truck_dist” list, and
+    calculate the travel time, based on the distance traveled, and append it to the “delivery_times_list” list.
+    5. Repeat steps 1 through 4 for subsequent trucks.
 
+Pseudo Code (Python):
 
+ordered_truck_list = []
+truck_distance_list = []
+truck_travel_time_list = []
+loaded_package_list = []
 
-load_trucks():
+for package in manually_loaded_truck:
 
-[Issues: if a package that has a deliver by time earlier than when it gets loaded and there is nowhere to put it, how
- should that be handled?]
-If truck 1 is not full, continue...
-Loop though the package id dict so that all packages going to the same address are analyzed at the same time
-If the package has not yet been loaded onto truck 1, continue...
-If the package id dict shows that this package has to be on truck 1, or there is no specific truck that the package has
-to be on and the calculated delivery time meets any "deliver by" criteria, continue...
-Load package(s) onto truck
+    if ordered_truck_list is empty:
+        minimum_distance = infinity
 
-If truck 2 is not full, continue...
-Loop though the package id dict so that all packages going to the same address are analyzed at the same time
-If the package has not yet been loaded onto truck 2, continue...
-If the package id dict shows that this package has to be on truck 2, or there is no specific truck that the package has
-to be on and the calculated delivery time meets any "deliver by" criteria, continue...
-Load package(s) onto truck
+    for package in manually_loaded_truck_packages:
+        if distance_to_hub < minimum_distance and package not in loaded_package_list:
+            minimum_distance = distance_to_hub
+            package_id = package
+    ordered_truck_list.append(package_id)
+    truck_distance_list.append(minimum_distance)
+    truck_travel_time_list.append(calculate_travel_time(minimum_distance))
+    loaded_package_list.append(package_id)
 
-If truck 3 is not full, continue...
-Loop though the package id dict so that all packages going to the same address are analyzed at the same time
-If the package has not yet been loaded onto truck 3, continue...
-If the package id dict shows that this package has to be on truck 3, or there is no specific truck that the package has
-to be on and the calculated delivery time meets any "deliver by" criteria, continue...
-Load package(s) onto truck
+    minimum_distance = infinity
+    for package in manually_loaded_truck_packages:
+        if distance_to_previous_package < minimum_distance and package not in loaded_package_list:
+            minimum_distance = distance_to_hub
+            package_id = package
+    ordered_truck_list.append(package_id)
+    truck_distance_list.append(minimum_distance)
+    truck_travel_time_list.append(calculate_travel_time(minimum_distance))
+    loaded_package_list.append(package_id)
 
-Call find_shortest_distance() to get the next package id and call load_trucks() recursively sending the package id of
-the next closest delivery.
+truck_distance_list.append(distance_from_last_package_to_hub)
+truck_travel_time_list.append(calculate_travel_time(distance_from_last_package_to_hub))
 
-
-Shortest distance algorithm will load packages onto the truck based on the shortest distance between each. The order in
-which they're loaded is also the order that they'll be delivered.
-
-Find the shortest distance:
-1. Find the package that has the shortest distance to the hub. This will be the first package loaded onto the truck.
-2. Find the package that has the shortest distance from the previous package until all the packages have been
-re-ordered.
+check_package_requirements(order_truck_list) is True (requirements met):

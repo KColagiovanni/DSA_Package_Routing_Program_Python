@@ -23,10 +23,10 @@ class HashTable:
 
         Time Complexity: O(1)
 
-        Parameter:
+        Parameters:
             key(int): The value that is used as the bucket where the data will be stored.
 
-        Return: None
+        Returns: None
         """
         return int(key) % self.table_size
 
@@ -40,7 +40,7 @@ class HashTable:
             key(int): The value that is used as the bucket where the data will be stored.
             value(list): The value to be stored in the bucket.
 
-        Return: None
+        Returns: None
         """
         self.hash_table[self.create_key(key)] = [key, value]
 
@@ -50,10 +50,11 @@ class HashTable:
 
         Time Complexity: O(1)
 
-        Parameter:
+        Parameters:
             key(int): The value that is used as the bucket where the data will be stored.
 
-        Return(list): The value that is stored in the bucket.
+        Returns:
+            list: The value that is stored in the bucket.
         """
         return self.hash_table[self.create_key(key)]
 
@@ -68,6 +69,6 @@ class HashTable:
             value_index(int): The index of the stored list where the update will happen.
             new_value(any): The updated value.
 
-        Return: None
+        Returns: None
         """
         self.hash_table[self.create_key(key)][1][value_index] = new_value

@@ -19,7 +19,7 @@ def main():
 
     Parameters: None
 
-    Return: None
+    Returns: None
     """
     print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
     print('+                                                                     +')
@@ -34,10 +34,11 @@ def main():
 
     while True:
 
-        user_input = input("""\nSelect one of the below options or type 'quit' to quit the program:
-    Press 1 to enter a time to display package info and status' for all packages.
-    Press 2 to enter a package id and time to display info for a specific package.
-
+        user_input = input("""\nSelect one of the below options:
+    Press 1 to display package info and status' for all packages at a specified time.
+    Press 2 to display package info and status for a specific package at a specific time.
+    Type 'quit' at any time to quit the program.
+    
 Selection: """)
 
         wtime = WgupsTime()

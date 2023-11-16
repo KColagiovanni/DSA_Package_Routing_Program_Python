@@ -3,8 +3,9 @@ from hash_table import HashTable
 from wgups_time import WgupsTime
 
 TABLE_SIZE = 40
-DISTANCE_TABLE = './actualData/WGUPS Distance Table.csv'
-PACKAGE_FILE = './actualData/WGUPS Package File.csv'
+SUBDIRECTORY = './data/'
+DISTANCE_TABLE = 'WGUPS Distance Table.csv'
+PACKAGE_FILE = 'WGUPS Package File.csv'
 ht = HashTable(TABLE_SIZE)
 wtime = WgupsTime()
 
@@ -24,10 +25,10 @@ class ParseCsvData:
 
         Parameters: None
 
-        Return:
+        Returns:
             package_data(list): A list of the package input data in string format.
         """
-        with open(PACKAGE_FILE, newline='') as delivery_data:
+        with open(SUBDIRECTORY + PACKAGE_FILE, newline='') as delivery_data:
 
             package_data = csv.reader(delivery_data, delimiter=',')
 
@@ -42,10 +43,10 @@ class ParseCsvData:
 
         Parameters: None
 
-        Return:
+        Returns:
             distance_data_list(list): A list of the distance data in string format.
         """
-        with open(DISTANCE_TABLE, newline='') as distance_table:
+        with open(SUBDIRECTORY + DISTANCE_TABLE, newline='') as distance_table:
 
             distance_table = csv.reader(distance_table, delimiter=',')
 
@@ -62,10 +63,10 @@ class ParseCsvData:
 
         Parameters: None
 
-        Return:
+        Returns:
             distance_name_data_list(list): A list of the distance name data in string format.
         """
-        with open(DISTANCE_TABLE, newline='') as distance_table:
+        with open(SUBDIRECTORY + DISTANCE_TABLE, newline='') as distance_table:
 
             distance_table = csv.reader(distance_table, delimiter=',')
 
@@ -99,11 +100,11 @@ class Packages(ParseCsvData):
 
         Parameters: None
 
-        Return(dict): The data that was returned from the hash table.
+        Returns:
+            dict: The data that was returned from the hash table.
         """
         return ht
 
-    # Parse package data and send it to the hash table - [O(n)]
     @staticmethod
     def get_package_data():
         """
@@ -114,7 +115,7 @@ class Packages(ParseCsvData):
 
         Parameters: None
 
-        Return:
+        Returns:
             package_data_list(list): The unpacked values from the package file.
         """
         package_data_list = list(ParseCsvData.get_input_data())
@@ -155,10 +156,10 @@ class Packages(ParseCsvData):
 
         Time Complexity: O(n)
 
-        Parameter:
+        Parameters:
             package_data(list): A list with the data for each package that was provided in the ipackage data csv file.
 
-        Return:
+        Returns:
             record(dict): A dictionary with package delivery data.
         """
 
@@ -195,19 +196,19 @@ class Packages(ParseCsvData):
         # Adding packages to the dictionary with truck number that the special instructions request.
         if 'Can only be on truck' in package_data[1][7]:
 
-            # For truck 1
+            # Truck 1
             if package_data[1][7][-1] == '1':
                 self.record[package_data[1][1]].update({'Truck': 1})
 
-            # For truck 2
+            # Truck 2
             elif package_data[1][7][-1] == '2':
                 self.record[package_data[1][1]].update({'Truck': 2})
 
-            # For truck 3
+            # Truck 3
             elif package_data[1][7][-1] == '3':
                 self.record[package_data[1][1]].update({'Truck': 3})
 
-        # Adding packages to the dictionary that must be delivered together
+        # Add packages to the dictionary that must be delivered together
         if 'Must be delivered with' in package_data[1][7]:
             self.packages_to_be_delivered_together.add(package_data[0])
             package1 = int(package_data[1][7][-7:-5])

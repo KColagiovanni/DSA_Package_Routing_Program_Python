@@ -16,11 +16,12 @@ class WgupsTime:
         being split will never be longer than 8, no matter how large the input of the program. Worse case: O(n), Avg
          Case: O(8) = O(1)
 
-        Parameter:
-            time(str): The time to be checked in standard time (HH:MM:SS) format.
+        Parameters:
+            time(str): The time to be checked in standard time format (HH:MM:SS) as a string.
 
-        Return(bool):
-            True if input parameter is a string, otherwise nothing gets returned, but a TypeError is raised.
+        Returns:
+            bool: True if input parameter is a string, otherwise nothing gets returned. If not True, a TypeError is
+            raised.
         """
         # If time format is (HH:MM:SS)
         if isinstance(time, str):
@@ -87,16 +88,16 @@ class WgupsTime:
         parameter that is being split and counted will never be longer than 8, no matter how large the input of the
         program. Worse case: O(n), Avg Case: O(8) = O(1)
 
-        Parameter:
+        Parameters:
             time(str): The time to be converted in standard time (HH:MM:SS) format.
 
-        Return(int):
-            The converted time in seconds.
+        Returns:
+            int: The formatted time (HH:MM:SS) as a string converted time in integer seconds.
         """
         if self.check_input(time):
             if time.count(':') == 1:
                 time += ':00'
-            (time_hr, time_min, time_sec) = time.split(':')  # [O(8)
+            (time_hr, time_min, time_sec) = time.split(':')  # [O(8)]
 
             return (int(time_hr) * 3600) + (int(time_min) * 60) + int(time_sec)
 
@@ -107,11 +108,11 @@ class WgupsTime:
 
         Time Complexity: O(1)
 
-        Parameter:
+        Parameters:
             seconds(int): The time to be converted in seconds.
 
-        Return(str):
-            The converted time in standard time (HH:MM:SS) format.
+        Returns:
+            str: The converted time in standard time format (HH:MM:SS) as a string.
         """
         if seconds >= 3600:
 
@@ -154,14 +155,11 @@ class WgupsTime:
             time1(str): The first time parameter in standard time (HH:MM:SS) format.
             time2(str): The second time parameter in standard time (HH:MM:SS) format.
 
-        Return:
-            total_seconds(int): Sum of the two Parameter in seconds.
+        Returns:
+            int: Sum of the two parameters in seconds.
         """
         if self.check_input(time1) and self.check_input(time2):
-            total_seconds = (
-                    self.convert_string_time_to_int_seconds(time1) + self.convert_string_time_to_int_seconds(time2)
-            )
-            return total_seconds
+            return self.convert_string_time_to_int_seconds(time1) + self.convert_string_time_to_int_seconds(time2)
 
     def time_difference(self, time1, time2):
         """
@@ -178,11 +176,11 @@ class WgupsTime:
             time1(str): The first time parameter in standard time (HH:MM:SS) format.
             time2(str): The second time parameter in standard time (HH:MM:SS) format.
 
-        Return:
-            diff(int): Difference between the two parameters in seconds.
+        Returns:
+            int: The difference between the two parameters in seconds.
         """
 
-        if self.check_input(time1) and self.check_input(time2):  # [O(1)
+        if self.check_input(time1) and self.check_input(time2):  # [O(1)]
 
             if time1.count(':') == 1:
                 time1 += ':00'
@@ -195,6 +193,4 @@ class WgupsTime:
             total_seconds_1 = int(time1_hr) * 3600 + int(time1_min) * 60 + int(time1_sec)
             total_seconds_2 = int(time2_hr) * 3600 + int(time2_min) * 60 + int(time2_sec)
 
-            diff = total_seconds_1 - total_seconds_2
-
-            return diff
+            return total_seconds_1 - total_seconds_2
