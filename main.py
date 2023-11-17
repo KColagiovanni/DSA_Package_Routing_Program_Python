@@ -1,13 +1,9 @@
-# Author: Kevin Colagiovanni
 # Student ID: 011039990
+# Author: Kevin Colagiovanni
 
 from parse_package_data import Packages
 from package_delivery import DeliverPackages
 from wgups_time import WgupsTime
-
-TABLE_SIZE = 40
-NUMBER_OF_TRUCKS = 3
-INVALID_ENTRY = 'Invalid Entry!'
 
 
 def main():
@@ -102,12 +98,30 @@ Selection: """)
                 if not package_id.isnumeric():
                     print('Please enter numerical values only for package ID.\n')
                 else:
-                    if ppd.get_hash().lookup_item(package_id)[1][0] != package_id:
+                    try:
+                        check_input = ppd.get_hash().lookup_item(package_id)[1][0]
+                    except IndexError:
                         print('That is not a valid Package ID.\n')
+                        continue
                     else:
-                        break
+                        if check_input != package_id:
+                            print('That is not a valid Package ID.\n')
+                            continue
+                        else:
+                            break
 
-            lookup_time = input('Enter a time (HH:MM:SS): ')
+            while True:
+                try:
+                    lookup_time = input('Enter a time (HH:MM:SS): ')
+
+                except ValueError as e:
+                    print(e)
+                    continue
+
+                else:
+                    break
+
+
 
             # User wants to quit the program
             if lookup_time.lower() == 'quit':

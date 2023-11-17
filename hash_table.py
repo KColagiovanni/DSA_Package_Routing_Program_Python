@@ -9,10 +9,12 @@ class HashTable:
         hash_table(list): A list that will be used as a bucket.
         table_size(int): The size of the hash table.
     """
-    def __init__(self, table_size=40):
+    def __init__(self, table_size):
 
         self.hash_table = []
         self.table_size = table_size
+
+        print(f'Table Size: {self.table_size}')
 
         # Create an empty list/array of size "table_size" that will be used to store bucket keys.
         self.hash_table = [[] for bucket in range(self.table_size)]

@@ -6,6 +6,7 @@ TABLE_SIZE = 40
 SUBDIRECTORY = './data/'
 DISTANCE_TABLE = 'WGUPS Distance Table.csv'
 PACKAGE_FILE = 'WGUPS Package File.csv'
+
 ht = HashTable(TABLE_SIZE)
 wtime = WgupsTime()
 
