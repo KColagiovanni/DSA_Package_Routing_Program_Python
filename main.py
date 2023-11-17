@@ -1,6 +1,10 @@
 # Student ID: 011039990
 # Author: Kevin Colagiovanni
 
+import hash_table
+import package_delivery
+import parse_package_data
+import wgups_time
 from parse_package_data import Packages
 from package_delivery import DeliverPackages
 from wgups_time import WgupsTime
@@ -17,22 +21,26 @@ def main():
 
     Returns: None
     """
-    print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-    print('+                                                                     +')
-    print('+   ++           ++     ++++++     ++      ++  +++++++      +++++     +')
-    print('+   ++           ++   ++      ++   ++      ++  ++     ++  ++     ++   +')
-    print('+   ++     +     ++  ++            ++      ++  ++     ++   +++        +')
-    print('+    ++   +++   ++   ++     +++++  ++      ++  +++++++         +++    +')
-    print('+     ++ ++ ++ ++     ++      ++    ++    ++   ++         ++     ++   +')
-    print('+      +++   +++        ++++++        ++++     ++           +++++     +')
-    print('+                                                                     +')
-    print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')
+    print('\n\n           +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+    print('           +                                                                     +')
+    print('           +   ++           ++     ++++++     ++      ++  +++++++      +++++     +')
+    print('           +   ++           ++   ++      ++   ++      ++  ++     ++  ++     ++   +')
+    print('           +   ++     +     ++  ++            ++      ++  ++     ++   +++        +')
+    print('           +    ++   +++   ++   ++     +++++  ++      ++  +++++++         +++    +')
+    print('           +     ++ ++ ++ ++     ++      ++    ++    ++   ++         ++     ++   +')
+    print('           +      +++   +++        ++++++        ++++     ++           +++++     +')
+    print('           +                                                                     +')
+    print('           +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')
 
     while True:
 
-        user_input = input("""\nSelect one of the below options:
+        print()
+        print('<>' * 20 + ' Main Menu ' + '<>' * 20)
+        user_input = input("""
+Select one of the below options:
     Press 1 to display package info and status' for all packages at a specified time.
     Press 2 to display package info and status for a specific package at a specific time.
+    Type 'doc' so see documentation.
     Type 'quit' at any time to quit the program.
     
 Selection: """)
@@ -42,13 +50,23 @@ Selection: """)
         # User enters 1
         if user_input == '1':
 
-            lookup_time = input('Enter a time (HH:MM): ')
+            # Validate lookup time entry
+            while True:
+                lookup_time = input('Enter a time (HH:MM): ')
+
+                try:
+                    wtime.check_input(lookup_time)  # [O(1)]
+
+                except ValueError as e:
+                    print(f'{e}\n')
+                    continue
+
+                else:
+                    break
 
             # User wants to quit the program
             if lookup_time.lower() == 'quit':
                 exit()
-
-            wtime.check_input(lookup_time)  # [O(1)]
 
             ppd = Packages()
             dp = DeliverPackages()
@@ -110,24 +128,23 @@ Selection: """)
                         else:
                             break
 
+            # Validate lookup time entry
             while True:
+                lookup_time = input('Enter a time (HH:MM): ')
+
                 try:
-                    lookup_time = input('Enter a time (HH:MM:SS): ')
+                    wtime.check_input(lookup_time)  # [O(1)]
 
                 except ValueError as e:
-                    print(e)
+                    print(f'{e}\n')
                     continue
 
                 else:
                     break
 
-
-
             # User wants to quit the program
             if lookup_time.lower() == 'quit':
                 exit()
-
-            wtime.check_input(lookup_time)  # [O(1)]
 
             # Define the record data dictionary.
             for package_key in range(1, number_of_packages + 1):  # [O(n^2)]
@@ -162,6 +179,46 @@ Selection: """)
         # User wants to quit the program
         elif user_input.lower() == 'quit':
             exit()
+
+        # User wants to quit the program
+        elif user_input.lower() == 'doc':
+            while True:
+                print()
+                print('<>' * 17 + ' Documentation Menu ' + '<>' * 18)
+                doc_selection = input('''
+Select a Module to display it\'s documentation:
+    1. main.py
+    2. DeliverPackages class in package_delivery.py
+    3. HashTable class in hash_table.py
+    4. ParseCsvData class in parse_package_data.py
+    5. Packages class in parse_package_data.py
+    6. WgupsTime class in wgups_time.py
+    
+    Note: Press 'H' when viewing documentation so see a help menu.
+    
+    Enter 'back' to go back to the main menu or 'quit' to quit the program.
+
+Selection: ''')
+
+                if doc_selection == '1':
+                    help(main.__name__)
+                elif doc_selection == '2':
+                    help(package_delivery.DeliverPackages)
+                elif doc_selection == '3':
+                    help(hash_table.HashTable)
+                elif doc_selection == '4':
+                    help(parse_package_data.ParseCsvData)
+                elif doc_selection == '5':
+                    help(parse_package_data.Packages)
+                elif doc_selection == '6':
+                    help(wgups_time.WgupsTime)
+                elif doc_selection.lower() == 'back':
+                    break
+                elif doc_selection.lower() == 'quit':
+                    quit()
+                else:
+                    print('Invalid entry.')
+                    continue
 
         # User entered invalid data.
         else:

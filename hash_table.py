@@ -14,8 +14,6 @@ class HashTable:
         self.hash_table = []
         self.table_size = table_size
 
-        print(f'Table Size: {self.table_size}')
-
         # Create an empty list/array of size "table_size" that will be used to store bucket keys.
         self.hash_table = [[] for bucket in range(self.table_size)]
 
