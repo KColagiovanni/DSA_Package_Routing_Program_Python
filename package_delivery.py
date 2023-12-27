@@ -1,6 +1,6 @@
 from parse_package_data import Packages
 from hash_table import HashTable
-from wgups_time import WgupsTime
+from kfc_time import KfcTime
 
 DELIVERY_TRUCK_AVG_SPEED_MPH = 18
 FIRST_TRUCK_DEPARTURE_TIME = '8:00:00'
@@ -9,7 +9,7 @@ TABLE_SIZE = 40
 
 ppd = Packages()
 ht = HashTable(TABLE_SIZE)
-wtime = WgupsTime()
+wtime = KfcTime()
 
 
 class DeliverPackages:

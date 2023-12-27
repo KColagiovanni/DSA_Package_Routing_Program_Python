@@ -1,4 +1,4 @@
-class WgupsTime:
+class KfcTime:
     """
     Convert string time in HH:MM:SS format to integer time in seconds and vice versa, and also add or subtract two
     different times.

@@ -1,13 +1,12 @@
-# Student ID: 011039990
 # Author: Kevin Colagiovanni
 
 import hash_table
 import package_delivery
 import parse_package_data
-import wgups_time
+import kfc_time
 from parse_package_data import Packages
 from package_delivery import DeliverPackages
-from wgups_time import WgupsTime
+from kfc_time import KfcTime
 
 
 def main():
@@ -21,16 +20,17 @@ def main():
 
     Returns: None
     """
-    print('\n\n           +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-    print('           +                                                                     +')
-    print('           +   ++           ++     ++++++     ++      ++  +++++++      +++++     +')
-    print('           +   ++           ++   ++      ++   ++      ++  ++     ++  ++     ++   +')
-    print('           +   ++     +     ++  ++            ++      ++  ++     ++   +++        +')
-    print('           +    ++   +++   ++   ++     +++++  ++      ++  +++++++         +++    +')
-    print('           +     ++ ++ ++ ++     ++      ++    ++    ++   ++         ++     ++   +')
-    print('           +      +++   +++        ++++++        ++++     ++           +++++     +')
-    print('           +                                                                     +')
-    print('           +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')
+    print('\n\n           ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+    print('           +                                                                        +')
+    print('           +   ++     ++  ++++++++++    +++++    ++      ++  +++++++      +++++     +')
+    print('           +   ++   ++    ++          ++     ++  ++      ++  ++     ++  ++     ++   +')
+    print('           +   ++  ++     ++          ++         ++      ++  ++     ++  ++          +')
+    print('           +   ++++       ++++++++    ++         ++      ++  ++     ++     ++++     +')
+    print('           +   ++ ++      ++          ++         ++      ++  +++++++           ++   +')
+    print('           +   ++   ++    ++          ++     ++   ++    ++   ++         ++     ++   +')
+    print('           +   ++     ++  ++            +++++       ++++     ++           +++++     +')
+    print('           +                                                                        +')
+    print('           ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')
 
     while True:
 
@@ -45,7 +45,7 @@ Select one of the below options:
     
 Selection: """)
 
-        wtime = WgupsTime()
+        wtime = KfcTime()
 
         # User enters 1
         if user_input == '1':
@@ -192,7 +192,7 @@ Select a Module to display it\'s documentation:
     3. HashTable class in hash_table.py
     4. ParseCsvData class in parse_package_data.py
     5. Packages class in parse_package_data.py
-    6. WgupsTime class in wgups_time.py
+    6. KfcTime class in kfc_time.py
     
     Note: Press 'H' when viewing documentation so see a help menu.
     
@@ -211,7 +211,7 @@ Selection: ''')
                 elif doc_selection == '5':
                     help(parse_package_data.Packages)
                 elif doc_selection == '6':
-                    help(wgups_time.WgupsTime)
+                    help(kfc_time.KfcTime)
                 elif doc_selection.lower() == 'back':
                     break
                 elif doc_selection.lower() == 'quit':

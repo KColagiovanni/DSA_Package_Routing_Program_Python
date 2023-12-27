@@ -8,22 +8,22 @@ The skills you showcase in your completed project may be useful in responding to
 future employment. This project may also be added to your portfolio to show to future employers.
 
 SCENARIO
-This task is the planning phase of the WGUPS Routing Program.
+This task is the planning phase of the KFCUPS Routing Program.
 
-The Western Governors University Parcel Service (WGUPS) needs to determine an efficient route and delivery distribution
+The Kevin Flynn Colagiovanni Parcel Service (KFCUPS) needs to determine an efficient route and delivery distribution
 for their daily local deliveries (DLD) because packages are not currently being consistently delivered by their promised
 deadline. The Salt Lake City DLD route has three trucks, two drivers, and an average of 40 packages to deliver each day.
-Each package has specific criteria and delivery requirements that are listed in the attached “WGUPS Package File.”
+Each package has specific criteria and delivery requirements that are listed in the attached “Package File.”
 
 Your task is to determine an algorithm, write code, and present a solution where all 40 packages will be delivered on
 time while meeting each package’s requirements and keeping the combined total distance traveled under 140 miles for two
 of the trucks. The specific delivery locations are shown on the attached “Salt Lake City Downtown Map,” and distances to
-each location are given in the attached “WGUPS Distance Table.” The intent is to use the program for this specific
+each location are given in the attached “Distance Table.” The intent is to use the program for this specific
 location and also for many other cities in each state where WGU has a presence. As such, you will need to include
 detailed comments to make your code easy to follow and to justify the decisions you made while writing your scripts.
 
 The supervisor should be able to see, at assigned points, the progress of each truck and its packages by any of the
-variables listed in the “WGUPS Package File,” including what has been delivered and at what time the delivery occurred.
+variables listed in the “Package File,” including what has been delivered and at what time the delivery occurred.
 
 ASSUMPTIONS
 •  Each truck can carry a maximum of 16 packages, and the ID number of each package is unique.
@@ -37,7 +37,7 @@ needed.
 a truck at the hub). This time is factored into the calculation of the average speed of the trucks.
 •  There is up to one special note associated with a package.
 •  The delivery address for package #9, Third District Juvenile Court, is wrong and will be corrected at 10:20 a.m.
-WGUPS is aware that the address is incorrect and will be updated at 10:20 a.m. However, WGUPS does not know the correct
-address (410 S. State St., Salt Lake City, UT 84111) until 10:20 a.m.
-•  The distances provided in the “WGUPS Distance Table” are equal regardless of the direction traveled.
+KFCUPS is aware that the address is incorrect and will be updated at 10:20 a.m. However, KFCUPS does not know the
+correct address (410 S. State St., Salt Lake City, UT 84111) until 10:20 a.m.
+•  The distances provided in the “Distance Table” are equal regardless of the direction traveled.
 •  The day ends when all 40 packages have been delivered.

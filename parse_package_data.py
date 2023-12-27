@@ -1,14 +1,14 @@
 import csv
 from hash_table import HashTable
-from wgups_time import WgupsTime
+from kfc_time import KfcTime
 
 TABLE_SIZE = 40
 SUBDIRECTORY = './data/'
-DISTANCE_TABLE = 'WGUPS Distance Table.csv'
-PACKAGE_FILE = 'WGUPS Package File.csv'
+DISTANCE_TABLE = 'Distance Table.csv'
+PACKAGE_FILE = 'Package File.csv'
 
 ht = HashTable(TABLE_SIZE)
-wtime = WgupsTime()
+wtime = KfcTime()
 
 
 class ParseCsvData:
