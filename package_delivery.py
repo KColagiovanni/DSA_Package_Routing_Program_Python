@@ -106,7 +106,7 @@ class DeliverPackages:
             package_id(dict): A dict of the package(s) that are going to the same address. With the package number as
             the key and the package ID as the value (Ex: {1: 15, 2: 16, 3: 34}).
 
-        Returns: False if the truck is fullm otherwise None is returned.
+        Returns: False if the truck is full otherwise None is returned.
         """
         if len(self.first_truck) + len(package_id) < MAX_PACKAGES_PER_TRUCK:
             for package_num in package_id:  # [O(3) ==> O(1)]
