@@ -19,7 +19,7 @@ and to justify the decisions htat were made while writing the scripts.
 The supervisor should be able to see, at assigned points, the progress of each truck and its packages by any of the
 variables listed in the “Package File.csv” file including what has been delivered and at what time the delivery occurred.
 
-### Aaaumptions
+### Assumptions
 •  Each truck can carry a maximum of 16 packages, and the ID number of each package is unique.
 •  The trucks travel at an average speed of 18 miles per hour and have an infinite amount of gas with no need to stop.
 •  There are no collisions.
